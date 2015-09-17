@@ -89,9 +89,7 @@ public class UserDetailsController extends Controller {
             pager.setRows(new ArrayList<UserDetailsDao>(0));
         } else {
             List<UserDetailsDao> list = UserDetailsDao.dao.find(xDialect.forPaginate((int) pager.getPage(),
-                    (int) pager.getSize
-                            (), PropKit.get("LTE_SQL")
-                            .replace("$where", where)), sd, ed);
+                    (int) pager.getSize(), PropKit.get("LTE_SQL").replace("$where", where)), sd, ed);
             for (UserDetailsDao item : list) {
                 String cell_name = item.get("cell_name");
                 String start_time = item.get("procedure_starttime_ms").toString();

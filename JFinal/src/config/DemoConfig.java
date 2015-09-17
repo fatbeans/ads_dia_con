@@ -121,7 +121,7 @@ public class DemoConfig extends JFinalConfig {
         me.add(arp);
 //        arp.addMapping("syslog", LogDao.class);
 //        arp.addMapping("func",  FuncDao.class);
-//        arp.addMapping("ads.ads_4g_gnhttp", UserDetailsDao.class);
+        arp.addMapping("ads.ads_4g_gnhttp", UserDetailsDao.class);
         arp.addMapping("stage.eoms_total_hz1", ComplaintDao.class);
     }
 
