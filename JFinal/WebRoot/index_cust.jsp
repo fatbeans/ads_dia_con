@@ -57,7 +57,7 @@
             <label class="S-label">IMSI</label>
             <input type="text" class="w100" style="padding-left: 45px" placeholder="">
         </div>
-        <a href="#" class="btn btn-search vm mb10" id="psn" >
+        <a href="#" class="btn btn-search vm mb10" id="psn">
             <span class="searchicon"><i class="uicon ui-search"></i></span> 查询
         </a>
         <a href="javascript:void(0)" id="toFlow" class="btn btn-primary btn-sbox vm mb10">
