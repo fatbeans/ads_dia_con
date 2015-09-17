@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<tables>
+    <!-- 基础 -->
+    <table id="10030002" name="ADS_DIA_CON_USR_VIR" cnName="用户感染手机病毒">
+        <fields>SESSION_ID, MDN, IMSI, SRC_IP, DEST_IP, VIRUS_NAME, VIRUS_HAZARD_INDEX, VIRUS_HAZARD_PROPERTY, TIME, VIRUS_HAZARD_LEVEL</fields>
+        <fieldsCN>会话标识,手机号码,IMSI,源地址IP,目的地址IP,感染病毒名称,病毒危害指数,病毒危害属性,时间,病毒危害等级</fieldsCN>
+        <condition></condition>
+    </table>
+    <table id="10030003" name="ADS_DIA_CON_USR_IL_IP" cnName="用户访问非法地址">
+        <fields>SESSION_ID, MDN, IMSI, SERVER_IP, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT</fields>
+        <fieldsCN>会话标识,手机号码,IMSI,非法IP地址,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms),会话量</fieldsCN>
+        <condition></condition>
+    </table>
+    <table id="10030004" name="ADS_DIA_HTTP" cnName="用户没有产生上网记录">
+        <fields>SESSION_ID, IMSI, MDN, START_TIME, END_TIME, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, TE_ID, TE_NAME, CLIENT_IP, SERVER_IP, SGW_ID, SGW_NAME, SGW_IP, STATUS, ERROR_CODE, CONTENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, SERVER_IP_COUNTRY, SERVER_IP_PROVINCE, SERVER_IP_OPERATOR</fields>
+        <fieldsCN>会话标识,IMSI,手机号码,连接开始时间,连接结束时间,日期,小时,小区标识,小区名称,网络制式,LAC,CI,终端标识,终端名称,客户端IP,服务端IP,SGW/SGSN标识,SGW/SGSN名称,SGW/SGSNIP,状态,错误码,ContentType,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,业务大类,业务大类名称,业务小类,业务小类名称,服务端IP归属国家,服务端IP归属省,服务端IP归属运营商</fieldsCN>
+        <condition></condition>
+    </table>
+    <table id="10030005" name="ADS_DIA_CON_USR_HI_FLO_SRV" cnName="用户访问较多容易产生高流量的业务">
+        <fields>SESSION_ID, IMSI, MDN, NET_RAT, TE_ID, TE_NAME, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, SESSION_COUNT</fields>
+        <fieldsCN>会话标识,IMSI,手机号码,网络制式,终端标识,终端名称,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms),业务大类,业务大类名称,业务小类,业务小类名称,会话量</fieldsCN>
+        <condition></condition>
+    </table>
+    <!-- 控制面 -->
+    <table id="10010001" name="ADS_DIA_CON_CTL_CELL" cnName="无线弱覆盖">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE,LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition></condition>
+    </table>
+    <table id="10010002" name="ADS_DIA_CON_CTL_CELL" cnName="无线弱覆盖">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE,LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition>LV2_CON_ID=10010002</condition>
+    </table>
+    <table id="10010003" name="ADS_DIA_CON_CTL_CELL" cnName="无线高负荷">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE,LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition>LV2_CON_ID=10010003</condition>
+    </table>
+    <table id="10010006" name="ADS_DIA_CON_CTL_CELL" cnName="无线-核查参数">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE,LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition>LV2_CON_ID=10010006</condition>
+    </table>
+    <table id="10020002" name="ADS_DIA_CON_CTL_MME" cnName="核心-质量问题">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, NET_RAT, MME_ID, MME_NAME, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, ATTACH_SUCC_RATE, EPS_ATTACH_SUCC_RATE, EPS_ATTACH_REQ_RATE, EPS_ATTACH_FAIL_USER_RATE, EPS_ATTACH_FAIL_ME_RATE, EPS_EPS_FAIL_REFUSE_NUM, EPS_NOT_EPS_FAIL_REFUSE_NUM, AUTH_SUCC_RATE, AUTH_SUCC_NUM, AUTH_REQ_NUM, BUSI_REQ_SUCC_RATE</fields>
+        <fieldsCN>会话标识,日期,小时,网络制式,MME标识,MME名称,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,附着成功率（排除用户原因）,EPS附着成功次数,EPS附着请求次数,非法用户的EPS附着失败次数,非法ME的EPS附着失败次数,EPS服务不允许的EPS附着失败次数,EPS和非EPS服务不允许的EPS附着失败次数,鉴权信息查询成功率,鉴权信息查询成功次数,鉴权信息查询请求次数,业务请求成功率</fieldsCN>
+        <condition>LV2_CON_ID=10020002</condition>
+    </table>
+    <table id="10020001" name="ADS_DIA_CON_CTL_MME" cnName="核心-高负荷">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, NET_RAT, MME_ID, MME_NAME, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, ATTACH_SUCC_RATE, EPS_ATTACH_SUCC_RATE, EPS_ATTACH_REQ_RATE, EPS_ATTACH_FAIL_USER_RATE, EPS_ATTACH_FAIL_ME_RATE, EPS_EPS_FAIL_REFUSE_NUM, EPS_NOT_EPS_FAIL_REFUSE_NUM, AUTH_SUCC_RATE, AUTH_SUCC_NUM, AUTH_REQ_NUM, BUSI_REQ_SUCC_RATE</fields>
+        <fieldsCN>会话标识,日期,小时,网络制式,MME标识,MME名称,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,附着成功率（排除用户原因）,EPS附着成功次数,EPS附着请求次数,非法用户的EPS附着失败次数,非法ME的EPS附着失败次数,EPS服务不允许的EPS附着失败次数,EPS和非EPS服务不允许的EPS附着失败次数,鉴权信息查询成功率,鉴权信息查询成功次数,鉴权信息查询请求次数,业务请求成功率</fieldsCN>
+        <condition>LV2_CON_ID=10020001</condition>
+    </table>
+    <table id="10020009" name="ADS_DIA_CON_CTL_MME" cnName="核心-核查参数">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, NET_RAT, MME_ID, MME_NAME, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, ATTACH_SUCC_RATE, EPS_ATTACH_SUCC_RATE, EPS_ATTACH_REQ_RATE, EPS_ATTACH_FAIL_USER_RATE, EPS_ATTACH_FAIL_ME_RATE, EPS_EPS_FAIL_REFUSE_NUM, EPS_NOT_EPS_FAIL_REFUSE_NUM, AUTH_SUCC_RATE, AUTH_SUCC_NUM, AUTH_REQ_NUM, BUSI_REQ_SUCC_RATE</fields>
+        <fieldsCN>会话标识,日期,小时,网络制式,MME标识,MME名称,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,附着成功率（排除用户原因）,EPS附着成功次数,EPS附着请求次数,非法用户的EPS附着失败次数,非法ME的EPS附着失败次数,EPS服务不允许的EPS附着失败次数,EPS和非EPS服务不允许的EPS附着失败次数,鉴权信息查询成功率,鉴权信息查询成功次数,鉴权信息查询请求次数,业务请求成功率</fieldsCN>
+        <condition>LV2_CON_ID=10020009</condition>
+    </table>
+    <table id="10040001" name="ADS_DIA_CON_ALL_TE" cnName="终端-质量问题">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, NET_RAT, TE_ID, TE_NAME, UP_FLO, D_FLO, HTTP_AVG_ACK_DELAY, HTTP_SESSION_COUNT, CTL_AVG_ACK_DELAY, CTL_DELAY, CTL_SESSION_COUNT, ATTACH_SUCC_RTO, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, CON_SOURCE</fields>
+        <fieldsCN>会话标识,日期,小时,网络制式,终端标识,终端名称,HTTP上行流量（Byte）,HTTP下行流量（Byte）,HTTP平均响应时延（ms）,HTTP会话数量,CTL平均响应时延(ms),CTL总响应（ms）,CTL会话数量,附着成功率,一级原因分类编码,二级原因分类编码,一级结论标识,一级结论名称,二级结论标识,二级结论名称,数据来源</fieldsCN>
+        <condition>LV2_CON_ID=10040001</condition>
+    </table>
+    <table id="10030001" name="ADS_DIA_CON_CTL_USR_EC" cnName="用户-用户更换4G终端未更换4G卡">
+        <fields>SESSION_ID, IMSI, MDN, NET_RAT, TE_ID, TE_NAME, PROTO_TYPE, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,IMSI,手机号码,网络制式,终端标识,终端名称,控制面协议,错误码,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,一级结论名称,二级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10030001</condition>
+    </table>
+    <!-- 用户面 -->
+    <table id="10050001" name="ADS_DIA_CON_HTTP_SP_RES" cnName="业务属网外资源">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, SERVER_IP, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, SESSION_COUNT, SESSION_SUCC_COUNT, SESSION_SUCC_RTO, DL_RATE, SERVER_IP_COUNTRY, SERVER_IP_PROVINCE, SERVER_IP_OPERATOR, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,日期,小时,SPIP,业务大类,业务大类名称,业务小类,业务小类名称,会话量,会话成功量,会话成功率,下载速率,服务端IP归属国家,服务端IP归属省,服务端IP归属运营商,一级结论标识,一级结论名称,二级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10050001</condition>
+    </table>
+    <table id="10060001" name="ADS_DIA_CON_HTTP_SERV_IP" cnName="上网日志返回业务侧错误">
+        <fields>SESSION_ID, NET_RAT, SERVER_IP, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, ERROR_COUNT, SERVER_IP_COUNTRY, SERVER_IP_PROVINCE, SERVER_IP_OPERATOR, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>SESSION_ID, NET_RAT, SERVER_IP, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, ERROR_COUNT, SERVER_IP_COUNTRY, SERVER_IP_PROVINCE, SERVER_IP_OPERATOR, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fieldsCN>
+        <condition>LV2_CON_ID=10060001</condition>
+    </table>
+    <table id="10030010" name="ADS_DIA_CON_HTTP_SERV_IP" cnName="上网记录返回用户侧错误">
+        <fields>SESSION_ID, NET_RAT, SERVER_IP, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, ERROR_COUNT, SERVER_IP_COUNTRY, SERVER_IP_PROVINCE, SERVER_IP_OPERATOR, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>SESSION_ID, NET_RAT, SERVER_IP, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, APP_TYPE_ID, APP_TYPE_NAME, APP_SUB_TYPE_ID, APP_SUB_TYPE_NAME, ERROR_COUNT, SERVER_IP_COUNTRY, SERVER_IP_PROVINCE, SERVER_IP_OPERATOR, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fieldsCN>
+        <condition>LV2_CON_ID=10030010</condition>
+    </table>
+    <table id="10020003" name="ADS_DIA_CON_HTTP_SGW" cnName="SGW时延问题">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, SGW_ID, SGW_NAME, NET_RAT, DELAY, UP_FLO, D_FLO, SESSION_COUNT</fields>
+        <fieldsCN>会话标识,日期,小时,SGW标识,SGW名称,网络制式,平均时延(ms）,上流流量（Byte）,下行流量（Byte）,会话量</fieldsCN>
+        <condition></condition>
+    </table>
+    <table id="10060002" name="ADS_DIA_CON_HTTP_SP" cnName="业务时延问题">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, SP_IP, NET_RAT, DELAY, UP_FLO, D_FLO, SESSION_COUNT</fields>
+        <fieldsCN>会话标识,日期,小时,SPIP,网络制式,平均时延(ms）,上流流量（Byte）,下行流量（Byte）,会话量</fieldsCN>
+        <condition></condition>
+    </table>
+    <table id="10040001" name="ADS_DIA_CON_ALL_TE" cnName="终端质量问题">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, NET_RAT, TE_ID, TE_NAME, UP_FLO, D_FLO, HTTP_AVG_ACK_DELAY, HTTP_SESSION_COUNT, CTL_AVG_ACK_DELAY, CTL_DELAY, CTL_SESSION_COUNT, ATTACH_SUCC_RTO, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, CON_SOURCE</fields>
+        <fieldsCN>会话标识,日期,小时,网络制式,终端标识,终端名称,HTTP上行流量（Byte）,HTTP下行流量（Byte）,HTTP平均响应时延（ms）,HTTP会话数量,CTL平均响应时延(ms),CTL总响应（ms）,CTL会话数量,附着成功率,一级原因分类编码,二级原因分类编码,一级结论标识,一级结论名称,二级结论标识,二级结论名称,数据来源</fieldsCN>
+        <condition>LV2_CON_ID=10040001</condition>
+    </table>
+    <table id="10010001" name="ADS_DIA_CON_CTL_CELL" cnName="无线-弱覆盖">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition>LV2_CON_ID=10010001</condition>
+    </table>
+    <table id="10010002" name="ADS_DIA_CON_CTL_CELL" cnName="无线-质差小区">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition>LV2_CON_ID=10010001</condition>
+    </table>
+    <table id="10010003" name="ADS_DIA_CON_CTL_CELL" cnName="无线-高负荷">
+        <fields>SESSION_ID, DAY_KEY, HOUR_KEY, CELL_ID, CELL_NAME, NET_RAT, LAC, CI, PROTO_TYPE, ERROR_CODE, EVENT_TYPE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, SESSION_COUNT, LV1_CAUSE_CODE, LV2_CAUSE_CODE, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME, RADIO_CONNECT_SUCC_RATE, RAB_REQ_NUM, RAB_REQ_SUCC_NUM, RRC_CONNECT_REQ_NUM, RRC_CONNECT_REQ_SUCC_NUM, WIRELESS_DROP_RATE, ENB_RELEASE_NUM, NORMAL_END_RELEASE_NUM, INIT_REQ_SUCC_NUM, RAB_BUSY_RATE, SWITCH_SUCC_RATE, ENB_S1_REQ_NUM, ENB_S1_REQ_SUCC_NUM, ENB_X2_REQ_NUM, ENB_X2_REQ_SUCC_NUM, ENB_OUT_REQ_NUM, ENB_OUT_REQ_SUCC_NUM, RADIO_USE_RATE, UP_PUSCH_PRB_NUM, DL_PUSH_PRB_NUM, PRB_NUM, UP_SUBFRAME_NUM, DL_SUBFRAME_SUM, IS_WEAK_COVER</fields>
+        <fieldsCN>结论来源,会话标识,日期,小时,小区标识,小区名称,网络制式,LAC,CI,控制面协议,attach,上行流量（Byte）,下行流量（Byte）,平均响应时间（ms）,总响应（ms）,会话数量,一级原因分类编码,二级原因分类编码,一级结论标识,二级结论名称,一级结论标识,二级结论名称,无线接通率,E-RAB建立请求数,E-RAB建立成功数,RRC连接建立请求次数,RRC连接建立成功次数,无线掉线率,eNB请求释放上下文数,正常的eNB请求释放上下文数,初始上下文建立成功次数,E-RAB拥塞率（无线资源不足）,切换成功率,eNB间S1切换出请求次数,eNB间S1切换出成功次数,eNB间X2切换出请求次数,eNB间X2切换出成功次数,eNB内切换出请求次数,eNB内切换出成功次数,无线利用率,上行PUSCHPRB占用平均数,下行PDSCHPRB占用平均数,小区PRB数,上行子帧数,下行子帧数,是否弱覆盖小区</fieldsCN>
+        <condition>LV2_CON_ID=10010001</condition>
+    </table>
+    <!-- DNS -->
+    <table id="10030006" name="ADS_DIA_CON_DNS_EC" cnName="DNS格式错误">
+        <fields>SESSION_ID, DNS_SERVER_IP, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,DNS服务器IP,错误码,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,一级结论标识,二级结论名称,一级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10030006</condition>
+    </table>
+    <table id="10020005" name="ADS_DIA_CON_DNS_EC" cnName="DNS服务器出错">
+        <fields>SESSION_ID, DNS_SERVER_IP, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,DNS服务器IP,错误码,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,一级结论标识,二级结论名称,一级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10030006</condition>
+    </table>
+    <table id="10030007" name="ADS_DIA_CON_DNS_EC" cnName="DNS请求的域名错误">
+        <fields>SESSION_ID, DNS_SERVER_IP, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,DNS服务器IP,错误码,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,一级结论标识,二级结论名称,一级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10030007</condition>
+    </table>
+    <table id="10020006" name="ADS_DIA_CON_DNS_EC" cnName="DNS域名服务器不支持请求的类型">
+        <fields>SESSION_ID, DNS_SERVER_IP, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,DNS服务器IP,错误码,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,一级结论标识,二级结论名称,一级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10020006</condition>
+    </table>
+    <table id="10020007" name="ADS_DIA_CON_DNS_EC" cnName="DNS拒绝服务">
+        <fields>SESSION_ID, DNS_SERVER_IP, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,DNS服务器IP,错误码,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,一级结论标识,二级结论名称,一级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10020007</condition>
+    </table>
+    <table id="10020008" name="ADS_DIA_CON_DNS_EC" cnName="DNS解析时延问题">
+        <fields>SESSION_ID, DNS_SERVER_IP, ERROR_CODE, UP_FLO, D_FLO, AVG_ACK_DELAY, DELAY, LV1_CON_ID, LV1_CON_NAME, LV2_CON_ID, LV2_CON_NAME</fields>
+        <fieldsCN>会话标识,DNS服务器IP,错误码,上行流量(Byte）,下行流量(Byte）,平均响应时间（ms）,总响应(ms）,一级结论标识,二级结论名称,一级结论标识,二级结论名称</fieldsCN>
+        <condition>LV2_CON_ID=10020008</condition>
+    </table>
+</tables>

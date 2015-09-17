@@ -1,0 +1,68 @@
+[
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10020005",
+    "lv2_con_name": "DNS服务器出错"
+  },
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10020006",
+    "lv2_con_name": "DNS域名服务器不支持请求的类型"
+  },
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10020007",
+    "lv2_con_name": "DNS拒绝服务"
+  },
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10030007",
+    "lv2_con_name": "DNS解析时延问题"
+  },
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10020002",
+    "lv2_con_name": "核心侧·质量问题"
+  },
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10020001",
+    "lv2_con_name": "核心侧·高负荷"
+  },
+  {
+    "lv1_con_id": "1",
+    "lv1_con_name": "核心类",
+    "lv2_con_id": "10020009",
+    "lv2_con_name": "核心侧·核查参数"
+  },
+  {
+    "lv1_con_id": "2",
+    "lv1_con_name": "无线类",
+    "lv2_con_id": "10010001",
+    "lv2_con_name": "弱覆盖"
+  },
+  {
+    "lv1_con_id": "2",
+    "lv1_con_name": "无线类",
+    "lv2_con_id": "10010002",
+    "lv2_con_name": "质差小区"
+  },
+  {
+    "lv1_con_id": "2",
+    "lv1_con_name": "无线类",
+    "lv2_con_id": "10010003",
+    "lv2_con_name": "高负荷"
+  },
+  {
+    "lv1_con_id": "3",
+    "lv1_con_name": "互联网",
+    "lv2_con_id": "10050001",
+    "lv2_con_name": "业务属网外资源"
+  }
+]

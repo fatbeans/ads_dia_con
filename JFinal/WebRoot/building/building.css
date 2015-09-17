@@ -1,0 +1,6 @@
+﻿#divbuilding{display:none;position:relative;background:url(bg.png) repeat-x bottom center #e9f1f4;height:400px;}
+.divbox{top:50%;height:320px;margin-top:-160px;width:100%;position:absolute;text-align:center;}
+.divbox div{width:180px;height:180px;background:url(build.png);margin:auto;margin-bottom:20px;}
+.pbtn{margin-top:10px;}
+.pbtn a{display:inline-block;height:27px;padding:0 15px;margin-right:5px;line-height:26px;color:#fff;background:#26a4ed;border-radius:3px;min-width:48px;}
+.pbtn a.pclose{background:#f28b27;}

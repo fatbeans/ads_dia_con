@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<adapters>
+    <adapter interface="dataInterface.Isignalling" class="adapter.gbase.signalling.SignallingAdapter"></adapter>
+    <adapter interface="dataInterface.Iconclusion" class="adapter.oracle.delimitFlow.conclusionAdapter"></adapter>
+</adapters>
