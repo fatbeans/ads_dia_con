@@ -661,7 +661,7 @@
             activeli("a6");
             showTab("anyb6");
         }
-
+        $("#leftdiv").click();
     }
 
     function activeli(li) {
