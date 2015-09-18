@@ -515,8 +515,8 @@
         clearHtml();
         $.ajax({
             type: "POST",
-//            url: "./home/cust",
-            url: "./alldata.json",
+            url: "./home/cust",
+//            url: "./alldata.json",
             data: {"sd": $("#sd").val(), "ed": $("#ed").val(), "msisdn": $("#msisdn").val()},
             dataType: "json",
             error: function (XMLHttpRequest) {
