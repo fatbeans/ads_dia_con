@@ -6,6 +6,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.DbKit;
 import dao.Pager;
 import dao.UserDetailsDao;
 import dialect.XDialect;
@@ -13,11 +14,20 @@ import dialect.XGbaseDialect;
 import dialect.XGpDialect;
 import dic.DbType;
 import export.ExcelExport;
+import model.AppInfoEntity;
 import model.UserDetHbaseEntity;
 import org.apache.commons.lang.StringUtils;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static java.lang.Integer.*;
 
 /**
  * Created by xinxin on 2015/7/17.
@@ -115,7 +125,9 @@ public class UserDetailsController extends Controller {
     }
 
     private void doForHbase(int page, int size, long sd, long ed, long msisdn) throws Throwable {
+        Map<String, AppInfoEntity> appInfoEntityMap = getAppInfo();
         List<UserDetHbaseEntity> list = UserDetailHbaseAdapter.getPage(msisdn + "", sd + "", ed + "");
+        joinAppName(appInfoEntityMap, list);
         Pager pager = new Pager();
         pager.setPage(page);
         pager.setSize(size);
@@ -125,6 +137,41 @@ public class UserDetailsController extends Controller {
         JSONObject json = pager.toJson();
         json.put("rows", list);
         renderJson(json.toJSONString());
+    }
+
+    private void joinAppName(Map<String, AppInfoEntity> appInfoEntityMap, List<UserDetHbaseEntity> list) {
+        for (UserDetHbaseEntity item : list) {
+            AppInfoEntity appInfoEntity = appInfoEntityMap.get(AppInfoEntity.getKey(parseInt(item.APP_TYPE_NAME), parseInt
+                    (item.APP_SUB_TYPE_NAME)));
+            if (appInfoEntity != null) {
+                item.APP_TYPE_NAME = appInfoEntity.appTypeName;
+                item.APP_SUB_TYPE_NAME = appInfoEntity.appSubTypeName;
+            }
+        }
+    }
+
+
+    private Map<String, AppInfoEntity> getAppInfo() throws SQLException {
+        Connection connection = DbKit.getConfig("orcl").getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(PropKit.get
+                ("LTE_APP_SQL"));
+        ResultSet resultSet = preparedStatement.executeQuery();
+        HashMap<String, AppInfoEntity> map = new HashMap<String, AppInfoEntity>();
+        while (resultSet.next()) {
+            Integer appID = resultSet.getBigDecimal("APP_TYPE_ID").intValue();
+            String appName = resultSet.getString("APP_TYPE_NAME");
+            Integer appSubID = resultSet.getBigDecimal("APP_SUB_TYPE_ID").intValue();
+            String appSubName = resultSet.getString("APP_SUB_TYPE_NAME");
+            AppInfoEntity entity = new AppInfoEntity(appID, appName, appSubID, appSubName);
+
+            map.put(entity.getKey(), entity);
+
+
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+        return map;
     }
 
 
