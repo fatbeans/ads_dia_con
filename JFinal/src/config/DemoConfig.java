@@ -143,7 +143,7 @@ public class DemoConfig extends JFinalConfig {
         arp.setDialect(new OracleDialect());
         arp.setShowSql(true);
         me.add(arp);
-        //arp.addMapping("ADS_DIA_CON_HTTP_CELL", HttpCell.class);
+        arp.addMapping("ADS_DIA_CON_HTTP_CELL", HttpCell.class);
         arp.addMapping("ADS_DIA_CON_CTL_MME", CtlMme.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SGW", HttpSgw.class);
         arp.addMapping("ADS_DIA_CTL", CtlCell.class);
@@ -155,7 +155,7 @@ public class DemoConfig extends JFinalConfig {
         arp.addMapping("ADS_DIA_CON_USR_HI_FLO_SRV", UsrHiFloSrv.class);
         arp.addMapping("ADS_DIA_CON_CTL_TE", CtlTe.class);
         arp.addMapping("ADS_DIA_CON_HTTP_LIST", HttpList.class);
-        //arp.addMapping("ADS_DIA_CON_HTTP_TE", HttpTe.class);
+        arp.addMapping("ADS_DIA_CON_HTTP_TE", HttpTe.class);
         arp.addMapping("ADS_DIA_CON_CTL_S_EC", CtlSEc.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SP", HttpSp.class);
         arp.addMapping("ADS_DIA_CON", "ADS_DIA_CON_CFG", AdsDiaCon.class);
