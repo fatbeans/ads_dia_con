@@ -2,6 +2,7 @@ package adapter.hbase.signalling;
 
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -38,8 +39,9 @@ public class SignallingAdapter  implements Isignalling{
 			String imsi, String failStatus, String interfaceType,
 			String procedureType,String pageDate) throws Exception {
 		// TODO Auto-generated method stub
-		
-		imsi=getImsi(phone);
+		if(imsi.length()<=11){
+			imsi=getImsi(phone);
+		}
         //System.getProperties().put("hadoop.home.dir", "D:\\hadoop-common-2.2.0-bin-master"); 
 		SignallngObjEntity signallngObj=new SignallngObjEntity();
 		List<SignallingCommon> signallingList=new ArrayList<SignallingCommon>();
@@ -80,11 +82,15 @@ public class SignallingAdapter  implements Isignalling{
 			if(pageDate!=null && !pageDate.equals("")){
 				eDate=dateTime.converTo("yyyyMMddHHmmssSSS", String.valueOf(pageDate));
 			}
-			while(dateTime.converToLong("yyyyMMdd", sDate) <= dateTime.converToLong("yyyyMMdd", eDate) && signallingList.size()<10){
+			boolean isFirst=true;
+			while(dateTime.converToLong("yyyyMMdd", sDate) <= dateTime.converToLong("yyyyMMdd", eDate) && signallingList.size()<11){
 				
 				String sRrowKey=StringUtils.rightPad(imsi, 15,"0")+StringUtils.rightPad(String.valueOf(startDate), 17,"0")+"00";
 				String eRowKey=StringUtils.rightPad(imsi, 15,"0")+StringUtils.rightPad(String.valueOf(endDate), 17,"9")+"99";
-				if(pageDate!=null && !pageDate.equals("")){
+				if(pageDate!=null && !pageDate.equals("") && isFirst){
+					eRowKey=StringUtils.rightPad(imsi, 15,"0")+StringUtils.rightPad(String.valueOf(dateTime.converToLong("yyyyMMddHHmmssSSS", eDate)), 17,"9")+"99";
+				}
+				if(!isFirst){
 					eRowKey=StringUtils.rightPad(imsi, 15,"0")+StringUtils.rightPad(String.valueOf(dateTime.converToLong("yyyyMMddHHmmssSSS", eDate)), 17,"9")+"99";
 				}
 				
@@ -94,10 +100,11 @@ public class SignallingAdapter  implements Isignalling{
 					if(hbaseHelper.tableExists(httpTable)){
 						System.out.println("table:"+httpTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(httpTable,sRrowKey,eRowKey,null);
+						System.out.println(httpTable+"总共：" +result.size());
 						for(Map<String, String> item:result){
 							SignallingCommon signalling=getHttpSignalling(item.get("other"));
 							if(signalling!=null){
-								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && failStatus==signalling.getFailureCause())||failStatus==null ||failStatus.equals("-1");
+								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
 								if(isStatus){
 									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
@@ -113,17 +120,19 @@ public class SignallingAdapter  implements Isignalling{
 				//MME
 				if(isQueryMME){
 					String mmeEMMTable="S_M_S1MME_EMM_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
-					String mmeESMTable="S_M_S1MME_ESM"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
-					String mmeS1APTable="S_M_S1MME_S1AP"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
+					String mmeESMTable="S_M_S1MME_ESM_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
+					String mmeS1APTable="S_M_S1MME_S1AP_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
 					if(hbaseHelper.tableExists(mmeEMMTable)){
 						System.out.println("table:"+mmeEMMTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(mmeEMMTable,sRrowKey,eRowKey,null);
+						System.out.println(mmeEMMTable+"总共：" +result.size());
 						for(Map<String, String> item:result){
 							SignallingCommon signalling=getMMEEMMTableSignalling(item.get("other"));
 							if(signalling!=null){
-								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && failStatus==signalling.getFailureCause())||failStatus==null ||failStatus.equals("-1");
+								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
 								boolean isProcedureType =procedureType==null || procedureType.equals("") || (procedureType.contains(signalling.getProcedureType()));
 								if(isStatus && isProcedureType){
+									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
 								}
 							}
@@ -135,12 +144,14 @@ public class SignallingAdapter  implements Isignalling{
 					if(hbaseHelper.tableExists(mmeESMTable)){
 						System.out.println("table:"+mmeESMTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(mmeESMTable,sRrowKey,eRowKey,null);
+						System.out.println(mmeESMTable+"总共：" +result.size());
 						for(Map<String, String> item:result){
 							SignallingCommon signalling=getMMEESMTableSignalling(item.get("other"));
 							if(signalling!=null){
-								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && failStatus==signalling.getFailureCause())||failStatus==null ||failStatus.equals("-1");
+								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
 								boolean isProcedureType =procedureType==null || procedureType.equals("") || (procedureType.contains(signalling.getProcedureType()));
 								if(isStatus && isProcedureType){
+									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
 								}
 							}
@@ -152,12 +163,14 @@ public class SignallingAdapter  implements Isignalling{
 					if(hbaseHelper.tableExists(mmeS1APTable)){
 						System.out.println("table:"+mmeS1APTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(mmeS1APTable,sRrowKey,eRowKey,null);
+						System.out.println(mmeS1APTable+"总共：" +result.size());
 						for(Map<String, String> item:result){
 							SignallingCommon signalling=getMMES1APTableSignalling(item.get("other"));
 							if(signalling!=null){
-								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && failStatus==signalling.getFailureCause())||failStatus==null ||failStatus.equals("-1");
+								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
 								boolean isProcedureType =procedureType==null || procedureType.equals("") || (procedureType.contains(signalling.getProcedureType()));
 								if(isStatus && isProcedureType){
+									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
 								}
 							}
@@ -176,16 +189,51 @@ public class SignallingAdapter  implements Isignalling{
 				calendar.set(Calendar.SECOND,59);
 				calendar.set(Calendar.MILLISECOND,999);
 				eDate=calendar.getTime();
+				isFirst=false;
 				
 			}
 			System.out.println("数量："+ signallingList.size());
-			Collections.reverse(signallingList);
-			signallngObj.setSql(sql);
-			if(signallingList.size()>10){
-				for(int i=signallingList.size()-1;i>=10;i--){
+			
+			for(int i=0;i<signallingList.size();i++){
+				if(signallingList.get(i).getProcedure_starttime_ms()!=null && !signallingList.get(i).getProcedure_starttime_ms().equals("")){
+					for(int j=i;j<signallingList.size();j++){
+						long startDate1=Long.parseLong(signallingList.get(i).getProcedure_starttime_ms());
+						SignallingCommon item2= signallingList.get(j);
+						if(item2.getProcedure_starttime_ms()!=null && !item2.getProcedure_starttime_ms().equals("")){
+							long startDate2=Long.parseLong(item2.getProcedure_starttime_ms());
+							if(startDate1<startDate2){
+								SignallingCommon temp=signallingList.get(i);
+								signallingList.set(i, signallingList.get(j));
+								signallingList.set(j, temp);
+							}
+						}
+					}
+				}
+				
+			}
+			if(signallingList.size()>11){
+				for(int i=signallingList.size()-1;i>=11;i--){
 					signallingList.remove(i);
 				}
 			}
+			if(signallingList.size()>0){
+				List<DictionaryEntity> statusDictList=getStatus();
+				for(int i=0;i<signallingList.size();i++){
+					String statusCode=signallingList.get(i).getProcedureStatus();
+					for(int j=0;j<statusDictList.size();j++){
+						if(statusCode!=null && statusDictList.get(j).getKey()!=null && statusCode.trim().equals(statusDictList.get(j).getKey().trim())){
+							signallingList.get(i).setProcedureStatusText(statusDictList.get(j).getName());
+							if(statusCode.equals("3")){
+								signallingList.get(i).setProcedureStatus("1");
+							}
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			signallngObj.setSql(sql);
 			signallngObj.setSignallingList(signallingList);
 		}catch(Exception ex){
 			System.out.println(ex.getMessage());
@@ -215,30 +263,41 @@ public class SignallingAdapter  implements Isignalling{
 				tableName="S_M_S1MME_EMM";
 				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,FirstEvent,LastEvent,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,FirstMTmsi,FirstMMEIp,LastMTmsi");
 			}else if(tabName.equals("mmeesm")){
+				tableName="S_M_S1MME_ESM";
 				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,FirstEvent,LastEvent,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,ParentEmmXdrId,最终用户IP,最终用户IPV6");
 			}else if(tabName.equals("mmes1ap")){
+				tableName="S_M_S1MME_S1AP";
 				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,EmmXdrId,MMEUeApId,eNodeBUeApId");
 			}
 			tableName=tableName+"_"+String.valueOf(dateTime.converToLong("yyyyMMdd", sDate));
 			System.out.println(tableName);
-			Map<String, String> result= hbaseHelper.get(tableName,rowKey,null);
-			String[] colArray=StringUtils.splitByWholeSeparatorPreserveAllTokens(signallingDetail.getCols(), ",");
-			String[] dataArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(result.get("other"), "|");
-			JSONArray array = new JSONArray();  
-			if(colArray.length==dataArray.length){
-				JSONObject jsonObj = new JSONObject(); 
-				for(int i=0;i<colArray.length;i++){
-					String columnName =colArray[i];  
-		            String value = dataArray[i];  
-		            jsonObj.put(columnName, value);  
+			if(hbaseHelper.tableExists(tableName)){
+				System.out.println("table:"+tableName+",rowKey:"+rowKey);
+				Map<String, String> result= hbaseHelper.get(tableName,rowKey,null);
+				if(result!=null && result.get("other")!=null){
+
+					String[] colArray=StringUtils.splitByWholeSeparatorPreserveAllTokens(signallingDetail.getCols(), ",");
+					String[] dataArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(result.get("other"), "|");
+					JSONArray array = new JSONArray();  
+					if(colArray.length==dataArray.length){
+						JSONObject jsonObj = new JSONObject(); 
+						for(int i=0;i<colArray.length;i++){
+							String columnName =colArray[i];  
+				            String value = dataArray[i];
+				            jsonObj.put(columnName, value);  
+						}
+						array.add(jsonObj);
+					}
+					String sql="";
+					signallingDetail.setSql(sql);
+				    signallingDetail.setJsonArray(array);
+				}else{
+					System.out.println("table:"+tableName+",rowKey:"+rowKey+";未查到数据");
 				}
-				array.add(jsonObj);
+			}else{
+				System.out.println(tableName+"不存在");
 			}
-			String sql="";
-			signallingDetail.setSql(sql);
-		    signallingDetail.setJsonArray(array);
 		}catch(Exception ex){
-			System.out.println(ex.getMessage());
 			throw ex;
 		}finally{
 			if(hbaseHelper!=null){
@@ -272,6 +331,34 @@ public class SignallingAdapter  implements Isignalling{
 		return imsi;
 	}
 
+	private List<DictionaryEntity> getStatus() throws Exception{
+		List<DictionaryEntity> dictionaryList=new ArrayList<DictionaryEntity>();
+		Statement statement=null;
+		ResultSet resultSet=null;
+		try{
+			
+			statement= DbKit.getConfig("orcl").getConnection().createStatement();
+			String sql="select STATUS,STATUS_CODE from ads_dia_http_status";
+			resultSet= statement.executeQuery(sql);
+			while (resultSet.next()){
+				DictionaryEntity dictionary=new DictionaryEntity();
+				dictionary.setKey(resultSet.getString("STATUS"));
+				dictionary.setName(resultSet.getString("STATUS_CODE"));
+				dictionaryList.add(dictionary);
+			}
+		}catch(Exception ex){
+			throw ex;
+		}finally{
+			if(statement!=null){
+				statement.close();
+			}
+			if(!resultSet.equals(null)){
+				resultSet.close();
+			}
+		}
+		return dictionaryList;
+	}
+	
 	private SignallingCommon getHttpSignalling(String dataStr) throws ParseException{
 		String[] dataArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(dataStr, "|");
 		SignallingCommon signalling=new SignallingCommon();
@@ -291,7 +378,7 @@ public class SignallingAdapter  implements Isignalling{
 			}
 			signalling.setXdrId(dataArray[6]);
 			signalling.setRat(dataArray[7]);
-			signalling.setInterfaceType(dataArray[8]);
+			signalling.setInterfaceType("11");
 			signalling.setProcedureType("-2");
 			signalling.setProtocolType(dataArray[10]);
 			
@@ -403,4 +490,6 @@ public class SignallingAdapter  implements Isignalling{
 		}
 		return signalling;
 	}
+
+	
 }

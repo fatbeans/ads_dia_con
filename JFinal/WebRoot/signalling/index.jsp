@@ -53,21 +53,17 @@
 			<div class="mt10 animated fadeInDown pr" style="z-index:101">
 				<div class="inlininput mr10">
 					<label class="S-label">开始时间</label>
-					<span class="add-on"><a href="#"><i class="icon-calendar"></i></a></span>
+					<span class="add-on"><a href="javascript:void(0)"><i class="icon-calendar"></i></a></span>
 					<input id="txtStartDate" type="text" class="w100" placeholder="" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH'})">
 				</div>
 				<div class="inlininput mr10">
 					<label class="S-label">结束时间</label>
-					<span class="add-on"><a href="#"><i class="icon-calendar"></i></a></span>
+					<span class="add-on"><a href="javascript:void(0)"><i class="icon-calendar"></i></a></span>
 					<input id="txtEndDate" type="text" class="w100" placeholder="" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH'})">
 				</div>
 				<div class="inlininput mr10">
-					<label class="S-label">用户号码</label>
-					<input id="txtPhone" type="text" class="w100" placeholder="" value=""  maxlength="11">
-				</div>
-				<div class="inlininput mr10">
-					<label class="S-label">IMSI</label>
-					<input id="txtImsi" type="text" class="w100" style="padding-left: 45px" placeholder="">
+					<label class="S-label">用户标识</label>
+					<input id="txtPhone" type="text" class="w100" placeholder="" value=""  maxlength="15" style="width:130px;"">
 				</div>
 				<div id="interfacepanel" class="sel_wrap w150 mb10 mr10 dragdownlist"  style="overflow: visible;">
 				    <label>接口类型</label>
@@ -114,7 +110,7 @@
 			  <!-- 表格数据-s -->
 			  <div class="container4 clearfix">
 	            <div class="div_scroll">
-	                <div style="height:408px;overflow-y: hidden; width:auto">
+	                <div style="height:418px;overflow-y: hidden; width:auto">
 			  			<table class="table table-striped table-bordered panel-tabborder table-hover">
 					        <thead>
 					          <tr>

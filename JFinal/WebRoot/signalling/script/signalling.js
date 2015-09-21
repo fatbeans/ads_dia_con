@@ -176,18 +176,6 @@ var signallingQuery = function () {
         return result;
     };
 
-    var getStatus = function (code) {
-        var result = "";
-        code = code + "";
-        switch (code) {
-            case "0": result = "成功"; break;
-            case "1": result = "失败"; break;
-            case "2": result = "未识别"; break;
-            default: result = code; break;
-        }
-        return result;
-    };
-
     var initPage = function () {
         $("#pagepanel").empty();
         var firstPage = $('<li class="active pageitems"><a href="javascript:void(0)">' + (tsobj.search.pageIndex + 1) + '</a></li>');
@@ -196,12 +184,11 @@ var signallingQuery = function () {
             tsobj.search.pageIndex = firstPage.data("data");
             $(this).parent().children("li").removeClass("active");
             $(this).addClass("active");
-            tsobj.search.endDate = tsobj.oldEndDate;
             tsobj.pageDate = null;
             loadTable();
         });
 
-        var nextPage = $('<li id="btnnextpage"><a href="javascript:void(0)">></a></li>');
+        var nextPage = $('<li id="btnnextpage"><a href="javascript:void(0)">...</a></li>');
         nextPage.click(function () {
             tsobj.search.pageIndex = tsobj.search.pageIndex + 1;
             $(this).parent().children("li").removeClass("active");
@@ -218,7 +205,7 @@ var signallingQuery = function () {
                     $(this).addClass("active");
                     if (tsobj.search.pageIndex > 0) {
                         var lastData = $(this).parent().children(".pageitems").eq(tsobj.search.pageIndex - 1).data("lastdata");
-                        tsobj.pageDate = lastData.oldEndDate;
+                        tsobj.pageDate = lastData.oldStartDate;
                     } else {
                         tsobj.pageDate = null;
                     }                    
@@ -231,15 +218,17 @@ var signallingQuery = function () {
                 }
                 var lastData = pageItemObjs.last().data("lastdata");
                 if (lastData) {
-                    tsobj.pageDate = lastData.oldEndDate;
+                    tsobj.pageDate = lastData.oldStartDate;
                 }
                 
                 $(this).before(pageObj);
                 loadTable(function (rdata) {
-                    if ( rdata.signallingList && rdata.signallingList.length > 0) {
-                        var lastData = rdata.signallingList[rdata.signallingList.length - 1];
+                    if (rdata.signallingList && rdata.signallingList.length > 0) {
+                        var lastIndex = rdata.signallingList.length > 10 ? 10 : rdata.signallingList.length - 1;
+                        var lastData = rdata.signallingList[lastIndex];
                         pageObj.data("lastdata", lastData);
                     }
+                    
                 });
             }
         });
@@ -248,12 +237,19 @@ var signallingQuery = function () {
 
     var init = function () {
 
+        $(".S-label").click(function () {
+            $(this).parent().children("input").focus();
+        });
+        $(".add-on").click(function () {
+            $(this).parent().children("input").focus();
+        });
+
         $("#btnQuery").click(function () {
+
             tsobj.search.startDate = $.trim($("#txtStartDate").val()).replace("-", "").replace("-", "").replace(" ", "").replace(":", "");
             tsobj.search.endDate = $.trim($("#txtEndDate").val()).replace("-", "").replace("-", "").replace(" ", "").replace(":", "");
             tsobj.pageDate = null;
             tsobj.search.phone = $.trim($("#txtPhone").val());
-            tsobj.search.imsi = $.trim($("#txtImsi").val());
             tsobj.search.failStatus = $("#cbLoadData").prop("checked") ? 1 : -1;
             tsobj.search.procedure_type = null;
             tsobj.search.interfaceType = null;
@@ -274,9 +270,9 @@ var signallingQuery = function () {
                 });
                 return;
             }
-            if (!tsobj.search.phone || tsobj.search.phone.length!=11) {
+            if (!tsobj.search.phone || tsobj.search.phone.length<11) {
                 $.artcloud.alert({
-                    text: "手机号码必须是11位.", onclose: function () {
+                    text: "用户标识必须在11-15位之间.", onclose: function () {
                         $("#txtPhone").focus();
                     }
                 });
@@ -322,10 +318,7 @@ var signallingQuery = function () {
         });
 
         $("#cbloadPanel").click(function () {
-            tsobj.search.failStatus = $("#cbLoadData").prop("checked") ? 1 : -1;
-            if (tsobj.search.startDate != null && tsobj.search.endDate != null && tsobj.search.phone != null) {
-                loadTable();
-            }
+            $("#btnQuery").click();
         });
 
         $("#btnIssue").click(function () {
@@ -507,6 +500,28 @@ var signallingQuery = function () {
                     if (callback) {
                         callback(rdata.obj)
                     }
+                    //分页控制
+                    var pageitems = $("#pagepanel").children(".pageitems");
+                    pageitems.show();
+                    var totalSize = pageitems.length;
+                    var index = pageitems.index($("#pagepanel").children(".active"));
+                    if (totalSize == (index+1)) {
+                        if (rdata.obj.signallingList.length > 10) {
+                            $("#btnnextpage").show();
+                        } else {
+                            $("#btnnextpage").hide();
+                        }
+                    }
+                    if (index-4 > 1) {
+                        for (var i = 1; i < index - 5; i++) {
+                            pageitems.eq(i).hide();
+                        }
+                    }
+                    if (totalSize - index - 5 > 1) {
+                        for (var i = index + 5; i < totalSize; i++) {
+                            pageitems.eq(i).hide();
+                        }
+                    }
                 } else {
                     alert(rdata.message || "出错.");
                 }
@@ -524,7 +539,8 @@ var signallingQuery = function () {
         $("#tabdetail").empty();
         var rdata = dataObj.signallingList;
         if (rdata && rdata.length > 0) {
-            for (var i = 0; i < rdata.length; i++) {
+            var size = rdata.length > 10 ? 10 : rdata.length;
+            for (var i = 0; i < size; i++) {
                 var dataItem = rdata[i];
                 var trObj = $('<tr style="cursor:pointer"/>').data("data", dataItem);
                 $('<td scope="row"/>').text(i + 1).appendTo(trObj);
@@ -542,7 +558,7 @@ var signallingQuery = function () {
                 $('<td/>').text(dataItem.busLantency || "").appendTo(trObj);
                 $('<td/>').text(dataItem.userIp4 || "").appendTo(trObj);
                 $('<td/>').text(dataItem.serverIp || "").appendTo(trObj);
-                var statusObj = $('<td/>').text(getStatus(dataItem.procedureStatus)).appendTo(trObj);
+                var statusObj = $('<td/>').text(dataItem.procedureStatusText).appendTo(trObj);
                 $('<td/>').text(dataItem.failureCause || "").appendTo(trObj);
                 $('<td/>').text(getProtoType(dataItem.tabname, dataItem.protocolType)).appendTo(trObj);
                 if (dataItem.procedureStatus == "1") {
@@ -630,8 +646,8 @@ var signallingQuery = function () {
                                 $("#tabdetail").append(liObj);
                             }
                         }
-                        var top = $("#content").scrollTop();
-                        $("#content").scrollTop(top / 2);
+                        //var height = $("#content").outerHeight();
+                        $("#content").animate({ scrollTop: 153 }, 200);
                     } else {
                         alert(rdata.message || "出错.");
                     }

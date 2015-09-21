@@ -174,7 +174,7 @@ public class SignallingAdapter implements Isignalling{
 			}
 						
 			sql.append(")t");
-			sql.append(" limit "+(pageIndex*pageSize)+" ,"+(pageIndex*pageSize+pageSize));
+			sql.append(" limit "+(pageIndex*pageSize)+" ,"+(pageIndex*pageSize+pageSize+1));
 			System.out.println(sql.toString());
 			resultSet= statement.executeQuery(sql.toString());
 			while (resultSet.next()) {
@@ -204,7 +204,17 @@ public class SignallingAdapter implements Isignalling{
 				signalling.setBusLantency(resultSet.getString("BUS_LANTENCY"));
 				signalling.setUserIp4(resultSet.getString("USER_IPv4"));
 				signalling.setServerIp(resultSet.getString("APP_SERVER_IP_IPV4"));
-				signalling.setProcedureStatus(resultSet.getString("Procedure_Status"));
+				String statusCode=resultSet.getString("Procedure_Status");
+				String stautsText="";
+				if(statusCode.equals("0")){
+					stautsText="成功";
+				}else if(statusCode.equals("1")){
+					stautsText="失败";
+				}else{
+					stautsText="未知";
+				}
+				signalling.setProcedureStatus(statusCode);
+				signalling.setProcedureStatusText(stautsText);
 				signalling.setFailureCause(resultSet.getString("failure_cause"));
 				signalling.setProtocolType(resultSet.getString("PROTOCOL_TYPE"));
 				signallingList.add(signalling);
