@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -12,6 +13,7 @@ import model.SignallingCommon;
 import model.SignallingDetailEntity;
 import model.SignallngObjEntity;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import service.signalling.SignallingService;
@@ -27,7 +29,9 @@ import com.jfinal.kit.PropKit;
  * 2015年8月13日
  */
 public class SignallingController extends Controller{
-	
+
+
+
 	public void getProp() {
 		JSONObject obj = new JSONObject();
 		JSONObject json = new JSONObject();
@@ -51,18 +55,19 @@ public class SignallingController extends Controller{
 		
 		JSONObject json = new JSONObject();
 		try{
-			
 			int pageSize=this.getParaToInt("pageSize",10);
 			int pageIndex=this.getParaToInt("pageIndex",0);
 			long startDate=this.getParaToLong("startDate");
 			long endDate=this.getParaToLong("endDate");
-			String phone=this.getPara("phone").trim();
-			String imsi=this.getPara("imsi").trim();
+			String phone=this.getPara("phone","").trim();
+			String imsi=this.getPara("imsi","").trim();
 			String failStatus=this.getPara("failStatus","-1").trim();
 			String interfaceType=this.getPara("interfaceType","").trim();
 			String procedure_type=this.getPara("procedure_type","").trim();
 			String pageDate=this.getPara("pageDate","").trim();
-					
+			if(phone.length()>11){
+				imsi=phone;
+			}
 			SignallingService signallingService=new SignallingService();
 			SignallngObjEntity signallingObj= signallingService.getSignallingList(pageSize, pageIndex, startDate, endDate, phone, imsi, failStatus, interfaceType, procedure_type,pageDate);
 			

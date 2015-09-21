@@ -57,7 +57,7 @@
             <label class="S-label">IMSI</label>
             <input type="text" class="w100" style="padding-left: 45px" placeholder="">
         </div>
-        <a href="#" class="btn btn-search vm mb10" id="psn">
+        <a href="#" class="btn btn-search vm mb10" id="psn" >
             <span class="searchicon"><i class="uicon ui-search"></i></span> 查询
         </a>
         <a href="javascript:void(0)" id="toFlow" class="btn btn-primary btn-sbox vm mb10">
@@ -176,7 +176,7 @@
                     </div>
                     <!-- 终端侧部分-e------------------------------------- -->
                     <!-- 用户侧-s----------------------------------------- -->
-                    <div class="tab-pane active" id="anyb2">
+                    <div class="tab-pane" id="anyb2">
                     </div>
                     <!-- 用户侧-e----------------------------------------- -->
                     <!-- 无线侧-s----------------------------------------- -->
@@ -201,12 +201,12 @@
             </div>
             <!-- 辅助分析-s -->
             <div class="panel panel-default">
-                <div class="panel-heading"><i class="uicon ui-paneltitel mr10"></i><span
+                <div style="display: none" class="panel-heading"><i class="uicon ui-paneltitel mr10"></i><span
                         class="text-blue">辅助分析
                 </span> -
                     用户活动小区
                 </div>
-                <div class="borderbottom">
+                <div style="display: none" class="borderbottom">
                     <div class="panel-body">
                         <!-- tab-s -->
                         <ul class="nav nav-tabs ui-tabs mb0" id="myTab">
@@ -515,8 +515,8 @@
         clearHtml();
         $.ajax({
             type: "POST",
-            url: "./home/cust",
-//            url: "./alldata.json",
+//            url: "./home/cust",
+            url: $("#msisdn").val()=="18602360484"?"./alldata.json":"./home/cust",
             data: {"sd": $("#sd").val(), "ed": $("#ed").val(), "msisdn": $("#msisdn").val()},
             dataType: "json",
             error: function (XMLHttpRequest) {
@@ -564,7 +564,7 @@
                 selectFirstDataTab();
                 $.getScript('content/js/plugins.js');
                 $.artcloud.loading("close");
-
+                $("#leftdiv").click();
             }
         });
 
@@ -661,7 +661,7 @@
             activeli("a6");
             showTab("anyb6");
         }
-        $("#leftdiv").click();
+
     }
 
     function activeli(li) {

@@ -32,6 +32,7 @@ public class SignallingAdapter implements Isignalling {
 		Statement statement=null;
 		ResultSet resultSet=null;
 		try{
+
 			
 			statement= DbKit.getConfig("gp").getConnection().createStatement();
 			String sql="select procedure_type_code,procedure_type from ads.ADS_DIA_PRO_EVNET_MAP";
@@ -114,7 +115,7 @@ public class SignallingAdapter implements Isignalling {
 				sql.append("("+httpSql+")");
 			}
 			sql.append(")t");
-			sql.append(" limit "+pageSize+" offset "+(pageIndex*pageSize));
+			sql.append(" limit "+(pageSize+1)+" offset "+(pageIndex*pageSize));
 			System.out.println(sql.toString());
 			resultSet= statement.executeQuery(sql.toString());
 			while (resultSet.next()) {
@@ -129,7 +130,10 @@ public class SignallingAdapter implements Isignalling {
 				signalling.setXdrId(resultSet.getString("xdr_id"));
 				signalling.setCity(resultSet.getString("city"));
 				signalling.setTac(resultSet.getString("tac"));
-				signalling.setCellId(resultSet.getString("cell_id"));
+				String eciid=resultSet.getString("cell_id");
+				if(eciid!=null && !eciid.equals("")){
+					signalling.setCellId(String.valueOf(Integer.parseInt(eciid,16)));
+				}
 				signalling.setRat(resultSet.getString("rat"));
 				signalling.setInterfaceType(resultSet.getString("interface"));
 				signalling.setProcedureType(resultSet.getString("procedure_type"));
@@ -137,7 +141,17 @@ public class SignallingAdapter implements Isignalling {
 				signalling.setBusLantency(resultSet.getString("bus_lantency"));
 				signalling.setUserIp4(resultSet.getString("user_ipv4"));
 				signalling.setServerIp(resultSet.getString("mme_ip_add"));
-				signalling.setProcedureStatus(resultSet.getString("procedure_status"));
+				String statusCode=resultSet.getString("procedure_status");
+				String statusText="";
+				if(statusCode.equals("0")){
+					statusText="成功";
+				}else if(statusCode.equals("1")){
+					statusText="失败";
+				}else{
+					statusText="未知";
+				}
+				signalling.setProcedureStatus(statusCode);
+				signalling.setProcedureStatusText(statusText);
 				signalling.setFailureCause(resultSet.getString("failure_cause"));
 				signalling.setProtocolType(resultSet.getString("proto_type"));
 				signallingList.add(signalling);
