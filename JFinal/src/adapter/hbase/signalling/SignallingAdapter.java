@@ -33,6 +33,7 @@ public class SignallingAdapter  implements Isignalling{
 		return null;
 	}
 
+
 	@Override
 	public SignallngObjEntity getSignallingList(int pageSize,
 			int pageIndex, long startDate, long endDate, String phone,

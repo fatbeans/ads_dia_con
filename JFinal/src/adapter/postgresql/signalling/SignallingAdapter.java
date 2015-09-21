@@ -32,6 +32,7 @@ public class SignallingAdapter implements Isignalling {
 		Statement statement=null;
 		ResultSet resultSet=null;
 		try{
+
 			
 			statement= DbKit.getConfig("gp").getConnection().createStatement();
 			String sql="select procedure_type_code,procedure_type from ads.ADS_DIA_PRO_EVNET_MAP";
