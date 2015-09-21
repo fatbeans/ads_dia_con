@@ -516,7 +516,7 @@
         $.ajax({
             type: "POST",
 //            url: "./home/cust",
-            url: "./alldata.json",
+            url: $("#msisdn").val()=="18602360484"?"./alldata.json":"./home/cust",
             data: {"sd": $("#sd").val(), "ed": $("#ed").val(), "msisdn": $("#msisdn").val()},
             dataType: "json",
             error: function (XMLHttpRequest) {
