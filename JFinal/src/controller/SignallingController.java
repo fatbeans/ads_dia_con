@@ -27,7 +27,8 @@ import com.jfinal.kit.PropKit;
  * 2015年8月13日
  */
 public class SignallingController extends Controller{
-	
+
+
 	public void getProp() {
 		JSONObject obj = new JSONObject();
 		JSONObject json = new JSONObject();
