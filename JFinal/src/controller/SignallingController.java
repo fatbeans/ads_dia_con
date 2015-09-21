@@ -29,6 +29,7 @@ import com.jfinal.kit.PropKit;
 public class SignallingController extends Controller{
 
 
+
 	public void getProp() {
 		JSONObject obj = new JSONObject();
 		JSONObject json = new JSONObject();
