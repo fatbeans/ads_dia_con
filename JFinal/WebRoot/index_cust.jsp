@@ -176,7 +176,7 @@
                     </div>
                     <!-- 终端侧部分-e------------------------------------- -->
                     <!-- 用户侧-s----------------------------------------- -->
-                    <div class="tab-pane active" id="anyb2">
+                    <div class="tab-pane" id="anyb2">
                     </div>
                     <!-- 用户侧-e----------------------------------------- -->
                     <!-- 无线侧-s----------------------------------------- -->
@@ -564,7 +564,7 @@
                 selectFirstDataTab();
                 $.getScript('content/js/plugins.js');
                 $.artcloud.loading("close");
-
+                $("#leftdiv").click();
             }
         });
 
