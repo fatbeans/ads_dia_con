@@ -18,6 +18,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -432,7 +433,7 @@ public class HomePageController extends Controller {
                 sql = PropKit.get("CTL_MME_SQL");
                 dataList = CtlMme.dao.find(sql.replace("$where", whereLv2Sessionid), lv2Con.getValue(), sessionId);
                 break;
-            case 业务受限:
+            case 用户未签约或被关闭4G业务:
                 sql = PropKit.get("CTL_USR_EC_SQL");
                 dataList = CtlUsrEc.dao.find(sql.replace("$where", whereLv2Sessionid), lv2Con.getValue(), sessionId);
                 break;
@@ -464,7 +465,7 @@ public class HomePageController extends Controller {
                 break;
             case 终端质量问题:
                 sql = PropKit.get("CTL_TE_SQL");
-                dataList = CtlTe.dao.find(sql.replace("$where", whereLv2Sessionid), lv2Con.getValue(), sessionId);
+                dataList = AllTe.dao.find(sql.replace("$where", whereLv2Sessionid), lv2Con.getValue(), sessionId);
                 break;
             case 上网记录返回终端侧错误:
                 sql = PropKit.get("HTTP_SERV_IP_SQL");
@@ -573,18 +574,32 @@ public class HomePageController extends Controller {
      * @throws SQLException
      */
     public void concUnder() throws SQLException {
-        String server_ip = getPara("server_ip");
-        String lv2_con_id = getPara("lv2_con_id");
-        String session_id = getPara("session_id");
+        String server_ip = getPara("server_ip", "").trim();
+        String lv2_con_id = getPara("lv2_con_id", "").trim();
+        String session_id = getPara("session_id", "").trim();
 
-        String where = "where SERVER_IP = '" + server_ip + "' and LV2_CON_ID = '" + lv2_con_id +
-                "' and SESSION_ID= '" + session_id + "'";
 
+        if (lv2_con_id.equals("10040002") || lv2_con_id.equals("10050001") || lv2_con_id.equals("10060001")) {
+            underHttpList(server_ip, lv2_con_id, session_id);
+        } else if (lv2_con_id.equals(Lv2Con.终端APN设置问题.getValue()+"")) {
+            System.out.println(Lv2Con.终端APN设置问题);
+            underApn(session_id);
+        } else if (lv2_con_id.equals(Lv2Con.用户未签约或被关闭4G业务.getValue()+"")) {
+            System.out.println(Lv2Con.用户未签约或被关闭4G业务);
+            String error_code = getPara("error_code", "").trim();
+            underNot4g(session_id, error_code);
+        }
+    }
+
+
+    private void underNot4g(String session_id, String error_code) throws SQLException {
+        String where = "where error_code = " + error_code + " and SESSION_ID= '" + session_id + "'";
 
         String sql = PropKit.get
-                ("HTTP_LIST_SQL").replaceAll("\\$where", where);
+                ("UNDER_NOT4_SQL").replaceAll("\\$where", where);
         System.out.println("查询SQL" + sql);
-        PreparedStatement preparedStatement = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection()
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection
                 .prepareStatement(sql);
 
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -598,6 +613,72 @@ public class HomePageController extends Controller {
             }
             list.add(data);
         }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+
+        JSONObject json = new JSONObject();
+        json.put("rows", list);
+        renderJson(json.toJSONString());
+    }
+
+
+    private void underApn(String session_id) throws SQLException {
+        String where = "where error_code = 33 and PROTO_TYPE = 10 and SESSION_ID= '" + session_id + "'";
+
+        String sql = PropKit.get
+                ("UNDER_APN_SQL").replaceAll("\\$where", where);
+        System.out.println("查询SQL" + sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection
+                .prepareStatement(sql);
+
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            HashMap<String, String> data = new HashMap<String, String>();
+            for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+                data.put(resultSet.getMetaData().getColumnLabel(i), resultSet.getString(i));
+            }
+            list.add(data);
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+
+        JSONObject json = new JSONObject();
+        json.put("rows", list);
+        renderJson(json.toJSONString());
+    }
+
+    private void underHttpList(String server_ip, String lv2_con_id, String session_id) throws SQLException {
+        String where = "where SERVER_IP = '" + server_ip + "' and LV2_CON_ID = '" + lv2_con_id +
+                "' and SESSION_ID= '" + session_id + "'";
+
+
+        String sql = PropKit.get
+                ("HTTP_LIST_SQL").replaceAll("\\$where", where);
+        System.out.println("查询SQL" + sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection
+                .prepareStatement(sql);
+
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            HashMap<String, String> data = new HashMap<String, String>();
+            for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+                data.put(resultSet.getMetaData().getColumnLabel(i), resultSet.getString(i));
+            }
+            list.add(data);
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
 
         JSONObject json = new JSONObject();
         json.put("rows", list);
