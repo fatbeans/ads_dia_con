@@ -9,11 +9,13 @@ import com.jfinal.plugin.c3p0.C3p0Plugin;
 import com.jfinal.render.ViewType;
 import controller.*;
 import dao.ComplaintDao;
+import dao.LogDao;
 import dao.UserDetailsDao;
 import dao.adsDiaCon.*;
 import dialect.XGbaseDialect;
 import dialect.XGpDialect;
 import dic.DbType;
+import log.LogInterceptor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -34,7 +36,7 @@ public class DemoConfig extends JFinalConfig {
     public void configRoute(Routes me) {
 
 //        me.add("/hello", HelloController.class);
-//        me.add(("/syslog"), SystemUseController.class);
+        me.add(("/syslog"), SystemUseController.class);
         me.add("/", IndexCotroller.class);
         me.add("/user_det", UserDetailsController.class);
         me.add("/home", HomePageController.class);
@@ -119,7 +121,7 @@ public class DemoConfig extends JFinalConfig {
                 arp.setDialect(new XGpDialect());
         arp.setShowSql(true);
         me.add(arp);
-//        arp.addMapping("syslog", LogDao.class);
+//        arp.addMapping("syslog", LogDao.class);/**/
 //        arp.addMapping("func",  FuncDao.class);
         arp.addMapping("ads.ads_4g_gnhttp", UserDetailsDao.class);
         arp.addMapping("stage.eoms_total_hz1", ComplaintDao.class);
@@ -143,6 +145,7 @@ public class DemoConfig extends JFinalConfig {
         arp.setDialect(new OracleDialect());
         arp.setShowSql(true);
         me.add(arp);
+        arp.addMapping("ADS_DIA_CON_SYSLOG", LogDao.class);
         arp.addMapping("ADS_DIA_CON_HTTP_CELL", HttpCell.class);
         arp.addMapping("ADS_DIA_CON_CTL_MME", CtlMme.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SGW", HttpSgw.class);
@@ -163,12 +166,14 @@ public class DemoConfig extends JFinalConfig {
         arp.addMapping("ADS_DIA_HTTP", AdsDiaHttp.class);
         arp.addMapping("ADS_DIA_USR", Usr.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SERV_IP", HttpServIp.class);
+
+
     }
 
 
     public void configInterceptor(Interceptors me) {
 
-//        me.addGlobalActionInterceptor(new LogInterceptor());
+        me.addGlobalActionInterceptor(new LogInterceptor());
     }
 
     public void configHandler(Handlers me) {

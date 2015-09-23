@@ -11,12 +11,19 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Created by xinxin on 2015/7/13.
  */
 public class IndexCotroller extends Controller {
-    public void index() {
+    public void index() throws UnsupportedEncodingException {
+        String usr = getPara("usr", "未知");
+        String dep = getPara("dep", "未知");
+        setCookie("usr", URLEncoder.encode(usr,"utf-8"), Integer.MAX_VALUE);
+        setCookie("dep", URLEncoder.encode(dep,"utf-8"), Integer.MAX_VALUE);
+
         redirect("/index_cust.jsp");
     }
 
@@ -55,7 +62,6 @@ public class IndexCotroller extends Controller {
 
 
     }
-
 
 
 }
