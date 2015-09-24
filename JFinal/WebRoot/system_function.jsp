@@ -48,7 +48,7 @@
                                class="w100"/>
                     </div>
                     <div class="inlininput mr10" id="usrdiv">
-                        <label> class="S-label">用户名</label>
+                        <label class="S-label">用户名</label>
                         <input type="text" id="usr" class="w100">
                     </div>
                     <div class="inlininput mr10" id="depdiv">
