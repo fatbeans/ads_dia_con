@@ -42,7 +42,10 @@ public class LogInterceptor implements Interceptor {
         try {
             usr = URLDecoder.decode(inv.getController().getCookie("usr", "未知"), "utf-8");
             dep = URLDecoder.decode(inv.getController().getCookie("dep", "未知"), "utf-8");
-            tel = URLDecoder.decode(inv.getController().getPara("msisdn", "未知"), "utf-8");
+
+            tel = inv.getController().getPara("msisdn") != null ? inv.getController().getPara("msisdn") : inv
+                    .getController().getPara("phone");
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

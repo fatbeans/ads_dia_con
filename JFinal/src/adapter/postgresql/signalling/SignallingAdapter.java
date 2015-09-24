@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.protobuf.ByteString.Output;
@@ -131,7 +133,7 @@ public class SignallingAdapter implements Isignalling {
 				signalling.setCity(resultSet.getString("city"));
 				signalling.setTac(resultSet.getString("tac"));
 				String eciid=resultSet.getString("cell_id");
-				if(eciid!=null && !eciid.equals("")){
+				if(!StringUtils.isBlank(eciid)){
 					signalling.setCellId(String.valueOf(Integer.parseInt(eciid,16)));
 				}
 				signalling.setRat(resultSet.getString("rat"));

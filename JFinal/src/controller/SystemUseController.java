@@ -17,16 +17,14 @@ import java.util.List;
  * Created by xinxin on 2015/7/20.
  */
 public class SystemUseController extends Controller {
-    private final String SQL_COUNT_FUNC_BY_DEP = "select dep, case when func_id = 2 then 1 else 0 end as xdcx, case " +
-            "when func_id = 3 then 1 else 0 end as tsll, case when func_id = 4 then 1 else 0 end as znzd, case when " +
-            "func_id = 5 then 1 else 0 end as xlcx, case when func_id = 6 then 1 else 0 end as xlgis from " +
-            "ads_dia_con_syslog where $where and time >= ? and time <= ?  group by dep," +
-            "func_id  ";
-    private final String SQL_COUNT_FUNC_BY_USER ="select usr, case when func_id = 2 then 1 else 0 end as xdcx, case " +
-            "when func_id = 3 then 1 else 0 end as tsll, case when func_id = 4 then 1 else 0 end as znzd, case when " +
-            "func_id = 5 then 1 else 0 end as xlcx, case when func_id = 6 then 1 else 0 end as xlgis from " +
-            "ads_dia_con_syslog where $where and time >= ? and time <= ?  group by usr," +
-            "func_id  ";
+    private final String SQL_COUNT_FUNC_BY_DEP = "select dep, sum( case when func_id = 2 then 1 else 0 end) as xdcx, " +
+            "sum(case when func_id = 3 then 1 else 0 end) as tsll, sum(case when func_id = 4 then 1 else 0 end) as znzd," +
+            " sum(case when func_id = 5 then 1 else 0 end) as xlcx, sum(case when func_id = 6 then 1 else 0 end) as " +
+            "xlgis from ads_dia_con_syslog where $where and time >= ? and time <= ?  group by dep";
+    private final String SQL_COUNT_FUNC_BY_USER ="select usr, sum( case when func_id = 2 then 1 else 0 end) as xdcx, " +
+            "sum(case when func_id = 3 then 1 else 0 end) as tsll, sum(case when func_id = 4 then 1 else 0 end) as " +
+            "znzd, sum(case when func_id = 5 then 1 else 0 end) as xlcx, sum(case when func_id = 6 then 1 else 0 end) " +
+            "as xlgis from ads_dia_con_syslog where $where and time >= ? and time <= ?  group by usr";
 
     private final String SQL_COUNT_FUNC = "select a.func_id,b.func_desc, count(*) cnt from ads_dia_con_syslog a inner" +
             " JOIN " +
