@@ -23,6 +23,13 @@ Date.prototype.Format = function (fmt) { //author: meizz
     return fmt;
 };
 
+function GetDateDiff(startDate, endDate) {
+    var startTime = new Date(Date.parse(startDate.replace(/-/g, "/"))).getTime();
+    var endTime = new Date(Date.parse(endDate.replace(/-/g, "/"))).getTime();
+    var dates = Math.abs((startTime - endTime)) / (1000 * 60 * 60 * 24);
+    return dates;
+}
+
 $(function () {
     //$('.container4 .div_scroll').scroll_absolute({ arrows: false });
     //$(window).resize(function () {//当浏览器大小变化时
@@ -56,50 +63,50 @@ var signallingQuery = function () {
     };
 
     tsobj.interfaceType = [
-        { id: 11, name: 'S1-U' },
-        { id: 5, name: 'S1-MME' },
-        { id: 7, name: 'S11' },
-        { id: 9, name: 'SGS' }
+        //{ id: 11, name: 'S1-U' },
+        //{ id: 5, name: 'S1-MME' },
+        //{ id: 7, name: 'S11' },
+        //{ id: 9, name: 'SGS' }
     ];
 
     tsobj.procedureType = [
-        { interfase: 5, id: 1, name: 'Attach' },
-        { interfase: 5, id: 2, name: 'Sevice Request' },
-        { interfase: 5, id: 3, name: 'Extended Service Request' },
-        { interfase: 5, id: 4, name: 'Paging' },
-        { interfase: 5, id: 5, name: 'TAU' },
-        { interfase: 5, id: 6, name: 'Detach' },
-        { interfase: 5, id: 7, name: 'PDN connectivity' },
-        { interfase: 5, id: 8, name: 'PDN disconnection' },
-        { interfase: 5, id: 9, name: ' EPS bearer resource allocation' },
-        { interfase: 5, id: 10, name: 'EPS bearer resource modify' },
-        { interfase: 5, id: 11, name: 'EPS bearer context deactivation' },
-        { interfase: 5, id: 12, name: 'EPS bearer context modification' },
-        { interfase: 5, id: 13, name: 'Dedicated EPS bearer context activation' },
-        { interfase: 5, id: 14, name: 'X2 handover' },
-        { interfase: 5, id: 15, name: 'S1 handover in' },
-        { interfase: 5, id: 16, name: 'S1 handover out' },
-        { interfase: 5, id: 17, name: 'S1 handover cancel' },
-        { interfase: 5, id: 18, name: 'Initial context setup' },
-        { interfase: 5, id: 19, name: 'UE context modification' },
-        { interfase: 5, id: 20, name: 'UE context release' },
-        { interfase: 5, id: 21, name: 'E-RAB release' },
-        { interfase: 5, id: 22, name: 'Reset' },
-        { interfase: 5, id: 23, name: 'Error indication' },
-        { interfase: 5, id: 24, name: 'S1 setup' },
-        { interfase: 5, id: 25, name: 'ENB configuration update' },
-        { interfase: 5, id: 26, name: 'MME configuration update' },
-        { interfase: 5, id: 27, name: 'Overload start' },
-        { interfase: 5, id: 28, name: 'Overload stop' },
-        { interfase: 5, id: 29, name: 'Identity Acquisition' },
-        { interfase: 5, id: 30, name: 'Authentication' },
-        { interfase: 5, id: 31, name: 'Security Activation' },
-        { interfase: 5, id: 32, name: 'SMS' },
+        //{ interfase: 5, id: 1, name: 'Attach' },
+        //{ interfase: 5, id: 2, name: 'Sevice Request' },
+        //{ interfase: 5, id: 3, name: 'Extended Service Request' },
+        //{ interfase: 5, id: 4, name: 'Paging' },
+        //{ interfase: 5, id: 5, name: 'TAU' },
+        //{ interfase: 5, id: 6, name: 'Detach' },
+        //{ interfase: 5, id: 7, name: 'PDN connectivity' },
+        //{ interfase: 5, id: 8, name: 'PDN disconnection' },
+        //{ interfase: 5, id: 9, name: ' EPS bearer resource allocation' },
+        //{ interfase: 5, id: 10, name: 'EPS bearer resource modify' },
+        //{ interfase: 5, id: 11, name: 'EPS bearer context deactivation' },
+        //{ interfase: 5, id: 12, name: 'EPS bearer context modification' },
+        //{ interfase: 5, id: 13, name: 'Dedicated EPS bearer context activation' },
+        //{ interfase: 5, id: 14, name: 'X2 handover' },
+        //{ interfase: 5, id: 15, name: 'S1 handover in' },
+        //{ interfase: 5, id: 16, name: 'S1 handover out' },
+        //{ interfase: 5, id: 17, name: 'S1 handover cancel' },
+        //{ interfase: 5, id: 18, name: 'Initial context setup' },
+        //{ interfase: 5, id: 19, name: 'UE context modification' },
+        //{ interfase: 5, id: 20, name: 'UE context release' },
+        //{ interfase: 5, id: 21, name: 'E-RAB release' },
+        //{ interfase: 5, id: 22, name: 'Reset' },
+        //{ interfase: 5, id: 23, name: 'Error indication' },
+        //{ interfase: 5, id: 24, name: 'S1 setup' },
+        //{ interfase: 5, id: 25, name: 'ENB configuration update' },
+        //{ interfase: 5, id: 26, name: 'MME configuration update' },
+        //{ interfase: 5, id: 27, name: 'Overload start' },
+        //{ interfase: 5, id: 28, name: 'Overload stop' },
+        //{ interfase: 5, id: 29, name: 'Identity Acquisition' },
+        //{ interfase: 5, id: 30, name: 'Authentication' },
+        //{ interfase: 5, id: 31, name: 'Security Activation' },
+        //{ interfase: 5, id: 32, name: 'SMS' },
 
-        { interfase: 11, id: -1, name: 'GENERAL' },
-        { interfase: 11, id: -2, name: 'HTTP' },
-        { interfase: 11, id: -3, name: 'DNS' },
-        { interfase: 11, id: -4, name: 'IM' }
+        //{ interfase: 11, id: -1, name: 'GENERAL' },
+        //{ interfase: 11, id: -2, name: 'HTTP' },
+        //{ interfase: 11, id: -3, name: 'DNS' },
+        //{ interfase: 11, id: -4, name: 'IM' }
     ];
 
     var getRat = function (code) {
@@ -246,16 +253,11 @@ var signallingQuery = function () {
         });
 
         $("#btnQuery").click(function () {
+            var sdate = $.trim($("#txtStartDate").val());
+            var edate = $.trim($("#txtEndDate").val());
+            var phone = $.trim($("#txtPhone").val());
 
-            tsobj.search.startDate = $.trim($("#txtStartDate").val()).replace("-", "").replace("-", "").replace(" ", "").replace(":", "");
-            tsobj.search.endDate = $.trim($("#txtEndDate").val()).replace("-", "").replace("-", "").replace(" ", "").replace(":", "");
-            tsobj.pageDate = null;
-            tsobj.search.phone = $.trim($("#txtPhone").val());
-            tsobj.search.failStatus = $("#cbLoadData").prop("checked") ? 1 : -1;
-            tsobj.search.procedure_type = null;
-            tsobj.search.interfaceType = null;
-            tsobj.search.pageIndex = 0;
-            if (tsobj.search.startDate == "") {
+            if (sdate == "") {
                 $.artcloud.alert({
                     text: "开始时间不能为空.", onclose: function () {
                         $("#txtStartDate").focus();
@@ -263,7 +265,7 @@ var signallingQuery = function () {
                 });
                 return;
             }
-            if (tsobj.search.endDate == "") {
+            if (edate == "") {
                 $.artcloud.alert({
                     text: "结束时间不能为空.", onclose: function () {
                         $("#txtEndDate").focus();
@@ -271,7 +273,7 @@ var signallingQuery = function () {
                 });
                 return;
             }
-            if (!tsobj.search.phone || tsobj.search.phone.length<11) {
+            if (!phone || phone.length < 11) {
                 $.artcloud.alert({
                     text: "用户标识必须在11-15位之间.", onclose: function () {
                         $("#txtPhone").focus();
@@ -279,12 +281,31 @@ var signallingQuery = function () {
                 });
                 return;
             }
+            if (GetDateDiff(sdate + ":00", edate + ":00") >3) {
+                $.artcloud.alert({
+                    text: "只能查询3天内的数据."
+                });
+                return;
+            }
+
+
+            tsobj.search.startDate = sdate.replace("-", "").replace("-", "").replace(" ", "").replace(":", "");
+            tsobj.search.endDate = edate.replace("-", "").replace("-", "").replace(" ", "").replace(":", "");
+            tsobj.pageDate = null;
+            tsobj.search.phone = phone;
+            tsobj.search.failStatus = $("#cbLoadData").prop("checked") ? 1 : -1;
+            tsobj.search.procedure_type = null;
+            tsobj.search.interfaceType = null;
+            tsobj.search.pageIndex = 0;
+            
+            
+            
 
             var flowTypeData = $("#flowtypepanel").data("data");
             if (flowTypeData) {
                 var ids = [];
                 for (var i = 0; i < flowTypeData.length; i++) {
-                    ids.push(flowTypeData[i].id);
+                    ids.push(flowTypeData[i].tabname + "-" + flowTypeData[i].id);
                 }
                 tsobj.search.procedure_type = ids.join(",");
             }
@@ -338,7 +359,7 @@ var signallingQuery = function () {
             }
             if (tsobj.search.phone && tsobj.search.startDate && tsobj.search.endDate) {
                 var param = "msisdn=" + tsobj.search.phone + "&startdate=" + tsobj.search.startDate + "&enddate=" + tsobj.search.endDate;
-                window.open(tsobj.gishost + "/Pages/GisDefault.aspx?m=mobilenetdiagnosis&" + param);
+                window.open(tsobj.gishost + "/Pages/GisDefault.aspx?m=newmobilenetdiagnosis&" + param);
             }
         });
 
@@ -357,6 +378,28 @@ var signallingQuery = function () {
             }
         });
 
+        $.ajax({
+            type: "Get",
+            url: "/signalling/getFlowType",
+            async: false,
+            success: function (rdata) {
+                if (rdata && rdata.obj && rdata.status) {
+                    var interfaceId = "";
+                    for (var i = 0; i < rdata.obj.length; i++) {
+                        var itemData = rdata.obj[i];
+                        if (i == 0 || (itemData.prop2key != interfaceId && interfaceId != "")) {
+                            tsobj.interfaceType.push({ id: itemData.prop2key, name: itemData.prop2Name });
+                        }
+                        interfaceId = itemData.prop2key;
+                        tsobj.procedureType.push({ interfase: itemData.prop2key,tabname:itemData.prop1key, id: itemData.key, name: itemData.name });
+                    }
+                }
+            }, complete: function (xhr) {
+                $.artcloud.loading("close");
+            }, error: function (xhr) {
+                alert("加载接口类型出错:" + xhr.status);
+            }
+        });
 
         $("#interfacepanel").children("ul").empty();
         for (var i = 0; i < tsobj.interfaceType.length; i++) {
@@ -370,9 +413,9 @@ var signallingQuery = function () {
             for (var i = 0; i < ids.length; i++) {
                 for (var j = 0; j < tsobj.procedureType.length; j++) {
                     if (ids[i].id == tsobj.procedureType[j].interfase+"") {
-                        var liitem = $('<li style="height:30px;line-height:30px;"><label style="color:#000;"><input style="margin-top: -2px;" type="checkbox" interface="' + tsobj.procedureType[j].interfase + '" value="' + tsobj.procedureType[j].id + '" />' + tsobj.procedureType[j].name + '</label></li>');
+                        var liitem = $('<li style="height:30px;line-height:30px;isplay:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><label style="color:#000;"><input style="margin-top: -2px;" type="checkbox" interface="' + tsobj.procedureType[j].interfase + '" value="' + tsobj.procedureType[j].id + '" />' + tsobj.procedureType[j].name + '</label></li>');
                         liitem.find('input[type=checkbox]').data("data", tsobj.procedureType[j]);
-
+                        liitem.attr("title", tsobj.procedureType[j].name);
                         if (seldata && seldata.length > 0) {
                             for (var n = 0; n < seldata.length; n++) {
                                 if (seldata[n].id == tsobj.procedureType[j].id + "" && tsobj.procedureType[j].interfase + "" == seldata[n].interfase) {
