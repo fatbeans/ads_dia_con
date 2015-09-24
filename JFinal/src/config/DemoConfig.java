@@ -50,7 +50,7 @@ public class DemoConfig extends JFinalConfig {
 
     public void configPlugin(Plugins me) {
         loadPropertyFile("prop.properties", "utf-8");
-        PropKit.use("colName.properties", "utf-8");
+        PropKit.use("colname.properties", "utf-8");
         String[] dbTypes = StringUtils.split(getProperty("dbPre",""), ",");
         for (String dbType : dbTypes) {
             if (dbType.equalsIgnoreCase("GP")) {

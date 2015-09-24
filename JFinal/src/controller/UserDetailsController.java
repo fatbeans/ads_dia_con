@@ -6,6 +6,8 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.DbKit;
+import com.sun.xml.internal.bind.v2.TODO;
 import dao.Pager;
 import dao.UserDetailsDao;
 import dialect.XDialect;
@@ -15,9 +17,16 @@ import dic.DbType;
 import export.ExcelExport;
 import model.UserDetHbaseEntity;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Created by xinxin on 2015/7/17.
@@ -38,8 +47,8 @@ public class UserDetailsController extends Controller {
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
 
-        long sd = getParaToLong("sd", 20000101l);
-        long ed = getParaToLong("ed", 21000101l);
+        long sd = getParaToLong("sd", 2000010100l);
+        long ed = getParaToLong("ed", 2100010100l);
         long msisdn = getParaToLong("msisdn", -1l);
 
         String dbPre = PropKit.get("dbPre");
@@ -180,6 +189,63 @@ public class UserDetailsController extends Controller {
             fileName = ExcelExport.exportExcelFile(list, prefix, headStr, key);
         }
         renderText(fileName);
+    }
+
+
+    private List<Map<String, String>> selectList(long msisdn, long startDate, long endDate, int page, int size, int
+            beginRow) throws ParseException, SQLException {
+        List<Map<String, String>> resList = new ArrayList<Map<String, String>>();
+
+        Map<String,Integer> tabMap = new HashMap<String, Integer>();
+
+        Date sDate = DateUtils.parseDate((startDate / 100 ) + "", new String[]{"yyyyMMdd"});
+        Date eDate = DateUtils.parseDate((endDate / 100 ) + "", new String[]{"yyyyMMdd"});
+
+        while (sDate.compareTo(eDate)>0) {
+            String tableName = "F_MS_S1U_HTTP_" + DateFormatUtils.format(sDate, "yyyyMMdd");
+            System.out.println(tableName);
+            tabMap.put(tableName, 1);
+            sDate = DateUtils.addDays(sDate, 1);
+        }
+
+
+
+        String tabNameSql = "select table_name from information_schema.tables where TABLE_SCHEMA='dw' and " +
+                "table_name like '%F_MS_S1U_HTTP%'";
+
+        Connection connection = DbKit.getConfig(DbType.GBASE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection
+                .prepareStatement(tabNameSql);
+
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<String> tabNameList = new ArrayList<String>();
+        while (resultSet.next()) {
+            tabNameList.add(resultSet.getString(1));
+            if (tabMap.containsKey(resultSet.getString(1))) {
+                tabNameList.add(resultSet.getString(1));
+            }
+        }
+
+
+        for(String tab: tabNameList) {
+            String sql = PropKit.get("LTE_SQL_COUNT").replaceAll("F_MS_S1U_HTTP", tab);
+            long records = Db.use(DbType.GBASE.getValue()).queryLong(sql);
+        }
+
+
+
+        int thispage = 0;
+
+        if (resList.size() < size) {
+//            Date nextDate = DateUtils.addDays(, 1);
+//            resList.addAll(selectList(msisdn, Long.parseLong(DateFormatUtils.format(nextDate, "yyyyMMddHH")), endDate,
+//                    page - thispage, size, beginRow - resList.size()));
+        }
+
+        return resList;
+
     }
 
 
