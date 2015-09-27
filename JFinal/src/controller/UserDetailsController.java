@@ -188,6 +188,8 @@ public class UserDetailsController extends Controller {
         for (String tab : tabNameList) {
             long tabCnt = tabCntMap.get(tab);
             String where = getWhere(msisdn, startDate, endDate, tab);
+            System.out.println("offset:"+offset+"|ctsCurrent:"+ctsCurrent+"|tabCnt:"+tabCnt+"|res:"+ (offset <
+                    ctsCurrent + tabCnt));
             if (offset < ctsCurrent + tabCnt) {
                 if (!beginSearch) {
                     offset = offset - ctsCurrent;
