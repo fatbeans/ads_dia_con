@@ -1,35 +1,22 @@
 package adapter.gbase.signalling;
 
 
-<<<<<<< .mine
-
-=======
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
->>>>>>> .r16833
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-
-import utility.dateTime;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.DbKit;
-
+import dataInterface.Isignalling;
 import model.DictionaryEntity;
 import model.SignallingCommon;
 import model.SignallingDetailEntity;
 import model.SignallngObjEntity;
-import dataInterface.Isignalling;
+import org.apache.commons.lang.StringUtils;
+import utility.dateTime;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
