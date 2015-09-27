@@ -1,12 +1,10 @@
 package adapter.gbase.signalling;
 
 
-<<<<<<< .mine
 
-=======
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
->>>>>>> .r16833
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
