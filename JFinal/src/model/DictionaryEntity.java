@@ -11,25 +11,13 @@ public class DictionaryEntity {
 	
 	private String name;
 	
-	private String prop1;
+	private String prop1key;
 	
-	private String prop2;
-
-	public String getProp1() {
-		return prop1;
-	}
-
-	public void setProp1(String prop1) {
-		this.prop1 = prop1;
-	}
-
-	public String getProp2() {
-		return prop2;
-	}
-
-	public void setProp2(String prop2) {
-		this.prop2 = prop2;
-	}
+	private String prop1Name;
+	
+	private String prop2key;
+	
+	private String prop2Name;
 
 	public String getKey() {
 		return key;
@@ -46,4 +34,40 @@ public class DictionaryEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getProp1key() {
+		return prop1key;
+	}
+
+	public void setProp1key(String prop1key) {
+		this.prop1key = prop1key;
+	}
+
+	public String getProp1Name() {
+		return prop1Name;
+	}
+
+	public void setProp1Name(String prop1Name) {
+		this.prop1Name = prop1Name;
+	}
+
+	public String getProp2key() {
+		return prop2key;
+	}
+
+	public void setProp2key(String prop2key) {
+		this.prop2key = prop2key;
+	}
+
+	public String getProp2Name() {
+		return prop2Name;
+	}
+
+	public void setProp2Name(String prop2Name) {
+		this.prop2Name = prop2Name;
+	}
+	
+
+
+	
 }

@@ -30,7 +30,35 @@ public class SignallingAdapter  implements Isignalling{
 
 	@Override
 	public List<DictionaryEntity> getFlowType() throws Exception {
-		return null;
+		List<DictionaryEntity> dictionaryList=new ArrayList<DictionaryEntity>();
+		Statement statement=null;
+		ResultSet resultSet=null;
+		try{
+			
+			statement= DbKit.getConfig("orcl").getConnection().createStatement();
+			String sql="select procedure_type_code,procedure_type,proto_type_code,proto_type,interface_id,interface_name from ADS_DIA_PRO_EVNET_MAP";
+			resultSet= statement.executeQuery(sql);
+			while (resultSet.next()){
+				DictionaryEntity dictionary=new DictionaryEntity();
+				dictionary.setKey(resultSet.getString("procedure_type_code"));
+				dictionary.setName(resultSet.getString("procedure_type"));
+				dictionary.setProp1key(resultSet.getString("proto_type_code"));
+				dictionary.setProp1Name(resultSet.getString("proto_type"));
+				dictionary.setProp2key(resultSet.getString("interface_id"));
+				dictionary.setProp2Name(resultSet.getString("interface_name"));
+				dictionaryList.add(dictionary);
+			}
+		}catch(Exception ex){
+			throw ex;
+		}finally{
+			if(statement!=null){
+				statement.close();
+			}
+			if(!resultSet.equals(null)){
+				resultSet.close();
+			}
+		}
+		return dictionaryList;
 	}
 
 
@@ -50,29 +78,47 @@ public class SignallingAdapter  implements Isignalling{
 		
 		boolean isQueryHttp=false;
 		boolean isQueryMME=false;
+		boolean isQueryESM=false;
+		boolean isQueryS1AP=false;
 		
-		if(interfaceType!=null && !interfaceType.equals("")){
-			if(procedureType!=null && !procedureType.equals("")){
-				isQueryMME=true;
-				if(procedureType.contains("-2")){
-					isQueryHttp=true;
+		if(!StringUtils.isBlank(interfaceType)){
+			if(!StringUtils.isBlank(procedureType)){
+				String[] dataArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(procedureType, ",");
+				for(int i=0;i<dataArray.length;i++){
+					String[] dataItemArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(dataArray[i], "-");
+					if(dataItemArray[0].contains("50")){
+						isQueryHttp=true;
+					}
+					if(dataItemArray[0].contains("10")){
+						isQueryESM=true;
+					}
+					if(dataItemArray[0].contains("11")){
+						isQueryMME=true;
+					}
+					if(dataItemArray[0].contains("12")){
+						isQueryS1AP=true;
+					}
+					if(isQueryHttp && isQueryMME && isQueryESM && isQueryS1AP){
+						break;
+					}
 				}
 			}else{
 				if(interfaceType.contains("5")){
 					isQueryMME=true;
+					isQueryESM=true;
+					isQueryS1AP=true;
 				}
-				if(interfaceType.contains("5")&&interfaceType.contains("11")){
-					isQueryMME=true;
-					isQueryHttp=true;
-				}else if(interfaceType.equals("11")){
+				if(interfaceType.contains("11")){
 					isQueryHttp=true;
 				}
 			}
 		}else{
 			isQueryMME=true;
 			isQueryHttp=true;
+			isQueryESM=true;
+			isQueryS1AP=true;
 		}
-		System.out.println("isQueryMME:"+isQueryMME+",isQueryHttp:"+isQueryHttp);
+		System.out.println("isQueryMME:"+isQueryMME+",isQueryHttp:"+isQueryHttp+",isQueryESM="+isQueryESM+",isQueryS1AP="+isQueryS1AP);
 		
 		
 		try{
@@ -121,8 +167,6 @@ public class SignallingAdapter  implements Isignalling{
 				//MME
 				if(isQueryMME){
 					String mmeEMMTable="S_M_S1MME_EMM_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
-					String mmeESMTable="S_M_S1MME_ESM_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
-					String mmeS1APTable="S_M_S1MME_S1AP_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
 					if(hbaseHelper.tableExists(mmeEMMTable)){
 						System.out.println("table:"+mmeEMMTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(mmeEMMTable,sRrowKey,eRowKey,null);
@@ -131,17 +175,19 @@ public class SignallingAdapter  implements Isignalling{
 							SignallingCommon signalling=getMMEEMMTableSignalling(item.get("other"));
 							if(signalling!=null){
 								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
-								boolean isProcedureType =procedureType==null || procedureType.equals("") || (procedureType.contains(signalling.getProcedureType()));
+								boolean isProcedureType =StringUtils.isBlank(procedureType) || procedureTypeExist(procedureType,signalling.getProcedureType());
 								if(isStatus && isProcedureType){
 									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
 								}
 							}
 						}
-						
 					}else{
 						System.out.println(mmeEMMTable+"表不存在.");
 					}
+				}
+				if(isQueryESM){
+					String mmeESMTable="S_M_S1MME_ESM_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
 					if(hbaseHelper.tableExists(mmeESMTable)){
 						System.out.println("table:"+mmeESMTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(mmeESMTable,sRrowKey,eRowKey,null);
@@ -150,17 +196,19 @@ public class SignallingAdapter  implements Isignalling{
 							SignallingCommon signalling=getMMEESMTableSignalling(item.get("other"));
 							if(signalling!=null){
 								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
-								boolean isProcedureType =procedureType==null || procedureType.equals("") || (procedureType.contains(signalling.getProcedureType()));
+								boolean isProcedureType =StringUtils.isBlank(procedureType) || procedureTypeExist(procedureType,signalling.getProcedureType());
 								if(isStatus && isProcedureType){
 									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
 								}
 							}
 						}
-						
 					}else{
 						System.out.println(mmeESMTable+"表不存在.");
 					}
+				}
+				if(isQueryS1AP){
+					String mmeS1APTable="S_M_S1MME_S1AP_"+String.valueOf(dateTime.converToLong("yyyyMMdd", eDate));
 					if(hbaseHelper.tableExists(mmeS1APTable)){
 						System.out.println("table:"+mmeS1APTable+",startRow:"+sRrowKey+",endRow:"+eRowKey);
 						List<Map<String, String>> result= hbaseHelper.get(mmeS1APTable,sRrowKey,eRowKey,null);
@@ -169,7 +217,7 @@ public class SignallingAdapter  implements Isignalling{
 							SignallingCommon signalling=getMMES1APTableSignalling(item.get("other"));
 							if(signalling!=null){
 								boolean isStatus=(failStatus!=null && !failStatus.equals("-1") && signalling.getProcedureStatus().equals("3"))||failStatus==null ||failStatus.equals("-1");
-								boolean isProcedureType =procedureType==null || procedureType.equals("") || (procedureType.contains(signalling.getProcedureType()));
+								boolean isProcedureType =StringUtils.isBlank(procedureType) || procedureTypeExist(procedureType,signalling.getProcedureType());
 								if(isStatus && isProcedureType){
 									signalling.setRowKey(item.get("key"));
 									signallingList.add(signalling);
@@ -196,11 +244,11 @@ public class SignallingAdapter  implements Isignalling{
 			System.out.println("数量："+ signallingList.size());
 			
 			for(int i=0;i<signallingList.size();i++){
-				if(signallingList.get(i).getProcedure_starttime_ms()!=null && !signallingList.get(i).getProcedure_starttime_ms().equals("")){
+				if(!StringUtils.isBlank(signallingList.get(i).getProcedure_starttime_ms())){
 					for(int j=i;j<signallingList.size();j++){
 						long startDate1=Long.parseLong(signallingList.get(i).getProcedure_starttime_ms());
 						SignallingCommon item2= signallingList.get(j);
-						if(item2.getProcedure_starttime_ms()!=null && !item2.getProcedure_starttime_ms().equals("")){
+						if(!StringUtils.isBlank(item2.getProcedure_starttime_ms())){
 							long startDate2=Long.parseLong(item2.getProcedure_starttime_ms());
 							if(startDate1<startDate2){
 								SignallingCommon temp=signallingList.get(i);
@@ -259,16 +307,16 @@ public class SignallingAdapter  implements Isignalling{
 			String tableName="";
 			if(tabName.equals("http")){
 				tableName="S_M_HTTP";
-				signallingDetail.setCols("Imsi,电话号码,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,业务大类,业务小类,客户端IP,服务的IP,NAI,连接状态,连接错误码,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,url,host,方法,内容类型,用户代理,引用类型,更新数,最终用户IP");
+				signallingDetail.setCols("Imsi,电话号码,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,业务大类,业务小类,客户端IP,服务的IP,NAI,连接状态,连接错误码,首要原因定界,上行流量,下行流量,平均响应时间,总响应(ms),响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,url,host,方法,内容类型,用户代理,引用类型,更新数,最终用户IP");
 			}else if(tabName.equals("mmeemm")){
 				tableName="S_M_S1MME_EMM";
-				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,FirstEvent,LastEvent,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,FirstMTmsi,FirstMMEIp,LastMTmsi");
+				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,FirstEvent,LastEvent,首要原因定界,上行流量,下行流量,平均响应时间,总响应(ms),响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,FirstMTmsi,FirstMMEIp,LastMTmsi");
 			}else if(tabName.equals("mmeesm")){
 				tableName="S_M_S1MME_ESM";
-				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,FirstEvent,LastEvent,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,ParentEmmXdrId,最终用户IP,最终用户IPV6");
+				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,FirstEvent,LastEvent,首要原因定界,上行流量,下行流量,平均响应时间,总响应(ms),响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,ParentEmmXdrId,最终用户IP,最终用户IPV6");
 			}else if(tabName.equals("mmes1ap")){
 				tableName="S_M_S1MME_S1AP";
-				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,首要原因定界,上行流量,下行流量,平均响应时间,总响应,响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,EmmXdrId,MMEUeApId,eNodeBUeApId");
+				signallingDetail.setCols("Imsi,连接开始时间,连接结束时间,日期,小时,XDR_ID,接入类型,接口类型,流程类型,协议类型,小区标识,小区名称,终端标识,终端名称,客户端IP,服务的IP,RAI,连接状态,连接错误码,首要原因定界,上行流量,下行流量,平均响应时间,总响应(ms),响应类型,负载类型,上行数据包,下行数据包,会话最后更新时间,连接行数,连接ID,总事件数,服务状态,TCP同步,TCP同步确认,TCP同步重置,EmmXdrId,MMEUeApId,eNodeBUeApId");
 			}
 			tableName=tableName+"_"+String.valueOf(dateTime.converToLong("yyyyMMdd", sDate));
 			System.out.println(tableName);
@@ -360,6 +408,23 @@ public class SignallingAdapter  implements Isignalling{
 		return dictionaryList;
 	}
 	
+	private Boolean procedureTypeExist(String procedureTypeArray,String val){
+		Boolean result=false;
+		if(!StringUtils.isBlank(procedureTypeArray) && !StringUtils.isBlank(val)){
+			String[] dataArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(procedureTypeArray, ",");
+			for(int i=0;i<dataArray.length;i++){
+				String[] dataItemArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(dataArray[i], "-");
+				if(dataItemArray.length==2){
+					if(dataItemArray[1].trim().equals(val)){
+						result=true;
+						break;
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
 	private SignallingCommon getHttpSignalling(String dataStr) throws ParseException{
 		String[] dataArray = StringUtils.splitByWholeSeparatorPreserveAllTokens(dataStr, "|");
 		SignallingCommon signalling=new SignallingCommon();
@@ -415,7 +480,12 @@ public class SignallingAdapter  implements Isignalling{
 			signalling.setCellId(dataArray[11]);
 			signalling.setRat(dataArray[6]);
 			signalling.setInterfaceType(dataArray[7]);
-			signalling.setProcedureType(dataArray[8]);
+			if(StringUtils.isBlank(dataArray[19])){
+				signalling.setProcedureType("EMM");
+			}else{
+				signalling.setProcedureType(dataArray[19]);
+			}
+			
 			signalling.setBusLantency(dataArray[24]);
 			signalling.setUserIp4(dataArray[14]);
 			signalling.setServerIp(dataArray[15]);
@@ -448,7 +518,11 @@ public class SignallingAdapter  implements Isignalling{
 			signalling.setRat(dataArray[6]);
 			signalling.setCellId(dataArray[11]);
 			signalling.setInterfaceType(dataArray[7]);
-			signalling.setProcedureType(dataArray[8]);
+			if(StringUtils.isBlank(dataArray[19])){
+				signalling.setProcedureType("ESM");
+			}else{
+				signalling.setProcedureType(dataArray[19]);
+			}
 			signalling.setBusLantency(dataArray[24]);
 			signalling.setUserIp4(dataArray[14]);
 			signalling.setServerIp(dataArray[15]);
