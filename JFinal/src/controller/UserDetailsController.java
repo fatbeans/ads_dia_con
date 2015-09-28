@@ -17,6 +17,7 @@ import export.ExcelExport;
 import model.AppInfoEntity;
 import model.UserDetHbaseEntity;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Integer.*;
 
 /**
  * Created by xinxin on 2015/7/17.
@@ -126,6 +126,8 @@ public class UserDetailsController extends Controller {
         Map<String, AppInfoEntity> appInfoEntityMap = getAppInfo();
         List<UserDetHbaseEntity> list = UserDetailHbaseAdapter.getPage(msisdn + "", sd + "", ed + "");
         joinAppName(appInfoEntityMap, list);
+        joinHttpStatus(list);
+        joinErrorCode(list);
         Pager pager = new Pager();
         pager.setPage(page);
         pager.setSize(size);
@@ -137,10 +139,60 @@ public class UserDetailsController extends Controller {
         renderJson(json.toJSONString());
     }
 
+
+    private void joinHttpStatus(List<UserDetHbaseEntity> list) throws SQLException {
+        String sql = "select * from ads_dia_http_status";
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+        HashMap<Integer, String> statusMap = new HashMap<Integer, String>();
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            statusMap.put(resultSet.getInt(1), resultSet.getString(2));
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+
+        for (UserDetHbaseEntity item : list) {
+            String var = statusMap.get(NumberUtils.toInt(item.STATUS_CODE, -1));
+            if (var != null) {
+                item.STATUS_CODE = var;
+            }
+        }
+    }
+
+    private void joinErrorCode(List<UserDetHbaseEntity> list) throws SQLException {
+        String sql = "select error_code,fail_cause,fial_scene_ch from ADS_DIA_ERROR_CODE where proto_type_code=15";
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+        HashMap<Integer, String> erroeCodeMap = new HashMap<Integer, String>();
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            erroeCodeMap.put(resultSet.getInt(1), resultSet.getString(2) + "," + resultSet.getString(3));
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+
+        System.out.println(erroeCodeMap);
+        for (UserDetHbaseEntity item : list) {
+            String var = erroeCodeMap.get(NumberUtils.toInt(item.ERROR_CODE, -1));
+            if (var != null) {
+                String[] v = var.split(",");
+                item.FIAL_SCENE_EN = v[0];
+                item.FIAL_SCENE_CH = v[1];
+            }
+        }
+    }
+
     private void joinAppName(Map<String, AppInfoEntity> appInfoEntityMap, List<UserDetHbaseEntity> list) {
         for (UserDetHbaseEntity item : list) {
-            AppInfoEntity appInfoEntity = appInfoEntityMap.get(AppInfoEntity.getKey(parseInt(item.APP_TYPE_NAME), parseInt
-                    (item.APP_SUB_TYPE_NAME)));
+            AppInfoEntity appInfoEntity = appInfoEntityMap.get(AppInfoEntity.getKey(NumberUtils.toInt(item
+                    .APP_TYPE_NAME, 0), NumberUtils.toInt(item.APP_SUB_TYPE_NAME, 0)));
             if (appInfoEntity != null) {
                 item.APP_TYPE_NAME = appInfoEntity.appTypeName;
                 item.APP_SUB_TYPE_NAME = appInfoEntity.appSubTypeName;
