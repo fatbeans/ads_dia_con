@@ -1,3 +1,19 @@
+function menuHrefaddUsrInfo(){
+    var usr = getCookie("usr");
+    var dep = getCookie("dep");
+
+    $("#menu_index_cust").attr("href", $("#menu_index_cust").attr("href") + "?usr=" + usr + "&dep=" + dep);
+    $("#menu_index_op").attr("href", $("#menu_index_op").attr("href") + "?usr=" + usr + "&dep=" + dep);
+}
+
+function getCookie(name)
+{
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+    if(arr=document.cookie.match(reg))
+        return arr[2];
+    else
+        return null;
+}
 $(document).ready(function(){ //页面加载完后执行
     if(getQueryString("usr")!=null){
         document.cookie="usr="+escape(getQueryString("usr"));
@@ -5,6 +21,7 @@ $(document).ready(function(){ //页面加载完后执行
     if(getQueryString("dep")!=null){
         document.cookie="dep="+escape(getQueryString("dep"));
     }
+    menuHrefaddUsrInfo();
     contentH();//计算content高度
     //tab动作
     $('#myTab a').click(function (e) {
