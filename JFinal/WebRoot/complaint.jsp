@@ -53,6 +53,10 @@
             <label class="S-label">用户号码</label>
             <input type="text" id="msisdn" class="w100">
         </div>
+        <div class="inlininput mr10">
+            <label class="S-label">投诉业务类型</label>
+            <input type="text" id="business_class" class="w100">
+        </div>
         <div class="inlininput mr10" style="display: none">
 
             <label class="S-label">IMSI</label>
@@ -268,6 +272,7 @@
             postData: {
                 sd: $("#sd").val().replace(/[/]/g, '').replace(' ', ''),
                 ed: $("#ed").val().replace(/[/]/g, '').replace(' ', ''),
+                business_class : $("#business_class").val(),
                 msisdn: $("#msisdn").val()
             }, datatype: 'json'
         }).trigger("reloadGrid");

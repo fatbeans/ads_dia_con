@@ -42,7 +42,7 @@ public class ComplaintController extends Controller {
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
         long msisdn = getParaToLong(("msisdn"), -1l);
-        if(msisdn==-1){
+        if (msisdn == -1) {
             render("");
             return;
         }
@@ -72,6 +72,7 @@ public class ComplaintController extends Controller {
         long sd = getParaToLong(("sd"), 2000010100l);
         long ed = getParaToLong(("ed"), 2100010100l);
         String msisdn = getPara("msisdn");
+        String business_class = getPara("business_class");
         DbType dbType = null;
         if (PropKit.get("dbPre").contains("GBASE")) {
             dbType = DbType.GBASE;
@@ -92,8 +93,7 @@ public class ComplaintController extends Controller {
         String pageSql = StringUtils.isNotBlank(msisdn) ? PropKit.get("COMP_SQL_PAGE").replaceFirst("\\?", msisdn)
                 .replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")) : StringUtils.replaceOnce(PropKit.get
                 ("COMP_SQL_PAGE"), PropKit.get("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst
-                ("\\?",
-                (ed + ""));
+                ("\\?", (ed + "")).replaceFirst("\\?", business_class);
         System.out.println(pageSql);
         ComplaintDao complaintDao = ComplaintDao.dao.findFirst(pageSql);
         String cnt = complaintDao.get("cnt") == null ? complaintDao.get("CNT").toString() : complaintDao.get("cnt")
@@ -104,11 +104,13 @@ public class ComplaintController extends Controller {
             pager.setRows(new ArrayList<ComplaintDao>(0));
         } else {
             if (StringUtils.isNotBlank(msisdn)) {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, PropKit.get("COMP_SQL")),
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, PropKit.get("COMP_SQL"))
+                                .replaceFirst("\\%\\?\\%", "%" + business_class + "%"),
                         msisdn, sd, ed));
             } else {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce( PropKit.get
-                        ("COMP_SQL"), PropKit.get("COMP_WHERE_MDN"), " ")), sd, ed));
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(PropKit.get
+                        ("COMP_SQL"), PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
+                        business_class + "%"), sd, ed));
             }
         }
 
@@ -129,7 +131,6 @@ public class ComplaintController extends Controller {
 
         renderJson(json.toJSONString());
     }
-
 
     /**
      * 上月。本月投诉次数
