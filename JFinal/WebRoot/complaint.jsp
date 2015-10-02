@@ -191,7 +191,7 @@
         var sessionid = cellvalue;
         var mdn = rowObject.MDN;
         var val =
-                "<a target='_blank' href='index_cust.jsp?q=true&sd=" + sd + "&ed=" + ed + "&msisdn=" + mdn +
+                "<a target='_blank' href='http://10.193.240.11:8806/sv/indexcust?q=true&sd=" + sd + "&ed=" + ed + "&msisdn=" + mdn +
                 "&sessionid=" +
                 sessionid + "' class='btn btn-small btn-primary'>查看详情</a>";
         return val;

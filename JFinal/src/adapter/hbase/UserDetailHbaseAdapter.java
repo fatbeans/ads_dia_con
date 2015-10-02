@@ -62,7 +62,6 @@ public class UserDetailHbaseAdapter {
                         tableNameTemp, startKey, endKey, col);
 
                 for (Map<String, String> data : dataList) {
-                    System.out.println(data);
                     rows.add(new UserDetHbaseEntity(data.get("other")));
                 }
             }

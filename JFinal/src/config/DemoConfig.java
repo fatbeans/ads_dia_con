@@ -50,7 +50,7 @@ public class DemoConfig extends JFinalConfig {
 
     public void configPlugin(Plugins me) {
         loadPropertyFile("prop.properties", "utf-8");
-        PropKit.use("colname.properties", "utf-8");
+        PropKit.use("colName.properties", "utf-8");
         String[] dbTypes = StringUtils.split(getProperty("dbPre",""), ",");
         for (String dbType : dbTypes) {
             if (dbType.equalsIgnoreCase("GP")) {
@@ -121,7 +121,7 @@ public class DemoConfig extends JFinalConfig {
                 arp.setDialect(new XGpDialect());
         arp.setShowSql(true);
         me.add(arp);
-//        arp.addMapping("syslog", LogDao.class);/**/
+//        arp.addMapping("syslog", LogDao.class);
 //        arp.addMapping("func",  FuncDao.class);
         arp.addMapping("ads.ads_4g_gnhttp", UserDetailsDao.class);
         arp.addMapping("stage.eoms_total_hz1", ComplaintDao.class);
@@ -166,8 +166,6 @@ public class DemoConfig extends JFinalConfig {
         arp.addMapping("ADS_DIA_HTTP", AdsDiaHttp.class);
         arp.addMapping("ADS_DIA_USR", Usr.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SERV_IP", HttpServIp.class);
-
-
     }
 
 
