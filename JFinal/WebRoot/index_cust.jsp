@@ -396,10 +396,10 @@
 <script type="text/javascript" src="/content/js/artcloudui/artcloudui.dialog.js"></script>
 <script type="text/javascript">
     if(getQueryString("usr")!=null){
-        document.cookie="usr="+escape(getQueryString("usr"));
+        document.cookie="usr="+encodeURIComponent(getQueryString("usr"));
     }
     if(getQueryString("dep")!=null){
-        document.cookie="dep="+escape(getQueryString("dep"));
+        document.cookie="dep="+encodeURIComponent(getQueryString("dep"));
     }
 
     var now = new Date();

@@ -16,10 +16,10 @@ function getCookie(name)
 }
 $(document).ready(function(){ //页面加载完后执行
     if(getQueryString("usr")!=null){
-        document.cookie="usr="+escape(getQueryString("usr"));
+        document.cookie="usr="+encodeURIComponent(getQueryString("usr"));
     }
     if(getQueryString("dep")!=null){
-        document.cookie="dep="+escape(getQueryString("dep"));
+        document.cookie="dep="+encodeURIComponent(getQueryString("dep"));
     }
     menuHrefaddUsrInfo();
     contentH();//计算content高度

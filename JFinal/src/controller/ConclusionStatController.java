@@ -138,7 +138,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                }catch (NullPointerException e){
+
+                }
             }
             data.add(row);
         }
