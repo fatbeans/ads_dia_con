@@ -1,12 +1,10 @@
 package controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.DbKit;
 import dic.DbType;
-import model.ConEntity;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
@@ -65,7 +63,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                }catch (NullPointerException e){
+
+                }
             }
             data.add(row);
         }
@@ -84,9 +86,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                if(resultSet.getObject(i+1)!=null){
-                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
-                }
+                    try {
+                        row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                    }catch (NullPointerException e){
+
+                    }
             }
             data.add(row);
         }
@@ -105,7 +109,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                } catch (NullPointerException e) {
+
+                }
             }
             data.add(row);
         }
@@ -121,7 +129,10 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                } catch (NullPointerException e) {
+                }
             }
             data.add(row);
         }
