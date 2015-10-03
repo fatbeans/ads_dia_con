@@ -55,7 +55,9 @@
         </div>
         <div class="inlininput mr10">
             <label class="S-label">投诉业务类型</label>
-            <input type="text" id="business_class" class="w100">
+            <input type="text" id="business_class" style="padding-left: 100px;width: 250px"
+                   value="基础通信-互联网类业务-4G（LTE）"
+                   class="w100">
         </div>
         <div class="inlininput mr10" style="display: none">
 
@@ -63,7 +65,7 @@
             <input id="imsi" type="text" class="w100" style="padding-left: 45px" placeholder="">
         </div>
         <a href="#" id="psb" class="btn btn-search vm mb10" title="无号码则查询时间段内所有设诉数据，且不查询投诉履历">
-            <span class="searchicon" ><i class="uicon ui-search" ></i></span> 查询
+            <span class="searchicon"><i class="uicon ui-search"></i></span> 查询
         </a>
     </div>
     <!-- 搜索-e -->
@@ -272,7 +274,7 @@
             postData: {
                 sd: $("#sd").val().replace(/[/]/g, '').replace(' ', ''),
                 ed: $("#ed").val().replace(/[/]/g, '').replace(' ', ''),
-                business_class : $("#business_class").val(),
+                business_class: $("#business_class").val(),
                 msisdn: $("#msisdn").val()
             }, datatype: 'json'
         }).trigger("reloadGrid");
