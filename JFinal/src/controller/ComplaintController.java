@@ -1,10 +1,8 @@
 package controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
-import com.jfinal.plugin.activerecord.Db;
 import dao.ComplaintDao;
 import dao.Pager;
 import dao.UserDetailsDao;
@@ -107,7 +105,7 @@ public class ComplaintController extends Controller {
                 pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, PropKit.get("COMP_SQL")),
                         msisdn, sd, ed));
             } else {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce( PropKit.get
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(PropKit.get
                         ("COMP_SQL"), PropKit.get("COMP_WHERE_MDN"), " ")), sd, ed));
             }
         }
