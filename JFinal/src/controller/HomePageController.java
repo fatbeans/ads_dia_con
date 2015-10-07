@@ -389,10 +389,6 @@ public class HomePageController extends Controller {
                 sql = PropKit.get("CTL_CELL_SQL");
                 dataList = CtlCell.dao.find(sql.replace("$where", whereLv2Sessionid), lv2Con.getValue(), sessionId);
                 break;
-            case 小区时延问题:
-                sql = PropKit.get("HTTP_CELL_SQL");
-                dataList = HttpCell.dao.find(sql.replace("$where", whereSessionid), sessionId);
-                break;
             case 无线侧_工程预约:
                 break;
             case 小区核查参数:

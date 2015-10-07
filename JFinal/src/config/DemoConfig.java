@@ -146,7 +146,7 @@ public class DemoConfig extends JFinalConfig {
         arp.setShowSql(true);
         me.add(arp);
         arp.addMapping("ADS_DIA_CON_SYSLOG", LogDao.class);
-        arp.addMapping("ADS_DIA_CON_HTTP_CELL", HttpCell.class);
+//        arp.addMapping("ADS_DIA_CON_HTTP_CELL", HttpCell.class);
         arp.addMapping("ADS_DIA_CON_CTL_MME", CtlMme.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SGW", HttpSgw.class);
         arp.addMapping("ADS_DIA_CTL", CtlCell.class);
