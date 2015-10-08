@@ -48,7 +48,7 @@ public class UserDetailsController extends Controller {
                 "mdn=" + mdn);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            String imsi = resultSet.getString("1");
+            String imsi = resultSet.getString(1);
             resultSet.close();
             preparedStatement.close();
             connection.close();
@@ -208,7 +208,6 @@ public class UserDetailsController extends Controller {
         preparedStatement.close();
         connection.close();
 
-        System.out.println(erroeCodeMap);
         for (UserDetHbaseEntity item : list) {
             String var = erroeCodeMap.get(NumberUtils.toInt(item.ERROR_CODE, -1));
             if (var != null) {
