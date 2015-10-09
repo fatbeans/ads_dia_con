@@ -72,6 +72,7 @@ public class ComplaintController extends Controller {
         long sd = getParaToLong(("sd"), 2000010100l);
         long ed = getParaToLong(("ed"), 2100010100l);
         String msisdn = getPara("msisdn");
+        String business_class = getPara("business_class");
         DbType dbType = null;
         if (PropKit.get("dbPre").contains("GBASE")) {
             dbType = DbType.GBASE;
