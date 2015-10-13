@@ -63,7 +63,6 @@ public class ComplaintController extends Controller {
         renderJson(jsonStr);
     }
 
-
     public void searchHistory() {
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
@@ -88,27 +87,35 @@ public class ComplaintController extends Controller {
         pager.setSize(size);
         System.out.println("page Para:" + msisdn + "|" + sd + "|" + ed);
 
-        String pageSql = StringUtils.isNotBlank(msisdn) ? PropKit.get("COMP_SQL_PAGE").replaceFirst("\\?", msisdn)
+        String pageSql = PropKit.get("COMP_SQL_PAGE");
+
+        if (StringUtils.isBlank(business_class)) {
+            pageSql = pageSql.replace(PropKit.get("COMP_WHERE_BUSINESS"), " ");
+        }
+
+
+        pageSql = StringUtils.isNotBlank(msisdn) ? pageSql.replaceFirst("\\?", msisdn)
                 .replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")).replaceFirst("\\%\\?\\%", "%" +
-                        business_class + "%") : StringUtils.replaceOnce(PropKit.get("COMP_SQL_PAGE"), PropKit.get
-                ("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")).replaceFirst
-                ("\\%\\?\\%", "%" + business_class + "%");
+                        business_class + "%") : StringUtils.replaceOnce(pageSql, PropKit.get
+                ("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + ""))
+                .replaceFirst("\\%\\?\\%", "%" + business_class + "%");
         System.out.println(pageSql);
         ComplaintDao complaintDao = ComplaintDao.dao.findFirst(pageSql);
         String cnt = complaintDao.get("cnt") == null ? complaintDao.get("CNT").toString() : complaintDao.get("cnt")
                 .toString();
         pager.setRecords(NumberUtils.toLong(cnt, 0));
-
         if (pager.getRecords() == 0) {
             pager.setRows(new ArrayList<ComplaintDao>(0));
         } else {
+            String sql = StringUtils.isBlank(business_class) ? PropKit.get("COMP_SQL").replace(PropKit.get
+                    ("COMP_WHERE_BUSINESS"), " ") : PropKit.get("COMP_SQL");
+
             if (StringUtils.isNotBlank(msisdn)) {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, PropKit.get("COMP_SQL"))
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size,sql )
                                 .replaceFirst("\\%\\?\\%", "%" + business_class + "%"),
                         msisdn, sd, ed));
             } else {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(PropKit.get
-                        ("COMP_SQL"), PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql, PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
                         business_class + "%"), sd, ed));
             }
         }
@@ -118,14 +125,6 @@ public class ComplaintController extends Controller {
         String jsonStr = pager.toJsonString();
         System.out.println(jsonStr);
         renderJson(jsonStr);
-    }
-
-    public static void main(String[] args) {
-        String s = "SELECT COUNT(*) CNT FROM V_TOTAL_ALL WHERE TOTAL6 = 13995356541 AND TOTAL3 >= to_date(to_number" +
-                "(2015100700),'yyyymmddhh24') AND TOTAL3 < to_date(to_number(2015100723),'yyyymmddhh24') and TOTAL4 " +
-                "like   '%?%'";
-        System.out.println(s.replaceFirst("%?%", "%" + "LTE" + "%"));
-
     }
 
     public void seachInfo() {
@@ -138,6 +137,7 @@ public class ComplaintController extends Controller {
 
         renderJson(json.toJSONString());
     }
+
 
     /**
      * 上月。本月投诉次数
