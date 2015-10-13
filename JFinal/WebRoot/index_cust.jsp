@@ -401,6 +401,7 @@
     if(getQueryString("dep")!=null){
         document.cookie="dep="+encodeURIComponent(getQueryString("dep"));
     }
+    window.location.href="http://10.193.240.11:8806/sv/indexcust"+window.location.search;
 
     var now = new Date();
 

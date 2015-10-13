@@ -57,6 +57,12 @@
             <span class="searchicon"><i class="uicon ui-search"></i></span>
             搜索
         </a>
+
+        <a href="#" id="paidan" class="btn vm mb10">
+            <span class="searchicon"><i class="uicon ui-search"></i></span>
+            派单
+        </a>
+
     </div>
     <!-- 搜索-e -->
     <!-- 表格部分-s -->
@@ -132,6 +138,7 @@
     }
 
     $("#contab").jqGrid({
+        multiselect: true,
         url: 'conc/concUnder',
         datatype: 'local',
         colNames: ['网元类型', '网元名称', '网元归属地市', '诊断问题', '影响人次', '问题时段数', '问题时段占比%', '解决措施'],
@@ -142,7 +149,7 @@
             {name: 'LV2_CON_NAME', width: 150},
             {name: 'SCNT', width: 150},
             {name: 'TCNT', width: 150},
-            {name: 'TIMEPERCENT', width: 150,formatter:timePrecentFormatter},
+            {name: 'TIMEPERCENT', width: 150, formatter: timePrecentFormatter},
             {name: 'SOLWAY', width: 150}
         ],
         autowidth: true,
@@ -154,25 +161,80 @@
         height: 500,
         pager: '#pager',
         viewrecords: true,
-        loadComplete:function(){
+        loadComplete: function () {
             $.artcloud.loading("close");
         },
-        loadError:function(){
+        loadError: function () {
             $.artcloud.loading("close");
         },
-        gridComplete:function(){
+        gridComplete: function () {
             $.artcloud.loading("close");
         }
     }).navGrid('#pager', {edit: false, add: false, del: false, search: false, refresh: false});
     $("#contab").jqGrid('setGridWidth', $('#panel').width() - 4);
     $(window).resize(function () {//当浏览器大小变化时
-//        $('.container4 .div_scroll').scroll_absolute({arrows: false});
         $("#contab").jqGrid('setGridWidth', $('#panel').width() - 4);
     });
 
 
-    $("#psb").click(function () {
+    $("#paidan").click(function () {
+        var grid = $("#contab");
 
+        var id = grid.jqGrid('getGridParam', 'selarrrow');
+        var data = new Array();
+
+        for (var i = 0; i < id.length; i++) {
+            data[i] = grid.jqGrid('getRowData', id[i]);
+        }
+        $.artcloud.loading("派单文件生成中...");
+        $.ajax({
+            url: "conc/initEomsExcel",
+            data: {
+                "data": JSON.stringify(data)
+            },
+            type: "POST",
+            dataType: "text",
+            error: function (event, xhr) {
+                $.artcloud.loading("close");
+                alert("生成工单文件出错");
+            },
+            success: function (fileName) {
+                $.artcloud.loading("close");
+                var wo_netype = "";
+                var lv2_con_id = $("#lv2_con_id").val();
+
+//        DNS服务器出错 DNS域名服务器不支持请求的类型 DNS拒绝服务
+                if (lv2_con_id == 10020005 || lv2_con_id == 10020006 || lv2_con_id == 10020007 || lv2_con_id == 10030008 || lv2_con_id == 10020008) {
+                    wo_netype = "DNS";
+                }
+//        核心侧·质量问题 核心侧·高负荷 核心侧·核查参数
+                else if (lv2_con_id == 10020002 || lv2_con_id == 10020001 || lv2_con_id == 10020009) {
+                    wo_netype = "MME";
+                }
+//        弱覆盖 质差小区 高负荷
+                else if (lv2_con_id == 10010001 || lv2_con_id == 10010002 || lv2_con_id == 10010003) {
+                    wo_netype = "小区";
+                }
+//        业务属网外资源
+                else if (lv2_con_id == 10050001) {
+                    wo_netype = "sp";
+                }
+                var url = "http://10.190.240.11:8804/eoms/eomsorder.jsp?typeId=2" +
+                        "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
+                        "&neType=" + wo_netype + "&sendWay=人工派单&fileName=" + fileName +
+                        "&typeName=专题分析结论&typeSubName=客户感知溯源";
+                window.open(encodeURI(url));
+            }
+        });
+
+    });
+
+
+    $("#psb").click(function () {
+        if (getQueryString("test") == "true") {
+            test();
+            return;
+        }
         if (!checkInput()) {
             return;
         }
@@ -186,6 +248,13 @@
 
         showHideCol();
     });
+
+    function test() {
+        $("#contab").jqGrid('setGridParam', {
+            url: "./concTestData.json",
+            datatype: 'json'
+        }).trigger("reloadGrid");
+    }
 
 
     function checkInput() {
@@ -217,7 +286,7 @@
         var d = $("#sd").val();
         var day = new Date(d.substr(0, 4), d.substr(4, 2), 0);
         var daycount = day.getDate();
-        return rowObject.TCNT / daycount/24 * 100;
+        return rowObject.TCNT / daycount / 24 * 100;
     }
 
     var conData;
