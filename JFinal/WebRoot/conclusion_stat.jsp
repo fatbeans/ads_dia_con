@@ -190,17 +190,21 @@
         $.ajax({
             url: "conc/initEomsExcel",
             data: {
-                "data": JSON.stringify( data)
+                "data": JSON.stringify(data)
             },
             type: "POST",
             dataType: "text",
+            error: function (event, xhr) {
+                $.artcloud.loading("close");
+                alert("生成工单文件出错");
+            },
             success: function (fileName) {
                 $.artcloud.loading("close");
                 var wo_netype = "";
                 var lv2_con_id = $("#lv2_con_id").val();
 
 //        DNS服务器出错 DNS域名服务器不支持请求的类型 DNS拒绝服务
-                if (lv2_con_id == 10020005 || lv2_con_id == 10020006 || lv2_con_id == 10020007 ||lv2_con_id == 10030008 || lv2_con_id == 10020008) {
+                if (lv2_con_id == 10020005 || lv2_con_id == 10020006 || lv2_con_id == 10020007 || lv2_con_id == 10030008 || lv2_con_id == 10020008) {
                     wo_netype = "DNS";
                 }
 //        核心侧·质量问题 核心侧·高负荷 核心侧·核查参数
@@ -209,15 +213,15 @@
                 }
 //        弱覆盖 质差小区 高负荷
                 else if (lv2_con_id == 10010001 || lv2_con_id == 10010002 || lv2_con_id == 10010003) {
-                   wo_netype = "小区";
+                    wo_netype = "小区";
                 }
 //        业务属网外资源
-                else if(lv2_con_id == 10050001){
+                else if (lv2_con_id == 10050001) {
                     wo_netype = "sp";
                 }
                 var url = "http://10.190.240.11:8804/eoms/eomsorder.jsp?typeId=2" +
                         "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
-                        "&neType="+wo_netype+"&sendWay=人工派单&fileName="+fileName+
+                        "&neType=" + wo_netype + "&sendWay=人工派单&fileName=" + fileName +
                         "&typeName=专题分析结论&typeSubName=客户感知溯源";
                 window.open(encodeURI(url));
             }
