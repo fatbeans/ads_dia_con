@@ -179,17 +179,13 @@ public class XGbaseDialect extends XDialect {
     }
 
     public void forPaginate(StringBuilder sql, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
-        int offset = pageSize * (pageNumber - 1);
-        sql.append(select).append(" ");
-        sql.append(sqlExceptSelect);
-        sql.append(" limit ").append(pageSize).append(" offset ").append(offset);
     }
 
     public  String forPaginate(int pageNumber, int pageSize, String select) {
         StringBuilder sql = new StringBuilder();
         int offset = pageSize * (pageNumber - 1);
         sql.append(select).append(" ");
-        sql.append(" limit ").append(offset).append(" , ").append(offset + pageSize);
+        sql.append(" limit ").append(offset).append(" , ").append( pageSize);
         return sql.toString();
     }
 }

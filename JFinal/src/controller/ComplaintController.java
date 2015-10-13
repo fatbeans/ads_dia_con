@@ -1,10 +1,8 @@
 package controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
-import com.jfinal.plugin.activerecord.Db;
 import dao.ComplaintDao;
 import dao.Pager;
 import dao.UserDetailsDao;

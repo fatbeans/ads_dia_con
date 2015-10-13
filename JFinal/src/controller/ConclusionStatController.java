@@ -1,15 +1,16 @@
 package controller;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.DbKit;
 import dic.DbType;
-import model.ConEntity;
+import export.ExcelExport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,7 +66,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                }catch (NullPointerException e){
+
+                }
             }
             data.add(row);
         }
@@ -84,9 +89,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                if(resultSet.getObject(i+1)!=null){
-                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
-                }
+                    try {
+                        row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                    }catch (NullPointerException e){
+
+                    }
             }
             data.add(row);
         }
@@ -105,7 +112,11 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                } catch (NullPointerException e) {
+
+                }
             }
             data.add(row);
         }
@@ -121,7 +132,10 @@ public class ConclusionStatController extends Controller {
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                try {
+                    row.put(resultSet.getMetaData().getColumnName(i + 1), resultSet.getObject(i + 1).toString());
+                } catch (NullPointerException e) {
+                }
             }
             data.add(row);
         }
@@ -148,6 +162,30 @@ public class ConclusionStatController extends Controller {
         }
         resultSet.close();
         preparedStatement.close();
+    }
+
+
+    public void initEomsExcel() throws Exception {
+        String jsStr = getPara("data");
+        if (jsStr != null) {
+            JSONArray array = JSONArray.parseArray(jsStr);
+            array.getJSONObject(1);
+
+
+            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次", "问题时段数", "问题时段占比%", "解决措施"};
+            String[] key = new String[]{"NETYPE","NENAME","NECITY","LV2_CON_NAME","SCNT","TCNT","TIMEPERCENT","SOLWAY"};
+
+            String fileName = PropKit.get("FILE_PRE") + DateFormatUtils.format(new Date(),
+                    "yyyyMmddHHmmssSSS")+".xlsx";
+            System.out.println(fileName);
+            File file = new File(PropKit.get("FILE_PATH") + fileName);
+
+            ExcelExport.createExcelFile(file,array,header,key);
+            renderText(fileName);
+
+        }else{
+            renderError(501);
+        }
     }
 
 }
