@@ -219,7 +219,7 @@
                 else if (lv2_con_id == 10050001) {
                     wo_netype = "sp";
                 }
-                var url = "http://10.190.240.11:8804/eoms/eomsorder.jsp?typeId=2" +
+                var url = "http://10.223.235.16:8804/eoms/eomsorder.jsp?typeId=2" +
                         "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
                         "&neType=" + wo_netype + "&sendWay=人工派单&fileName=" + fileName +
                         "&typeName=专题分析结论&typeSubName=客户感知溯源";
