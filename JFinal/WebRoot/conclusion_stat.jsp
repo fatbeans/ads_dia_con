@@ -34,16 +34,33 @@
             <label class="S-label">开始时间</label>
             <span class="add-on"><a href="#"><i class="icon-calendar"></i></a></span>
             <input type="text" id="sd" class="w100"
-                   onClick="WdatePicker({dateFmt:'yyyyMM'})"/>
+                   onClick="WdatePicker({dateFmt:'yyyy/MM/dd',maxDate:'#F{$dp.$D(\'ed\')}'})"/>
+        </div>
+        <div class="inlininput mr10">
+            <label class="S-label">结束时间</label>
+            <span class="add-on"><a href="#"><i class="icon-calendar"></i></a></span>
+            <input type="text" id="ed" class="w100"
+                   onClick="WdatePicker({dateFmt:'yyyy/MM/dd',minDate:'#F{$dp.$D(\'sd\')}'})"/>
+        </div>
+        <div class="inlininput mr10">
+            <label class="S-label">用户号码</label>
+            <input type="text" id="msisdn" class="w100">
+        </div>
+        <div class="sel_wrap w150 mb10 mr10">
+            <label>网元归属</label>
+            <select class="select" id="citySel">
+            </select>
+            <a class="sel-link"><i class="icon-arrow"></i></a>
         </div>
 
         <div class="sel_wrap w150 mb10 mr10">
-            <label>一级结论</label>
+            <label id="lv1_con_id_label">一级结论</label>
             <select class="select" id="lv1_con_id">
 
             </select>
             <a class="sel-link"><i class="icon-arrow"></i></a>
         </div>
+
         <div class="sel_wrap w150 mb10 mr10">
             <label id="lv2_con_id_label">二级结论</label>
             <select class="select" id="lv2_con_id">
@@ -57,9 +74,8 @@
             <span class="searchicon"><i class="uicon ui-search"></i></span>
             搜索
         </a>
-
-        <a href="#" id="paidan" class="btn vm mb10">
-            <span class="searchicon"><i class="uicon ui-search"></i></span>
+        &nbsp;
+        <a href="#" id="paidan" class="btn btn-info vm mb10" style="padding: 6px 20px 6px 20px">
             派单
         </a>
 
@@ -78,6 +94,10 @@
                 <div id="pager"></div>
             </div>
         </div>
+    </div>
+
+    <div class="panel panel-default animated fadeInUp">
+        <img src="content/images/lcpic.png">
     </div>
 
     <!-- 表格部分-e -->
@@ -104,7 +124,7 @@
 <script type="text/javascript" src="/content/js/artcloudui/artcloudui.dialog.js"></script>
 
 <script type="text/javascript">
-
+    var host = window.location.host;
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
@@ -137,28 +157,59 @@
 
     }
 
+    function statusFormat(ccc, options, rowObject) {
+        cellvalue = rowObject.SEND_STATUS;
+        if (cellvalue == 0) {
+            var s = "<a style='color:blue' href='" + host + "/eoms/eomsorder.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "草稿" + "</a>";
+            return s
+        } else if (cellvalue == 1) {
+            return "<a style='color:blue' href='" + host + "/eoms/detail.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "创建未派发" + "</a>";
+        } else if (cellvalue == 2) {
+            return "<a style='color:blue' href='" + host + "/eoms/detail.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "创建已派发" + "</a>";
+        } else {
+            return "未创建";
+        }
+    }
+
+    $(document).ajaxSuccess(function () {
+        var sendStatusArray = $("#contab").jqGrid("getCol", "SEND_STATUS", true);
+        for (var i = 0; i < sendStatusArray.length; i++) {
+            if (sendStatusArray[i].value.indexOf("未创建") == -1 && sendStatusArray[i].value.indexOf("草稿") == -1) {
+                var ckb = $("#jqg_contab_" + sendStatusArray[i].id);
+                ckb.attr("disabled", "disabled");
+            }
+        }
+    });
+
     $("#contab").jqGrid({
         multiselect: true,
+        beforeSelectRow: function (rowid, e) {
+            var $myGrid = $(this),
+                    i = $.jgrid.getCellIndex($(e.target).closest('td')[0]),
+                    cm = $myGrid.jqGrid('getGridParam', 'colModel');
+            return (cm[i].name === 'cb');
+        },
+
         url: 'conc/concUnder',
         datatype: 'local',
-        colNames: ['网元类型', '网元名称', '网元归属地市', '诊断问题', '影响人次', '问题时段数', '问题时段占比%', '解决措施'],
+        colNames: ['网元类型', '网元名称', '网元归属地市', '诊断问题', '影响人次', '工单创建状态', '工单处理状态'],
         colModel: [
             {name: 'NETYPE', width: 150},
             {name: 'NENAME', width: 150},
             {name: 'NECITY', width: 150},
             {name: 'LV2_CON_NAME', width: 150},
             {name: 'SCNT', width: 150},
-            {name: 'TCNT', width: 150},
-            {name: 'TIMEPERCENT', width: 150, formatter: timePrecentFormatter},
-            {name: 'SOLWAY', width: 150}
+            {name: 'SEND_STATUS', width: 150, formatter: statusFormat},
+            {name: 'EOMS_STATUS', width: 150}
         ],
+
         autowidth: true,
         rowNum: 30,
         hidegrid: false,
         rownumbers: true,
         shrinkToFit: false,
         deepempty: true,
-        height: 500,
+        height: 250,
         pager: '#pager',
         viewrecords: true,
         loadComplete: function () {
@@ -242,11 +293,20 @@
         $("#contab").jqGrid('setGridParam', {
             postData: {
                 sd: $("#sd").val().replace(/[/]/g, '').replace(' ', ''),
-                lv2_con_id: $("#lv2_con_id").val()
+                ed: $("#ed").val().replace(/[/]/g, '').replace(' ', ''),
+                lv2_con_id: $("#lv2_con_id").val(),
+                cityId: ciSel.val(),
+                msisdn: $("#msisdn").val()
             }, datatype: 'json'
         }).trigger("reloadGrid");
 
         showHideCol();
+    });
+    $(document).ajaxError(function (event,XMLHttpRequest) {
+
+        if (XMLHttpRequest.status == 488) {
+            alert("未能查找到号码" + $("#msisdn").val() + "对应的IMSI");
+        }
     });
 
     function test() {
@@ -272,13 +332,134 @@
         }
     }
 
+    $.artcloud.loading("加载下拉数据");
+    var cityAjaxsecc = false;
+    var lvAjaxsecc = false;
+    var lvData;
+    var ciSel = $("#citySel");
+    var lv1Sel = $("#lv1_con_id");
+    var lv2Sel = $("#lv2_con_id");
+
+    var citySelStatus = 0;
+
+    function selChange() {
+        if (cityAjaxsecc == false || lvAjaxsecc == false) {
+            return;
+        } else {
+            var provData = new Array();
+            var cityData = new Array();
+
+            for (var i = 0; i < lvData.length; i++) {
+                if (lvData[i].lv1id == 1001) {
+                    cityData.push(lvData[i]);
+                } else {
+                    provData.push(lvData[i]);
+                }
+            }
+
+            lv1Sel.click(function () {
+                if (ciSel.val() == -1) {
+                    alert("请先选择地市");
+                }
+            });
+            lv2Sel.click(function () {
+                if (ciSel.val() == -1) {
+                    alert("请先选择地市");
+                }
+            });
+            ciSel.change(function () {
+                if (ciSel.val() == -1) {
+                    citySelStatus = -1;
+                    lv1Sel.html('<option value="-1">一级结论</option>');
+                    lv2Sel.html('<option value="-1">二级结论</option>');
+                    $("#lv1_con_id_label").html("一级结论");
+                    $("#lv2_con_id_label").html("二级结论");
+                } else if (ciSel.val() == 0) {
+                    if (citySelStatus != 0) {
+                        initLv1ConSel(provData);
+                        citySelStatus = 0;
+                    }
+                } else {
+                    if (citySelStatus != 1) {
+                        initLv1ConSel(cityData);
+                        citySelStatus = 1;
+                    }
+                }
+            });
+        }
+    }
+
+    function initCitySel(d) {
+        var cityhtml = "";
+        for (var i = 0; i < d.length; i++) {
+            var city = d[i];
+            cityhtml += '<option value="' + city.id + '">' + city.name + '</option>';
+        }
+        ciSel.html('<option value="-1">网元归属</option>' + cityhtml);
+    }
+
+    function initLv1ConSel(data) {
+        var lv1html = "";
+        var lv1List = new Array();
+        for (var i = 0; i < data.length; i++) {
+            var lv1 = data[i];
+            var contains = false;
+            for (var j = 0; j < lv1List.length; j++) {
+                if (lv1List[j] == lv1.lv1id) {
+                    contains = true;
+                    break;
+                }
+            }
+            if (!contains) {
+                lv1html += '<option value="' + lv1.lv1id + '">' + lv1.lv1name + '</option>';
+                lv1List.push(lv1.lv1id);
+            }
+        }
+        lv1Sel.html('<option value="-1">一级结论</option>' + lv1html);
+        lv1Sel.val("-1");
+        $("#lv1_con_id_label").html("一级结论");
+        $("#lv2_con_id_label").html("二级结论");
+
+        lv1Sel.change(function () {
+            initLv2ConSel(data);
+        });
+
+
+    }
+
+
     $.ajax({
         type: "POST",
-        url: "concStatSel.json",
+        url: "conc/getConCfg",
         dataType: "json",
         success: function (d) {
-            conData = d;
-            initLv1ConSel();
+            lvAjaxsecc = true;
+            if (cityAjaxsecc == true) {
+                $.artcloud.loading("close");
+            }
+            lvData = d;
+            selChange();
+        },
+        error: function () {
+            $.artcloud.loading("close");
+            alert("加载结论下拉框数据出错");
+        }
+    });
+    $.ajax({
+        type: "POST",
+        url: "conc/getCity",
+        dataType: "json",
+        success: function (d) {
+            cityAjaxsecc = true;
+            if (lvAjaxsecc == true) {
+                $.artcloud.loading("close");
+            }
+            initCitySel(d);
+            selChange();
+        },
+        error: function () {
+            $.artcloud.loading("close");
+            alert("加载地市下拉框数据出错");
         }
     });
 
@@ -291,28 +472,6 @@
 
     var conData;
 
-    function initLv1ConSel() {
-        var lv1html = "";
-        var lv1List = new Array();
-        for (var i = 0; i < conData.length; i++) {
-            var lv1 = conData[i];
-            var contains = false;
-            for (var j = 0; j < lv1List.length; j++) {
-                if (lv1List[j] == lv1.lv1_con_id) {
-                    contains = true;
-                    break;
-                }
-            }
-            if (!contains) {
-                lv1html += '<option value="' + lv1.lv1_con_id + '">' + lv1.lv1_con_name + '</option>';
-                lv1List.push(lv1.lv1_con_id);
-            }
-        }
-        $("#lv1_con_id").html('<option value="-1">一级结论</option>' + lv1html);
-        $("#lv1_con_id").change(function () {
-            initLv2ConSel();
-        });
-    }
 
     $("#lv2_con_id").click(function () {
         if ($("#lv1_con_id").val() == -1) {
@@ -320,13 +479,13 @@
         }
     });
 
-    function initLv2ConSel() {
+    function initLv2ConSel(d) {
 
         var lv2html = "";
-        for (var i = 0; i < conData.length; i++) {
-            var lv2 = conData[i];
-            if ($("#lv1_con_id").val() == lv2.lv1_con_id) {
-                lv2html += '<option value="' + lv2.lv2_con_id + '">' + lv2.lv2_con_name + '</option>';
+        for (var i = 0; i < d.length; i++) {
+            var lv2 = d[i];
+            if ($("#lv1_con_id").val() == lv2.lv1id) {
+                lv2html += '<option value="' + lv2.lv2id + '">' + lv2.lv2name + '</option>';
             }
         }
         $("#lv2_con_id").html('<option value="-1">二级结论</option>' + lv2html);
@@ -340,17 +499,16 @@
         var ed = getQueryString("ed");
         var msisdn = getQueryString("msisdn");
 
-        $("#sd").val(sd.substr(0, 4) + "/" + sd.substr(4, 2) + "/" + sd.substr(6, 2) + " " + sd.substr(8, 2));
-        $("#ed").val(ed.substr(0, 4) + "/" + ed.substr(4, 2) + "/" + ed.substr(6, 2) + " " + ed.substr(8, 2));
+        $("#sd").val(sd.substr(0, 4) + "/" + sd.substr(4, 2) + "/" + sd.substr(6, 2));
+        $("#ed").val(ed.substr(0, 4) + "/" + ed.substr(4, 2) + "/" + ed.substr(6, 2));
         $("#msisdn").val(msisdn);
-        $("#psb").click();
 
     } else {
         var now = new Date();
-        now.setDate(now.getDate() - 1);
         var month = now.getMonth() + 1;
         var day = now.getDate();
-        $("#sd").val(now.getFullYear() + "" + (month < 10 ? ("0" + month) : month));
+        $("#sd").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/1");
+        $("#ed").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/" + now.getDate());
     }
 
 
