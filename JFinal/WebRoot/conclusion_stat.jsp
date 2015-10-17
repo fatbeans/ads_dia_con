@@ -100,6 +100,9 @@
         <img src="content/images/lcpic.png">
     </div>
 
+    <input type="hidden" value="1" id="provIdInDB"/>
+    <input type="hidden" value="-1" id="provIdInView">
+
     <!-- 表格部分-e -->
 </div>
 <%@ include file="footer.html" %>
@@ -124,6 +127,10 @@
 <script type="text/javascript" src="/content/js/artcloudui/artcloudui.dialog.js"></script>
 
 <script type="text/javascript">
+
+    var provIdInDB = $("#provIdInDB").val();
+    var provIdInView = $("#provIdInView").val() ;
+
     var host = window.location.host;
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
@@ -160,12 +167,13 @@
     function statusFormat(ccc, options, rowObject) {
         cellvalue = rowObject.SEND_STATUS;
         if (cellvalue == 0) {
-            var s = "<a style='color:blue' href='" + host + "/eoms/eomsorder.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "草稿" + "</a>";
+            var s = "<a style='color:blue' href='http://" + host + "/eoms/eomsorder.jsp?wo_id=" + rowObject.WO_ID +
+                    "' target='_blank'>" + "草稿" + "</a>";
             return s
         } else if (cellvalue == 1) {
-            return "<a style='color:blue' href='" + host + "/eoms/detail.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "创建未派发" + "</a>";
+            return "<a style='color:blue' href='http://" + host + "/eoms/eomsorder.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "创建未派发" + "</a>";
         } else if (cellvalue == 2) {
-            return "<a style='color:blue' href='" + host + "/eoms/detail.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "创建已派发" + "</a>";
+            return "<a style='color:blue' href='http://" + host + "/eoms/eomsorder.jsp?wo_id=" + rowObject.WO_ID + "' target='_blank'>" + "创建已派发" + "</a>";
         } else {
             return "未创建";
         }
@@ -174,7 +182,7 @@
     $(document).ajaxSuccess(function () {
         var sendStatusArray = $("#contab").jqGrid("getCol", "SEND_STATUS", true);
         for (var i = 0; i < sendStatusArray.length; i++) {
-            if (sendStatusArray[i].value.indexOf("未创建") == -1 && sendStatusArray[i].value.indexOf("草稿") == -1) {
+            if (sendStatusArray[i].value.indexOf("未创建") == -1) {
                 var ckb = $("#jqg_contab_" + sendStatusArray[i].id);
                 ckb.attr("disabled", "disabled");
             }
@@ -188,6 +196,14 @@
                     i = $.jgrid.getCellIndex($(e.target).closest('td')[0]),
                     cm = $myGrid.jqGrid('getGridParam', 'colModel');
             return (cm[i].name === 'cb');
+        },
+        onSelectAll: function (aRowids, status) {
+
+            for (var i = 0; i < aRowids.length; i++) {
+                if ($("#jqg_contab_" + aRowids[i]).attr("disabled") == "disabled") {
+                    $("#jqg_contab_" + aRowids[i]).removeAttr("checked");
+                }
+            }
         },
 
         url: 'conc/concUnder',
@@ -251,29 +267,21 @@
             },
             success: function (fileName) {
                 $.artcloud.loading("close");
-                var wo_netype = "";
-                var lv2_con_id = $("#lv2_con_id").val();
+                var ids = grid.jqGrid('getGridParam', 'selarrrow');
+                var wo_netype = grid.jqGrid('getRowData', ids[0]).NETYPE;
+                var neNames = "";
+                for (var i = 0; i < ids.length; i++) {
+                    neNames += grid.jqGrid('getRowData', ids[i]).NENAME + ",";
+                }
 
-//        DNS服务器出错 DNS域名服务器不支持请求的类型 DNS拒绝服务
-                if (lv2_con_id == 10020005 || lv2_con_id == 10020006 || lv2_con_id == 10020007 || lv2_con_id == 10030008 || lv2_con_id == 10020008) {
-                    wo_netype = "DNS";
-                }
-//        核心侧·质量问题 核心侧·高负荷 核心侧·核查参数
-                else if (lv2_con_id == 10020002 || lv2_con_id == 10020001 || lv2_con_id == 10020009) {
-                    wo_netype = "MME";
-                }
-//        弱覆盖 质差小区 高负荷
-                else if (lv2_con_id == 10010001 || lv2_con_id == 10010002 || lv2_con_id == 10010003) {
-                    wo_netype = "小区";
-                }
-//        业务属网外资源
-                else if (lv2_con_id == 10050001) {
-                    wo_netype = "sp";
-                }
-                var url = "http://10.223.235.16:8804/eoms/eomsorder.jsp?typeId=2" +
+                var cityKey = $("#citySel").val() ;
+                cityKey  = provIdInView ? provIdInDB : cityKey;
+                var cityName = $("#citySel option:selected").html();
+                var url = host + "/eoms/eomsorder.jsp?typeId=2" +
                         "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
-                        "&neType=" + wo_netype + "&sendWay=人工派单&fileName=" + fileName +
-                        "&typeName=专题分析结论&typeSubName=客户感知溯源";
+                        "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
+                        "&sendWay=人工派单&fileName=" + fileName +
+                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
                 window.open(encodeURI(url));
             }
         });
@@ -340,7 +348,7 @@
     var lv1Sel = $("#lv1_con_id");
     var lv2Sel = $("#lv2_con_id");
 
-    var citySelStatus = 0;
+    var citySelStatus = -2;
 
     function selChange() {
         if (cityAjaxsecc == false || lvAjaxsecc == false) {
@@ -358,23 +366,23 @@
             }
 
             lv1Sel.click(function () {
-                if (ciSel.val() == -1) {
+                if (ciSel.val() == -2) {
                     alert("请先选择地市");
                 }
             });
             lv2Sel.click(function () {
-                if (ciSel.val() == -1) {
+                if (ciSel.val() == -2) {
                     alert("请先选择地市");
                 }
             });
             ciSel.change(function () {
-                if (ciSel.val() == -1) {
-                    citySelStatus = -1;
+                if (ciSel.val() == -2) {
+                    citySelStatus = -2;
                     lv1Sel.html('<option value="-1">一级结论</option>');
                     lv2Sel.html('<option value="-1">二级结论</option>');
                     $("#lv1_con_id_label").html("一级结论");
                     $("#lv2_con_id_label").html("二级结论");
-                } else if (ciSel.val() == 0) {
+                } else if (ciSel.val() == -1) {
                     if (citySelStatus != 0) {
                         initLv1ConSel(provData);
                         citySelStatus = 0;
@@ -393,9 +401,10 @@
         var cityhtml = "";
         for (var i = 0; i < d.length; i++) {
             var city = d[i];
-            cityhtml += '<option value="' + city.id + '">' + city.name + '</option>';
+
+            cityhtml += '<option value="' + (city.id == provIdInDB?provIdInView   : city.id) + '">' + city.name + '</option>';
         }
-        ciSel.html('<option value="-1">网元归属</option>' + cityhtml);
+        ciSel.html('<option value="-2">网元归属</option>' + cityhtml);
     }
 
     function initLv1ConSel(data) {

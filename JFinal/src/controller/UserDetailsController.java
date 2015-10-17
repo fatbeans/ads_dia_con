@@ -1,6 +1,7 @@
 package controller;
 
 import adapter.hbase.UserDetailHbaseAdapter;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
@@ -19,10 +20,12 @@ import model.UserDetHbaseEntity;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -267,7 +270,7 @@ public class UserDetailsController extends Controller {
     }
 
 
-    public void export() {
+    public void export() throws Exception {
 
         long sd = getParaToLong(("sd"), 20000101l);
         long ed = getParaToLong(("ed"), 21000101l);
@@ -278,13 +281,16 @@ public class UserDetailsController extends Controller {
         String fileName = ExcelExport.checkFileExists(prefix);
         if (fileName == null) {
 
-            String where = "where procedure_starttime >= ? and procedure_starttime < ? " + (msisdn == -1 ? "" : " and" +
-                    " " +
 
-                    "msisdn = " + msisdn);
+            Map<String, AppInfoEntity> appInfoEntityMap = getAppInfo();
+            List<UserDetHbaseEntity> list = UserDetailHbaseAdapter.getPage(msisdn + "", sd + "", ed + "");
+            joinAppName(appInfoEntityMap, list);
+            joinHttpStatus(list);
+            joinErrorCode(list);
 
-            List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd,
-                    ed);
+            JSONArray array = new JSONArray();
+            array.addAll(list);
+
             String[] headStr = {
                     "手机号码", "开始时间", "结束时间", "终端型号", "终端厂家", "业务大类", "业务小类", "访问站点", "详细站点",
                     "状态", "错误码", "上行流量", "下行流量", "平均响应时间", "APN", "网络类型", "服务小区"};
@@ -305,7 +311,7 @@ public class UserDetailsController extends Controller {
                     "apn",
                     "rat_code",
                     "cell_name"};
-            fileName = ExcelExport.exportExcelFile(list, prefix, headStr, key);
+            fileName = ExcelExport.exportExcelFile(array, prefix, headStr, key);
         }
         renderText(fileName);
     }
