@@ -315,23 +315,12 @@ public class WorkCotronller extends Controller {
      * @throws Exception
      */
     public void getTaskOne() throws Exception {
-        String workId = getPara("workId");
-        String sql = "select t1.WO_ID,t1.WO_TITLE,t1.CITY," +
-                "t2.DIC_NAME as WO_TYPE,t3.DIC_NAME as WO_TYPE_SUB," +
-                "t1.WO_RANGE as WO_RANGE,t1.WO_CONTENT,t1.WO_NETYPE," +
-                "t1.WO_SEND_WAY,to_char(t1.WO_CREATE_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_CREATE_TIME," +
-                "to_char(t1.WO_SEND_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_SEND_TIME," +
-                "t1.WO_SEND_DEPARTMENT,t1.RECEIVE_USER," +
-                "t1.EOMS_ID,t1.EOMS_STATUS, " +
-                "to_char(t1.WO_CLOSE_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_CLOSE_TIME," +
-                "t1.SEND_STATUS,t1.FILE_NAME,t1.DETAIL_URL from W_WORKORDER_INFO t1 " +
-                " left join WORK_DICTIONARY t2 on t1.WO_TYPE=t2.DIC_ID " +
-                " left join WORK_DICTIONARY t3 on t1.WO_TYPE_SUB=t3.DIC_ID where 1=1 ";
-        if (workId != null && !"".equals(workId)) {
-            sql += " and t1.WO_ID=" + workId;
-        }
+        String workId = getPara("wo_id");
+        String sql = PropKit.get("SELECT_SQL");
+
         Connection connection = DbKit.getConfig("orcl").getConnection();
         Statement statement = connection.createStatement();
+        sql = sql.replace("?", workId);
         List<Map<String, String>> countDatas = DbOpUtil.query(sql, statement);
         statement.close();
         connection.close();
@@ -364,3 +353,4 @@ public class WorkCotronller extends Controller {
         }
     }
 }
+

@@ -278,13 +278,12 @@ public class UserDetailsController extends Controller {
         String fileName = ExcelExport.checkFileExists(prefix);
         if (fileName == null) {
 
-            String where = "where procedure_starttime >= ? and procedure_starttime < ? " + (msisdn == -1 ? "" : " and" +
-                    " " +
-
+            String time_key = PropKit.get("WHERE_TIME_KEY");
+            String where = "where " + time_key + " >= ? and " + time_key + " < ? " + (msisdn == -1 ? "" : " and " +
                     "msisdn = " + msisdn);
 
-            List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd,
-                    ed);
+
+            List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd, ed);
             String[] headStr = {
                     "手机号码", "开始时间", "结束时间", "终端型号", "终端厂家", "业务大类", "业务小类", "访问站点", "详细站点",
                     "状态", "错误码", "上行流量", "下行流量", "平均响应时间", "APN", "网络类型", "服务小区"};

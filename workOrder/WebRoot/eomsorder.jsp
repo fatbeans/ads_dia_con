@@ -48,7 +48,7 @@
         function cityInput(source) {
 
             if (source.cityName != null && source.cityName != undefined && source.cityName != '') {
-
+                val2Html(source);
             } else {
                 $.ajax({
                     url: getQueryString("test") == "true" ? "./citySelectTest.json" : "./work/getCity",
@@ -66,6 +66,7 @@
                                 $("#cityKey").val($("#cityName option:selected").attr("citykey"));
                             });
                         }
+                        val2Html(source);
                     },
                     error: function () {
                         alert("获取地市错误");
@@ -77,7 +78,7 @@
         function rangeInput(source) {
 
             if (source.rangeName != null && source.rangeName != undefined && source.rangeName != '') {
-
+                val2Html(source);
             } else {
                 $.ajax({
                     url: getQueryString("test") == "true" ? "./citySelectTest.json" : "./work/getRange",
@@ -85,9 +86,6 @@
                     data: {workJson: $.toJSON(synchData)},
                     dataType: 'json',
                     success: function (data) {
-
-//                        jsonObject.put("rangeid", resultSet.getString(1));
-//                        jsonObject.put("rangename", resultSet.getString(2));
                         var h = "";
                         for (var i = 0; i < data.length; i++) {
                             h += "<option rangekey='" + data[i].rangeid + "' value ='" + data[i].rangename + "'>" +
@@ -98,6 +96,7 @@
                                 $("#rangeId").val($("#rangeName option:selected").attr("rangekey"));
                             });
                         }
+                        val2Html(source);
                     },
                     error: function () {
                         alert("获取问题对象列表数据错误");
@@ -106,24 +105,49 @@
             }
         }
 
+        function val2Html( source){
+            $("#eomsOrderTitle").val(source.eomsOrderTitle);
+            $("#typeName").val(source.typeName);
+            $("#typeSubName").val(source.typeSubName);
+            $("#cityName").val(source.cityName);
+            $("#rangeName").val(source.rangeName);
+            $("#neType").val(source.neType);
+            $("#sendWay").val(source.sendWay);
+            $("#content").val(source.content);
+            $("#eomsOrderId").val(source.eomsOrderId);
+            $("#cityKey").val(source.cityKey);
+            $("#typeId").val(source.typeId);
+            $("#typeSubId").val(source.typeSubId);
+            $("#rangeId").val(source.rangeId);
+            $("#neNames").val(source.neNames);
+            if (!(source.fileName == null || source.fileName == undefined || source.fileName == '')) {
+                $("#fileName").html(source.fileName);
+                $("#fileName").attr("href", downFileUrl + "?fileName=" + source.fileName);
+            }
+            if (!(source.wo_id == null || source.wo_id == undefined || source.wo_id == '')) {
+                $("#wo_id").val(source.wo_id);
+            }
+        }
+
 
         function initSourceFromAjax(data) {
             var source = {
                 "neNames": data.NENAME,
                 "eomsOrderId": data.EOMSORDERID,
-                "eomsOrderTitle": data.EOMSORDERTITLE,
-                "typeId": data.TYPEID,
-                "typeName": data.TYPENAME,
-                "typeSubId": data.TYPESUBID,
-                "typeSubName": data.TYPESUBNAME,
-                "cityKey": data.CITYKEY,
-                "cityName": data.CITYNAME,
-                "rangeName": data.RANGENAME,
-                "neType": data.NETYPE,
-                "sendWay": data.SENDWAY,
-                "content": data.CONTENT,
-                "fileName": data.FILENAME,
-                "rangeId": data.RANGEID,
+                "eomsOrderTitle": data.WO_TITLE,
+                "typeId": data.WO_TYPE,
+                "typeName": data.WO_NAME,
+                "typeSubId": data.WO_TYPE_SUB,
+                "typeSubName": data.WO_SUB_NAME,
+                "cityKey": data.CITY_KEY,
+                "cityName": data.CITY,
+                "rangeName": data.WO_RANGE,
+                "neType": data.WO_NETYPE,
+                "sendWay": data.WO_SEND_WAY,
+                "content": data.WO_CONTENT,
+                "fileName": data.FILE_NAME,
+                "rangeId": data.WO_RANGE_ID,
+                "send_status": data.SEND_STATUS,
                 "wo_id": data.WO_ID
             };
             return source;
@@ -142,34 +166,22 @@
                     dataType: 'json',
                     success: function (data) {
                         source = initSourceFromAjax(data);
+                        rangeInput(source);
+                        if(source.send_status==1){
+                            $("#saveBtn").hide();
+                            $("#submitBtn").hide();
+                        }
                     },
                 });
             } else {
+
                 var source= initSource();
-                cityInput(source);
+                alert(JSON.stringify(source));
                 rangeInput(source);
-                $("#eomsOrderTitle").val(source.eomsOrderTitle);
-                $("#typeName").val(source.typeName);
-                $("#typeSubName").val(source.typeSubName);
-                $("#cityName").val(source.cityName);
-                $("#rangeName").val(source.rangeName);
-                $("#neType").val(source.neType);
-                $("#sendWay").val(source.sendWay);
-                $("#content").val(source.content);
-                $("#eomsOrderId").val(source.eomsOrderId);
-                $("#cityKey").val(source.cityKey);
-                $("#typeId").val(source.typeId);
-                $("#typeSubId").val(source.typeSubId);
-                $("#rangeId").val(source.rangeId);
-                $("#neNames").val(source.neNames);
-                if (!(source.fileName == null || source.fileName == undefined || source.fileName == '')) {
-                    $("#fileName").html(source.fileName);
-                    $("#fileName").attr("href", downFileUrl + "?fileName=" + source.fileName);
-                }
-                if (!(source.wo_id == null || source.wo_id == undefined || source.wo_id == '')) {
-                    $("#wo_id").val(source.wo_id);
-                }
+
             }
+
+
 
 
             $("#submitBtn").click(function () {
@@ -200,6 +212,8 @@
                     success: function (data) {
                         $("#wo_id").val(data.workId);
                         alert("工单提交成功！");
+                        $("#submitBtn").hide();
+                        $("#saveBtn").hide();
                     },
                     error: function () {
                         alert("工单提交失败！");

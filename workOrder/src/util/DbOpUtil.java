@@ -20,7 +20,7 @@ public class DbOpUtil {
             Map<String, String> row = new HashMap<String, String>();
             for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
                 if(resultSet.getString(i+1)!=null) {
-                    row.put(resultSet.getMetaData().getColumnLabel(i + 1), resultSet.getString(i + 1));
+                    row.put(resultSet.getMetaData().getColumnLabel(i + 1).toUpperCase(), resultSet.getString(i + 1));
                 }
             }
             list.add(row);
