@@ -115,12 +115,19 @@
         return null;
     }
 
+    $(document).ajaxError(function (event,XMLHttpRequest) {
+
+        if (XMLHttpRequest.status == 488) {
+            alert("未能查找到号码" + $("#msisdn").val() + "对应的IMSI");
+        }
+    });
+
 
     $("#ltetab").jqGrid({
         url: 'user_det/searchLTE',
         datatype: 'local',
         colNames: ['手机号码', '开始时间', '结束时间', '终端型号', '终端厂家', '业务大类', '业务小类', '访问站点', '详细站点',
-            '状态', '错误码','英文解释','中文解释', '上行流量(B)', '下行流量(B)', '平均响应时间(ms)', 'APN', '网络类型', '服务小区', '终端系统', '支持2G',
+            '状态', '错误码', '英文解释', '中文解释', '上行流量(B)', '下行流量(B)', '平均响应时间(ms)', 'APN', '网络类型', '服务小区', '终端系统', '支持2G',
             '支持3G',
             '支持4G'],
         colModel: [
@@ -205,6 +212,8 @@
             return true;
         }
     }
+
+
 
     if (getQueryString("q") != null) {
 

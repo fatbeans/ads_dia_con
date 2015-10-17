@@ -65,7 +65,7 @@
             <input id="imsi" type="text" class="w100" style="padding-left: 45px" placeholder="">
         </div>
         <a href="#" id="psb" class="btn btn-search vm mb10" title="无号码则查询时间段内所有设诉数据，且不查询投诉履历">
-            <span class="searchicon" ><i class="uicon ui-search" ></i></span> 查询
+            <span class="searchicon"><i class="uicon ui-search"></i></span> 查询
         </a>
     </div>
     <!-- 搜索-e -->
@@ -197,7 +197,7 @@
         var sessionid = cellvalue;
         var mdn = rowObject.MDN;
         var val =
-                "<a target='_blank' href='http://10.238.75.70:8806/sv/indexcust?q=true&sd=" + sd + "&ed=" + ed + "&msisdn=" + mdn +
+                "<a target='_blank' href='http://10.223.235.16:8806/sv/indexcust?q=true&sd=" + sd + "&ed=" + ed + "&msisdn=" + mdn +
                 "&sessionid=" +
                 sessionid + "' class='btn btn-small btn-primary'>查看详情</a>";
         return val;

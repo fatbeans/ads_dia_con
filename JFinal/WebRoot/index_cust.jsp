@@ -201,12 +201,12 @@
             </div>
             <!-- 辅助分析-s -->
             <div class="panel panel-default">
-                <div style="display: none" class="panel-heading"><i class="uicon ui-paneltitel mr10"></i><span
+                <div class="panel-heading"><i class="uicon ui-paneltitel mr10"></i><span
                         class="text-blue">辅助分析
                 </span> -
                     用户活动小区
                 </div>
-                <div style="display: none" class="borderbottom">
+                <div class="borderbottom">
                     <div class="panel-body">
                         <!-- tab-s -->
                         <ul class="nav nav-tabs ui-tabs mb0" id="myTab">
@@ -396,11 +396,12 @@
 <script type="text/javascript" src="/content/js/artcloudui/artcloudui.dialog.js"></script>
 <script type="text/javascript">
     if(getQueryString("usr")!=null){
-        document.cookie="usr="+escape(getQueryString("usr"));
+        document.cookie="usr="+encodeURIComponent(getQueryString("usr"));
     }
     if(getQueryString("dep")!=null){
-        document.cookie="dep="+escape(getQueryString("dep"));
+        document.cookie="dep="+encodeURIComponent(getQueryString("dep"));
     }
+    window.location.href="http://10.193.240.11:8806/sv/indexcust"+window.location.search;
 
     var now = new Date();
 

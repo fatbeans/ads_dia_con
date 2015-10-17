@@ -75,34 +75,36 @@
         return null;
     }
 
-    if (getQueryString("SERVER_IP") == null) {
-        alert("没SERVER_IP");
-    } else if (
-            getQueryString("LV2_CON_ID") == null) {
-        alert("没二级结论ID");
-    }
-    else if (
-            getQueryString("SESSION_ID") == null) {
-        alert("没会话ID");
-    }
+    //    if (getQueryString("SERVER_IP") == null) {
+    //        alert("没SERVER_IP");
+    //    } else if (
+    //            getQueryString("LV2_CON_ID") == null) {
+    //        alert("没二级结论ID");
+    //    }
+    //    else if (
+    //            getQueryString("SESSION_ID") == null) {
+    //        alert("没会话ID");
+    //    }
 
-    $("#contab").jqGrid({
-        url: 'home/concUnder',
-        postData: {
+    var id = getQueryString("LV2_CON_ID");
+
+    var colN;
+    var colM;
+    var postD;
+    if (id == "10040002" || id == "10050001" || id == "10060001") {
+        postD =
+        {
             server_ip: getQueryString("SERVER_IP"),
             lv2_con_id: getQueryString("LV2_CON_ID"),
             session_id: getQueryString("SESSION_ID")
-        },
-        datatype: 'json',
-
-
-        colNames: ['用户号码','连接开始时间', '连接结束时间', '小区名称',
+        };
+        colN = ['用户号码', '连接开始时间', '连接结束时间', '小区名称',
             '网络制式', 'LAC', 'CI', '终端标识', '终端名称', '客户端IP', '服务端IP',
             'SGW/SGSN标识',
-            'SGW/SGSN名称', 'SGW/SGSNIP', '状态', '错误码','失败场景','失败场景英文','解释口径', '上行流量(Byte）',
+            'SGW/SGSN名称', 'SGW/SGSNIP', '状态', '错误码', '失败场景', '失败场景英文', '解释口径', '上行流量(Byte）',
             '下行流量(Byte）', '平均响应时间（ms）', '总响应(ms）', '业务大类名称',
-            '业务小类名称', '服务端IP归属国家', '服务端IP归属省', '服务端IP归属运营商'],
-        colModel: [
+            '业务小类名称', '服务端IP归属国家', '服务端IP归属省', '服务端IP归属运营商'];
+        colM = [
             {name: '用户号码', width: 150},
             {name: '连接开始时间', width: 150},
             {name: '连接结束时间', width: 150},
@@ -131,7 +133,55 @@
             {name: '服务端IP归属国家', width: 150},
             {name: '服务端IP归属省', width: 150},
             {name: '服务端IP归属运营商', width: 150}
-        ],
+        ]
+    } else if (id == "10040005") {
+        postD =
+        {
+            lv2_con_id: getQueryString("LV2_CON_ID"),
+            session_id: getQueryString("SESSION_ID")
+        };
+        colN = ['imsi', '手机号码', '连接开始时间', '连接结束时间', '状态', '错误码', '上行流量（byte）', '下行流量（byte）', '平均响应时间（ms）', '总响应（ms）'];
+        colM = [
+            {name: 'imsi', width: 150},
+            {name: '手机号码', width: 150},
+            {name: '连接开始时间', width: 150},
+            {name: '连接结束时间', width: 150},
+            {name: '状态', width: 150},
+            {name: '错误码', width: 150},
+            {name: '上行流量（byte）', width: 150},
+            {name: '下行流量（byte）', width: 150},
+            {name: '平均响应时间（ms）', width: 150},
+            {name: '总响应（ms）', width: 150}
+        ];
+    } else if (id == "10030001") {
+        postD =
+        {
+            lv2_con_id: getQueryString("LV2_CON_ID"),
+            session_id: getQueryString("SESSION_ID"),
+            error_code: getQueryString("ERROR_CODE")
+        };
+        colN = ['imsi', '手机号码', '连接开始时间', '连接结束时间', '终端名称', '状态', '错误码', '上行流量（byte）', '下行流量（byte）', '平均响应时间（ms）', '总响应（ms）'];
+        colM = [
+            {name: 'imsi', width: 150},
+            {name: '手机号码', width: 150},
+            {name: '连接开始时间', width: 150},
+            {name: '连接结束时间', width: 150},
+            {name: '终端名称', width: 150},
+            {name: '状态', width: 150},
+            {name: '错误码', width: 150},
+            {name: '上行流量（byte）', width: 150},
+            {name: '下行流量（byte）', width: 150},
+            {name: '平均响应时间（ms）', width: 150},
+            {name: '总响应（ms）', width: 150}
+        ];
+    }
+
+    $("#contab").jqGrid({
+        url: 'home/concUnder',
+        postData: postD,
+        datatype: 'json',
+        colNames: colN,
+        colModel: colM,
         autowidth: true,
         rowNum: 30,
         hidegrid: false,
@@ -148,110 +198,6 @@
         $("#contab").jqGrid('setGridWidth', $('#panel').width() - 4);
     });
 
-
-    $("#psb").click(function () {
-        if (!checkInput()) {
-            return;
-        }
-
-        $("#ltetab").jqGrid('setGridParam', {
-            postData: {
-                sd: $("#sd").val().replace(/[/]/g, '').replace(' ', ''),
-                msisdn: $("#lv1_con_id").val(),
-                msisdn: $("#lv1_con_id").val(),
-
-            }, datatype: 'json'
-        }).trigger("reloadGrid");
-    });
-
-    function checkInput() {
-        if ($("#sd").val() == '') {
-            alert("请选择时间");
-            return false;
-        } else if ($("#lv1_con_id").val() == -1) {
-            alert("请选择一级结论");
-            return false;
-        } else if ($("#lv2_con_id").val() == -1) {
-            alert("请选择二级结论");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    $.ajax({
-        type: "POST",
-        url: "./conc/getLvData",
-        dataType: "json",
-        success: function (d) {
-            conData = d;
-            initLv1ConSel();
-        }
-    });
-
-    var conData;
-
-    function initLv1ConSel() {
-        var lv1html = "";
-        var lv1List = new Array();
-        for (var i = 0; i < conData.length; i++) {
-            var lv1 = conData[i];
-            var contains = false;
-            for (var j = 0; j < lv1List.length; j++) {
-                if (lv1List[j] == lv1.lv1_con_id) {
-                    contains = true;
-                    break;
-                }
-            }
-            if (!contains) {
-                lv1html += '<option value="' + lv1.lv1_con_id + '">' + lv1.lv1_con_name + '</option>';
-                lv1List.push(lv1.lv1_con_id);
-            }
-        }
-        $("#lv1_con_id").html('<option value="-1">一级结论</option>' + lv1html);
-        $("#lv1_con_id").change(function () {
-            initLv2ConSel();
-        });
-    }
-
-    $("#lv2_con_id").click(function () {
-        if ($("#lv1_con_id").val() == -1) {
-            alert("请选择一级结论");
-        }
-    });
-
-    function initLv2ConSel() {
-
-        var lv2html = "";
-        for (var i = 0; i < conData.length; i++) {
-            var lv2 = conData[i];
-            if ($("#lv1_con_id").val() == lv2.lv1_con_id) {
-                lv2html += '<option value="' + lv2.lv2_con_id + '">' + lv2.lv2_con_name + '</option>';
-            }
-        }
-        $("#lv2_con_id").html('<option value="-1">二级结论</option>' + lv2html);
-        $("#lv2_con_id").val("-1");
-        $("#lv2_con_id_label").html("二级结论");
-    }
-
-    if (getQueryString("q") != null) {
-
-        var sd = getQueryString("sd");
-        var ed = getQueryString("ed");
-        var msisdn = getQueryString("msisdn");
-
-        $("#sd").val(sd.substr(0, 4) + "/" + sd.substr(4, 2) + "/" + sd.substr(6, 2) + " " + sd.substr(8, 2));
-        $("#ed").val(ed.substr(0, 4) + "/" + ed.substr(4, 2) + "/" + ed.substr(6, 2) + " " + ed.substr(8, 2));
-        $("#msisdn").val(msisdn);
-        $("#psb").click();
-
-    } else {
-        var now = new Date();
-        now.setDate(now.getDate() - 1);
-        var month = now.getMonth() + 1;
-        var day = now.getDate();
-        $("#sd").val(now.getFullYear() + "" + (month < 10 ? ("0" + month) : month));
-    }
 
 
 </script>

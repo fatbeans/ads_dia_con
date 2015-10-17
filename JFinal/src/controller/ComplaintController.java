@@ -1,10 +1,8 @@
 package controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
-import com.jfinal.plugin.activerecord.Db;
 import dao.ComplaintDao;
 import dao.Pager;
 import dao.UserDetailsDao;
@@ -42,7 +40,7 @@ public class ComplaintController extends Controller {
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
         long msisdn = getParaToLong(("msisdn"), -1l);
-        if(msisdn==-1){
+        if (msisdn == -1) {
             render("");
             return;
         }
@@ -64,7 +62,6 @@ public class ComplaintController extends Controller {
         String jsonStr = pager.toJsonString();
         renderJson(jsonStr);
     }
-
 
     public void searchHistory() {
         int page = getParaToInt("page", 1);
@@ -90,26 +87,36 @@ public class ComplaintController extends Controller {
         pager.setSize(size);
         System.out.println("page Para:" + msisdn + "|" + sd + "|" + ed);
 
-        String pageSql = StringUtils.isNotBlank(msisdn) ? PropKit.get("COMP_SQL_PAGE").replaceFirst("\\?", msisdn)
-                .replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")) : StringUtils.replaceOnce(PropKit.get
-                ("COMP_SQL_PAGE"), PropKit.get("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst
-                ("\\?",
-                (ed + ""));
+        String pageSql = PropKit.get("COMP_SQL_PAGE");
+
+        if (StringUtils.isBlank(business_class)) {
+            pageSql = pageSql.replace(PropKit.get("COMP_WHERE_BUSINESS"), " ");
+        }
+
+
+        pageSql = StringUtils.isNotBlank(msisdn) ? pageSql.replaceFirst("\\?", msisdn)
+                .replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")).replaceFirst("\\%\\?\\%", "%" +
+                        business_class + "%") : StringUtils.replaceOnce(pageSql, PropKit.get
+                ("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + ""))
+                .replaceFirst("\\%\\?\\%", "%" + business_class + "%");
         System.out.println(pageSql);
         ComplaintDao complaintDao = ComplaintDao.dao.findFirst(pageSql);
         String cnt = complaintDao.get("cnt") == null ? complaintDao.get("CNT").toString() : complaintDao.get("cnt")
                 .toString();
         pager.setRecords(NumberUtils.toLong(cnt, 0));
-
         if (pager.getRecords() == 0) {
             pager.setRows(new ArrayList<ComplaintDao>(0));
         } else {
+            String sql = StringUtils.isBlank(business_class) ? PropKit.get("COMP_SQL").replace(PropKit.get
+                    ("COMP_WHERE_BUSINESS"), " ") : PropKit.get("COMP_SQL");
+
             if (StringUtils.isNotBlank(msisdn)) {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, PropKit.get("COMP_SQL")),
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size,sql )
+                                .replaceFirst("\\%\\?\\%", "%" + business_class + "%"),
                         msisdn, sd, ed));
             } else {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce( PropKit.get
-                        ("COMP_SQL"), PropKit.get("COMP_WHERE_MDN"), " ")), sd, ed));
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql, PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
+                        business_class + "%"), sd, ed));
             }
         }
 
