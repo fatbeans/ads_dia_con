@@ -310,7 +310,7 @@
 
         showHideCol();
     });
-    $(document).ajaxError(function (event, XMLHttpRequest) {
+    $(document).ajaxError(function (event,XMLHttpRequest) {
 
         if (XMLHttpRequest.status == 488) {
             alert("未能查找到号码" + $("#msisdn").val() + "对应的IMSI");
