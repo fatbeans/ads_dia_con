@@ -36,7 +36,7 @@ public class ConclusionStatController extends Controller {
             preparedStatement.close();
             connection.close();
             return imsi;
-        }else{
+        } else {
             resultSet.close();
             preparedStatement.close();
             connection.close();
@@ -107,11 +107,11 @@ public class ConclusionStatController extends Controller {
         String sd = getPara("sd", DateFormatUtils.format(new Date(), "yyyyMMdd"));
         String ed = getPara("ed", DateFormatUtils.format(new Date(), "yyyyMMdd"));
         long msisdn = getParaToLong("msisdn", 0l);
-        if((msisdn+"").length()==11) {
-            String imsi = mdn2Imsi(msisdn+"");
-            if(imsi == null){
+        if ((msisdn + "").length() == 11) {
+            String imsi = mdn2Imsi(msisdn + "");
+            if (imsi == null) {
                 renderError(488);
-            }else {
+            } else {
                 msisdn = NumberUtils.toLong(imsi, 0l);
             }
         }
@@ -122,7 +122,7 @@ public class ConclusionStatController extends Controller {
 
         List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
-        getCtlCellData(sd,ed, lv2_con_id, data, cityId,msisdn);
+        getCtlCellData(sd, ed, lv2_con_id, data, cityId, msisdn);
 
 
         JSONObject json = new JSONObject();
@@ -154,7 +154,8 @@ public class ConclusionStatController extends Controller {
         preparedStatement.close();
     }
 
-    private void getCtlCellData(String sd,String ed, long lv2_con_id, List<Map<String, String>> data, int cityId,long msisdn)
+    private void getCtlCellData(String sd, String ed, long lv2_con_id, List<Map<String, String>> data, int cityId,
+                                long msisdn)
             throws
             SQLException {
         String sql = PropKit.get("VIEW_LIST_STAT");
@@ -254,9 +255,8 @@ public class ConclusionStatController extends Controller {
         if (jsStr != null) {
             JSONArray array = JSONArray.parseArray(jsStr);
 
-            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次", "问题时段数", "问题时段占比%", "解决措施"};
-            String[] key = new String[]{"NETYPE", "NENAME", "NECITY", "LV2_CON_NAME", "SCNT", "TCNT", "TIMEPERCENT",
-                    "SOLWAY"};
+            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次" };
+            String[] key = new String[]{"NETYPE", "NENAME", "NECITY", "LV2_CON_NAME", "SCNT" };
 
             String fileName = PropKit.get("FILE_PRE") + DateFormatUtils.format(new Date(),
                     "yyyyMmddHHmmssSSS") + ".xlsx";
