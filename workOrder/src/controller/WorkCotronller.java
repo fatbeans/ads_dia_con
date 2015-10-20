@@ -11,10 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import util.DbOpUtil;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +55,33 @@ public class WorkCotronller extends Controller {
         renderJson(array.toJSONString());
     }
 
+    public void addNeEomsOrder(String neType, String neNames, String woId) throws SQLException {
+        System.out.println("开始插入");
+
+        String sql = "insert into rel_wo_conc(ne_type, ne_name,  wo_id) values (?,?,?)";
+
+        Connection connection = DbKit.getConfig().getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        connection.setAutoCommit(false);
+        for (String neName : StringUtils.split(neNames, ",")) {
+            System.out.println(neName);
+            if (StringUtils.isNotBlank(neName)) {
+                preparedStatement.setString(1, neType);
+                preparedStatement.setString(2, neName.trim());
+                preparedStatement.setString(3, woId);
+                preparedStatement.addBatch();
+            }
+        }
+
+        preparedStatement.executeBatch();
+        connection.commit();
+        connection.setAutoCommit(true);
+        preparedStatement.close();
+        connection.close();
+        System.out.println("插入完毕");
+
+    }
+
     public void getCity() throws SQLException {
         String sql = PropKit.get("CITY_SQL");
         Connection connection = DbKit.getConfig().getConnection();
@@ -85,17 +109,62 @@ public class WorkCotronller extends Controller {
      * @throws SQLException
      */
     public void addWork() throws SQLException {
-        String workId = null;
+        String workId = getPara("wo_id");
+        String neNames = getPara("neNames");
         EomsOrder workObj = EomsOrder.initEomsOrder(getParaMap());
 
+        boolean update = false;
 
+        if (StringUtils.isNotBlank(workId)) {
+            update = checkExists(workId);
+        } else {
+            update = false;
+        }
+
+        if (!update) {
+            workId = addWrokData(workId, workObj);
+            addNeEomsOrder(workObj.getNeType(),neNames,workId);
+        } else {
+            workId = updateWrokData(workId, workObj);
+        }
+
+        JSONObject res = new JSONObject();
+        res.put("workId", workId);
+
+        renderJson(res.toJSONString());
+    }
+
+    private String updateWrokData(String workId, EomsOrder workObj) throws SQLException {
+        String orderSql = "update  W_WORKORDER_INFO set CITY_KEY = ?, CITY = ?, WO_RANGE_ID = ? , WO_RANGE = ?, " +
+                "WO_CONTENT = ?, WO_NETYPE =  ?,SEND_STATUS=? where wo_id = " + workId;
+        Connection connection = DbKit.getConfig("orcl").getConnection();
+        PreparedStatement statement = connection.prepareStatement(orderSql);
+        try {
+            statement.setString(1, workObj.getCityKey());
+            statement.setString(2, workObj.getCityName());
+            statement.setString(3, workObj.getRangeId());
+            statement.setString(4, workObj.getRangeName());
+            statement.setString(5, workObj.getContent());
+            statement.setString(6, workObj.getNeType());
+            statement.setString(7, workObj.getSendStatus());
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        statement.close();
+        connection.close();
+        return workId;
+    }
+
+
+    private String addWrokData(String workId, EomsOrder workObj) throws SQLException {
         Connection connection = DbKit.getConfig("orcl").getConnection();
         Statement statement = connection.createStatement();
         try {
             String workIdSql = "select SEQ_W_WORKORDER_INFO.nextval as WORKID from dual";
             List<Map<String, String>> workIdData = DbOpUtil.query(workIdSql, statement);
             workId = workIdData.get(0).get("WORKID");
-            workObj.setDetailUrl(PropKit.get("DETAIL_URL")+"?workId="+workId);
+            workObj.setDetailUrl(PropKit.get("DETAIL_URL") + "?workId=" + workId);
 
             String workTitleIndexSql = "select SEQ_WORKORDER_TITLE_INDEX.nextval as TITLEINDEX from dual";
             List<Map<String, String>> workIndexData = DbOpUtil.query(workTitleIndexSql, statement);
@@ -110,18 +179,34 @@ public class WorkCotronller extends Controller {
                     workObj.getCityKey() + ",'" + workObj.getCityName() + "'," + workObj.getTypeId() + "," +
                     workObj.getTypeSubId() + "," + workObj.getRangeId() + ",'" + workObj.getRangeName() + "'," +
                     "'" + workObj.getContent() + "','" + workObj.getNeType() + "','" + workObj.getSendWay() + "'," +
-                    "sysdate,1,'" + workObj.getFileName() + "','" + workObj.getDetailUrl() + "')";
+                    "sysdate," + workObj.getSendStatus() + ",'" + workObj.getFileName() + "','" + workObj
+                    .getDetailUrl() + "')";
             DbOpUtil.exec(orderSql, statement);
         } catch (Exception e) {
             e.printStackTrace();
         }
         statement.close();
         connection.close();
+        return workId;
+    }
 
-        JSONObject res = new JSONObject();
-        res.put("workId", workId);
 
-        renderJson(res.toJSONString());
+    private boolean checkExists(String workId) throws SQLException {
+
+        String sql = PropKit.get("EXIST_WORK_SQL");
+        Connection connection = DbKit.getConfig("orcl").getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, workId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        boolean isExists = false;
+        if (resultSet.next()) {
+            isExists = resultSet.getInt(1) > 0 ? true : false;
+        } else {
+            isExists = false;
+        }
+        return isExists;
+
+
     }
 
 
@@ -230,23 +315,12 @@ public class WorkCotronller extends Controller {
      * @throws Exception
      */
     public void getTaskOne() throws Exception {
-        String workId = getPara("workId");
-        String sql = "select t1.WO_ID,t1.WO_TITLE,t1.CITY," +
-                "t2.DIC_NAME as WO_TYPE,t3.DIC_NAME as WO_TYPE_SUB," +
-                "t1.WO_RANGE as WO_RANGE,t1.WO_CONTENT,t1.WO_NETYPE," +
-                "t1.WO_SEND_WAY,to_char(t1.WO_CREATE_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_CREATE_TIME," +
-                "to_char(t1.WO_SEND_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_SEND_TIME," +
-                "t1.WO_SEND_DEPARTMENT,t1.RECEIVE_USER," +
-                "t1.EOMS_ID,t1.EOMS_STATUS, " +
-                "to_char(t1.WO_CLOSE_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_CLOSE_TIME," +
-                "t1.SEND_STATUS,t1.FILE_NAME,t1.DETAIL_URL from W_WORKORDER_INFO t1 " +
-                " left join WORK_DICTIONARY t2 on t1.WO_TYPE=t2.DIC_ID " +
-                " left join WORK_DICTIONARY t3 on t1.WO_TYPE_SUB=t3.DIC_ID where 1=1 ";
-        if (workId != null && !"".equals(workId)) {
-            sql += " and t1.WO_ID=" + workId;
-        }
+        String workId = getPara("wo_id");
+        String sql = PropKit.get("SELECT_SQL");
+
         Connection connection = DbKit.getConfig("orcl").getConnection();
         Statement statement = connection.createStatement();
+        sql = sql.replace("?", workId);
         List<Map<String, String>> countDatas = DbOpUtil.query(sql, statement);
         statement.close();
         connection.close();
@@ -263,7 +337,7 @@ public class WorkCotronller extends Controller {
         String filePath = PropKit.get("FILE_PATH");
 
         String fileName = getPara("fileName");
-        if (StringUtils.isBlank(fileName)||fileName.equals("null")) {
+        if (StringUtils.isBlank(fileName) || fileName.equals("null")) {
             System.out.println("文件名" + fileName + "异常");
             renderError(403);
         }
@@ -279,3 +353,4 @@ public class WorkCotronller extends Controller {
         }
     }
 }
+
