@@ -275,14 +275,14 @@
                 }
 
                 var cityKey = $("#citySel").val() ;
-                cityKey  = provIdInView ? provIdInDB : cityKey;
+
                 var cityName = $("#citySel option:selected").html();
-                var url = host + "/eoms/eomsorder.jsp?typeId=2" +
+                var url = "http://"+host + "/eoms/eomsorder.jsp?typeId=2" +
                         "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
                         "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
                         "&sendWay=人工派单&fileName=" + fileName +
                         "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
-                window.open(encodeURI(url));
+window.open(encodeURI(url));
             }
         });
 
@@ -382,13 +382,13 @@
                     lv2Sel.html('<option value="-1">二级结论</option>');
                     $("#lv1_con_id_label").html("一级结论");
                     $("#lv2_con_id_label").html("二级结论");
-                } else if (ciSel.val() == -1) {
-                    if (citySelStatus != 0) {
+                } else if (ciSel.val() == 0) {
+                    if (citySelStatus == -2) {
                         initLv1ConSel(provData);
                         citySelStatus = 0;
                     }
                 } else {
-                    if (citySelStatus != 1) {
+                    if (citySelStatus != 0) {
                         initLv1ConSel(cityData);
                         citySelStatus = 1;
                     }
@@ -402,7 +402,7 @@
         for (var i = 0; i < d.length; i++) {
             var city = d[i];
 
-            cityhtml += '<option value="' + (city.id == provIdInDB?provIdInView   : city.id) + '">' + city.name + '</option>';
+            cityhtml += '<option value="' + (city.id) + '">' + city.name + '</option>';
         }
         ciSel.html('<option value="-2">网元归属</option>' + cityhtml);
     }
@@ -516,7 +516,7 @@
         var now = new Date();
         var month = now.getMonth() + 1;
         var day = now.getDate();
-        $("#sd").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/1");
+        $("#sd").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/01");
         $("#ed").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/" + now.getDate());
     }
 

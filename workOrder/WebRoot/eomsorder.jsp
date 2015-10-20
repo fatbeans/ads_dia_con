@@ -1,13 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>添加EOMS工单</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/content.css"/>
     <link rel="stylesheet" href="css/style.css"/>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.json-2.4.min.js"></script>
+	<script type="text/javascript" src="js/plugins.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+
     <script type="text/javascript" >
 
         function getQueryString(name) {
@@ -60,7 +65,7 @@
                         for (var i = 0; i < data.length; i++) {
                             h += "<option citykey='" + data[i].citykey + "' value ='" + data[i].cityname + "'>" +
                                     data[i].cityname + "</option> ";
-                            $("#citySelect").html("<select id='cityName' name='CityName' type='text' style='width: 200px;'>" + h + "</select>");
+                            $("#citySelect").html("<select id='cityName' class='select'  name='CityName' type='text' style='width: 200px;'>" + h + "</select>");
                             $("#cityKey").val($("#cityName option:selected").attr("citykey"));
                             $("#cityName").change(function () {
                                 $("#cityKey").val($("#cityName option:selected").attr("citykey"));
@@ -89,7 +94,7 @@
                                 data[i].rangename + "</option> ";
 
                     }
-                    $("#rangeSelect").html("<select id='rangeName' name='RangeName' type='text' style='width: 200px;'>" + h + "</select>");
+                    $("#rangeSelect").html("<select id='rangeName' class='select'  name='RangeName'>" + h + "</select>");
                     $("#rangeId").val($("#rangeName option:selected").attr("rangekey"));
                     $("#rangeName").change(function () {
                         $("#rangeId").val($("#rangeName option:selected").attr("rangekey"));
@@ -264,59 +269,72 @@
     </script>
 </head>
 <body>
-<table class="conditionTable">
-    <tr>
-        <td class="title">任务主题:</td>
-        <td colspan="3"><input id="eomsOrderTitle"
-                               name="EomsOrderTitle" type="text" style="width: 508px;"/></td>
-    </tr>
-    <tr>
-        <td class="title">任务大类:</td>
-        <td><input id="typeName" name="TypeName" type="text"
-                   style="width: 200px;"/></td>
-        <td class="title">任务子类:</td>
-        <td><input id="typeSubName" name="TypeSubName" type="text"
-                   style="width: 200px;"/></td>
-    <tr>
-    <tr>
-        <td class="title">地市:</td>
-        <td id="citySelect"><input id="cityName" name="CityName" type="text"
-                                   style="width: 200px;" readonly="readonly"/></td>
-        <td class="title">问题对象:</td>
-        <td id="rangeSelect"><input id="rangeName" name="RangeName" type="text"
-                                    style="width: 200px;" readonly="readonly"/></td>
-    <tr>
-    <tr>
-        <td class="title">任务处理对象:</td>
-        <td><input id="neType" name="NetType" type="text"
-                   style="width: 200px;"/></td>
-        <td class="title">派单方式:</td>
-        <td><input id="sendWay" name="SendWay" type="text"
-                   style="width: 200px;"/></td>
-    <tr>
-    <tr>
-        <td class="title">派单内容:</td>
-        <td colspan="3"><textarea id="content" name="Content"
-                                  style="width: 508px; height: 100px;"></textarea></td>
-    </tr>
-    <tr>
-        <td class="title">附件名称:</td>
-        <td colspan="3"><a id="fileName" tyle="width: 200px;color:blue;cursor:pointer;">无附件</a></td>
-    <tr>
-    <tr>
-        <td colspan="4" style="text-align: center;"><input
-                id="saveBtn" type="button" value="保存" class="myButton"/>&nbsp;&nbsp;
-            <input
-                    id="submitBtn" type="button" value="提交" class="myButton"/></td>
+<div class="padding-30">
+    <div class="animated fadeInDown pr">
+        <div class="inlininput mr10">
+            <label class="S-label">任务主题</label>
+            <input id="eomsOrderTitle" type="text" class="w500" placeholder="" value="" maxlength="11">
+        </div>
+    </div>
+    <div class="animated fadeInDown pr">
+        <div class="inlininput mr10">
+            <label class="S-label">任务大类</label>
+            <input id="typeName" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
+        </div>
+        <div class="inlininput mr10">
+            <label class="S-label">任务子类</label>
+            <input id="typeSubName" type="text"  style="width: 204px;" placeholder="" value="" maxlength="11">
+        </div>
+    </div>
+    <div class="animated fadeInDown pr">
+        <div class="inlininput mr10"  >
+            <label class="S-label">地市</label>
+            
+                <input id="cityName" type="text"   style="width: 204px;"  placeholder="" value="" maxlength="11">
+        </div>
+        <div class="sel_wrap mb10 mr10" style="width: 280px;">
+            <label>问题对象</label>
+            <span id="rangeSelect"><input id="rangeName" name="RangeName" type="text" readonly="readonly"/></span>
+            <a class="sel-link"><i class="icon-arrow"></i></a>
+        </div>
+    </div>
+    <div class="animated fadeInDown pr">
+        <div class="inlininput mr10">
+            <label class="S-label">任务处理对象</label>
+            <input id="neType" type="text" style="padding-left: 98px;width: 177px;" placeholder="" value="" maxlength="11">
+        </div>
+        <div class="inlininput mr10">
+            <label class="S-label">派单方式</label>
+            <input id="sendWay" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
+        </div>
+    </div>
 
-    </tr>
-</table>
-<input type="hidden" id="eomsOrderId" name="EomsOrderID" >
-<input type="hidden" id="cityKey" name="CityKey">
-<input type="hidden" id="typeId" name="TypeID">
-<input type="hidden" id="typeSubId" name="TypeSubID">
-<input type="hidden" id="rangeId" name="RangeID">
-<input type="hidden" id="wo_id" name="wo_id">
-<input type="hidden" id="neNames" name="neNames">
+    <div class="animated fadeInDown pr">
+        <div class="inlininput mr10">
+            <label class="S-label">派单内容</label>
+            <textarea id="content" name="Content" style="width: 563px; height: 180px; padding: 29px 7px 7px 7px;"></textarea>
+        </div>
+    </div>
+
+    <div class="animated fadeInDown pr" style="height: 35px;margin: 10px 0;">
+        <div class="inlininput mr10 w500">
+            <label class="S-label">附件名称:</label>
+            <a href="#" id="fileName" style="margin-left: 75px;line-height: 35px;">无附件</a>
+        </div>
+    </div>
+
+    <div class="animated fadeInDown pr">
+        <input id="saveBtn" type="button" value="保存" class="myButton btn btn-primary"/>&nbsp;&nbsp;
+        <input id="submitBtn" type="button" value="提交" class="myButton btn btn-danger"/>
+    </div>
+
+    <input type="hidden" id="eomsOrderId" name="EomsOrderID" >
+    <input type="hidden" id="cityKey" name="CityKey">
+    <input type="hidden" id="typeId" name="TypeID">
+    <input type="hidden" id="typeSubId" name="TypeSubID">
+    <input type="hidden" id="rangeId" name="RangeID">
+    <input type="hidden" id="wo_id" name="wo_id">
+    <input type="hidden" id="neNames" name="neNames">
+</div>
 </body>
 </html>
