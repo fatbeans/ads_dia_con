@@ -172,8 +172,8 @@ public class ConclusionStatController extends Controller {
             array.getJSONObject(1);
 
 
-            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次", "问题时段数", "问题时段占比%", "解决措施"};
-            String[] key = new String[]{"NETYPE","NENAME","NECITY","LV2_CON_NAME","SCNT","TCNT","TIMEPERCENT","SOLWAY"};
+            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次"};
+            String[] key = new String[]{"NETYPE","NENAME","NECITY","LV2_CON_NAME","SCNT"};
 
             String fileName = PropKit.get("FILE_PRE") + DateFormatUtils.format(new Date(),
                     "yyyyMmddHHmmssSSS")+".xlsx";
