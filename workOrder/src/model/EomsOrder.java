@@ -43,6 +43,8 @@ public class EomsOrder {
     private String fileName;
     //详情Url
     private String detailUrl;
+    //发送状态
+    private String sendStatus;
 
     public String getEomsOrderId() {
         return eomsOrderId;
@@ -180,6 +182,14 @@ public class EomsOrder {
         this.detailUrl = detailUrl;
     }
 
+    public String getSendStatus() {
+        return sendStatus;
+    }
+
+    public void setSendStatus(String sendStatus) {
+        this.sendStatus = sendStatus;
+    }
+
     public static EomsOrder initEomsOrder(Map<String, String[]> map) {
         EomsOrder eo = new EomsOrder();
         eo.eomsOrderId = map.get("eomsOrderId") != null ? map.get("eomsOrderId")[0] : null;
@@ -200,6 +210,7 @@ public class EomsOrder {
         eo.fileName = map.get("fileName") != null ? map.get("fileName")[0] : null;
         eo.detailUrl = map.get("detailUrl") != null ? map.get("detailUrl")[0] : null;
         eo.eomsOrderTitle = map.get("eomsOrderTitle") != null ? map.get("eomsOrderTitle")[0] : null;
+        eo.sendStatus = map.get("sendStatus") != null ? map.get("sendStatus")[0] : null;
         return eo;
     }
 
@@ -223,6 +234,7 @@ public class EomsOrder {
                 ", sendTime='" + sendTime + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", detailUrl='" + detailUrl + '\'' +
+                ", sendStatus='" + sendStatus + '\'' +
                 '}';
     }
 }
