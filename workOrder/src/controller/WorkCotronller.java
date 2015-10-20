@@ -11,10 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import util.DbOpUtil;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -184,7 +181,6 @@ public class WorkCotronller extends Controller {
                     "'" + workObj.getContent() + "','" + workObj.getNeType() + "','" + workObj.getSendWay() + "'," +
                     "sysdate," + workObj.getSendStatus() + ",'" + workObj.getFileName() + "','" + workObj
                     .getDetailUrl() + "')";
-            System.out.println(orderSql);
             DbOpUtil.exec(orderSql, statement);
         } catch (Exception e) {
             e.printStackTrace();
