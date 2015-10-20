@@ -275,13 +275,13 @@
                 }
 
                 var cityKey = $("#citySel").val() ;
-         
+
                 var cityName = $("#citySel option:selected").html();
                 var url = "http://"+host + "/eoms/eomsorder.jsp?typeId=2" +
                         "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
                         "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
                         "&sendWay=人工派单&fileName=" + fileName +
-                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;                
+                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
 window.open(encodeURI(url));
             }
         });
