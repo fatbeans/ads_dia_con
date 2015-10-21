@@ -58,7 +58,7 @@ public class WorkCotronller extends Controller {
     public void addNeEomsOrder(String neType, String neNames, String woId) throws SQLException {
         System.out.println("开始插入");
 
-        String sql = "insert into rel_wo_conc(ne_type, ne_name,  wo_id) values (?,?,?)";
+        String sql = PropKit.get("REL_WO_CONC_SQL");
 
         Connection connection = DbKit.getConfig().getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -135,7 +135,7 @@ public class WorkCotronller extends Controller {
     }
 
     private String updateWrokData(String workId, EomsOrder workObj) throws SQLException {
-        String orderSql = "update  W_WORKORDER_INFO set CITY_KEY = ?, CITY = ?, WO_RANGE_ID = ? , WO_RANGE = ?, " +
+        String orderSql = "update  metadb_fc.W_WORKORDER_INFO set CITY_KEY = ?, CITY = ?, WO_RANGE_ID = ? , WO_RANGE = ?, " +
                 "WO_CONTENT = ?, WO_NETYPE =  ?,SEND_STATUS=? where wo_id = " + workId;
         Connection connection = DbKit.getConfig("orcl").getConnection();
         PreparedStatement statement = connection.prepareStatement(orderSql);
@@ -161,18 +161,18 @@ public class WorkCotronller extends Controller {
         Connection connection = DbKit.getConfig("orcl").getConnection();
         Statement statement = connection.createStatement();
         try {
-            String workIdSql = "select SEQ_W_WORKORDER_INFO.nextval as WORKID from dual";
+            String workIdSql = "select metadb_fc.SEQ_W_WORKORDER_INFO.nextval as WORKID from dual";
             List<Map<String, String>> workIdData = DbOpUtil.query(workIdSql, statement);
             workId = workIdData.get(0).get("WORKID");
             workObj.setDetailUrl(PropKit.get("DETAIL_URL") + "?workId=" + workId);
 
-            String workTitleIndexSql = "select SEQ_WORKORDER_TITLE_INDEX.nextval as TITLEINDEX from dual";
+            String workTitleIndexSql = "select metadb_fc.SEQ_WORKORDER_TITLE_INDEX.nextval as TITLEINDEX from dual";
             List<Map<String, String>> workIndexData = DbOpUtil.query(workTitleIndexSql, statement);
             String workTitleIndex = workIndexData.get(0).get("TITLEINDEX");
             workTitleIndex = ("000" + workTitleIndex).substring(workTitleIndex.length() + 3 - 4, workTitleIndex
                     .length() + 3);
 
-            String orderSql = "insert into W_WORKORDER_INFO(WO_ID,WO_TITLE,CITY_KEY,CITY,WO_TYPE," +
+            String orderSql = "insert into metadb_fc.W_WORKORDER_INFO(WO_ID,WO_TITLE,CITY_KEY,CITY,WO_TYPE," +
                     "WO_TYPE_SUB,WO_RANGE_ID,WO_RANGE,WO_CONTENT,WO_NETYPE,WO_SEND_WAY,WO_CREATE_TIME," +
                     "SEND_STATUS,FILE_NAME,DETAIL_URL) values(" + workId + "," +
                     "'" + workObj.getEomsOrderTitle() + "-" + workTitleIndex + "'," +
@@ -272,8 +272,8 @@ public class WorkCotronller extends Controller {
                     "t1.EOMS_ID,t1.EOMS_STATUS, " +
                     "to_char(t1.WO_CLOSE_TIME,'yyyy-mm-yy hh24:mi:ss') as WO_CLOSE_TIME," +
                     "t1.SEND_STATUS,t1.FILE_NAME " +
-                    " from W_WORKORDER_INFO t1 left join WORK_DICTIONARY t2 on t1.WO_TYPE=t2.DIC_ID " +
-                    " left join WORK_DICTIONARY t3 on t1.WO_TYPE_SUB=t3.DIC_ID where 1=1 ";
+                    " from metadb_fc.W_WORKORDER_INFO t1 left join metadb_fc.WORK_DICTIONARY t2 on t1.WO_TYPE=t2" +
+                    ".DIC_ID  left join metadb_fc.WORK_DICTIONARY t3 on t1.WO_TYPE_SUB=t3.DIC_ID where 1=1 ";
             if (taskObj.get("fromTime") != null) {
                 sql += " and t1.WO_CREATE_TIME >= to_date('" + taskObj.get("fromTime")[0] + " 000000', 'yyyymmdd " +
                         "hh24miss')";

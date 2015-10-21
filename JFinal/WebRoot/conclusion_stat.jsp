@@ -382,7 +382,7 @@ window.open(encodeURI(url));
                     lv2Sel.html('<option value="-1">二级结论</option>');
                     $("#lv1_con_id_label").html("一级结论");
                     $("#lv2_con_id_label").html("二级结论");
-                } else if (ciSel.val() == 0) {
+                } else if (ciSel.val() == 1) {
                     if (citySelStatus == -2) {
                         initLv1ConSel(provData);
                         citySelStatus = 0;

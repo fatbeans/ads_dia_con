@@ -41,25 +41,7 @@ public class UserDetailsController extends Controller {
     public void search23g() {
     }
 
-    private String mdn2Imsi(String mdn) throws SQLException {
-//
-        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("select IMSI from map_imsi_mdn where " +
-                "mdn=" + mdn);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            String imsi = resultSet.getString(1);
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-            return imsi;
-        }else{
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-            return null;
-        }
-    }
+
 
     /**
      * 详单-LTE
@@ -73,14 +55,7 @@ public class UserDetailsController extends Controller {
         long msisdn = getParaToLong("msisdn", -1l);
 
 
-        if((msisdn+"").length()==11) {
-            String imsi = mdn2Imsi(msisdn+"");
-            if(imsi == null){
-                renderError(488);
-            }else {
-                msisdn = NumberUtils.toLong(imsi, 0l);
-            }
-        }
+
 
         String dbPre = PropKit.get("dbPre");
 
