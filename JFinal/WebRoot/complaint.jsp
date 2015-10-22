@@ -56,7 +56,7 @@
         <div class="inlininput mr10">
             <label class="S-label">投诉业务类型</label>
             <input type="text" id="business_class" style="padding-left: 100px;"
-                   value="基础通信-互联网类业务-4G（LTE）"
+                   value="4G"
                    class="w100">
         </div>
         <div class="inlininput mr10" style="display: none">
