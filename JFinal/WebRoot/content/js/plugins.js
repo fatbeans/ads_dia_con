@@ -4,6 +4,10 @@ function menuHrefaddUsrInfo(){
 
     $("#menu_index_cust").attr("href", $("#menu_index_cust").attr("href") + "?usr=" + usr + "&dep=" + dep);
     $("#menu_index_op").attr("href", $("#menu_index_op").attr("href") + "?usr=" + usr + "&dep=" + dep);
+    $("#index_gis").attr("href", $("#index_gis").attr("href") + "&usr=" + usr + "&dep=" + dep);
+    $("#index_gcfx").attr("href", $("#index_gcfx").attr("href") + "&usr=" + usr + "&dep=" + dep);
+    $("#index_tjfx").attr("href", $("#index_tjfx").attr("href") + "&usr=" + usr + "&dep=" + dep);
+
 }
 
 function getCookie(name)

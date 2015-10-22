@@ -1,4 +1,4 @@
-﻿<!-- 顶部导航-start -->
+<!-- 顶部导航-start -->
 <div class="navbar">
     <!-- logo-s -->
     <h1 class="logo ml15">客户感知溯源</h1>
@@ -31,11 +31,8 @@
 
                 <li><a  tabindex="-1" href="/signalling/index.jsp">信令查询</a></li>
                 <li class="divider"></li>
-                <li><a tabindex="-1" target="_blank"  href="http://10.223.3.216:5898/Pages/GisDefault.aspx?m=mobilenetdiagnosis">GIS
-                    查询</a></li>
-                <!--Hu nan-->
-                <!--<li><a tabindex="-1" target="_blank" href="http://10.154.38.19:5898/Pages/GisDefault.aspx?m=mobilenetdiagnosis">GIS 查询</a></li>-->
-
+                <li><a id="index_gis" tabindex="-1" target="_blank"
+                        href="http://10.223.3.216:5898/Pages/GisDefault.aspx?m=mobilenetdiagnosis">GIS 查询</a></li>
             </ul>
         </li>
         <li>
@@ -46,17 +43,32 @@
         </li>
         <li>
             <a href="#" data-toggle="dropdown">
-                <i class="navicon ni-5"></i>
-                系统功能
+                <i class="navicon ni-3"></i>
+                闭环管理
             </a>
 
 
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                <li><a tabindex="-1" href="/system_function.jsp">系统使用情况统计</a></li>
+                <li><a tabindex="-1" href="/conclusion_stat.jsp">工单派发</a></li>
                 <li class="divider"></li>
-                <li><a tabindex="-1" href="/conclusion_stat.jsp">诊断结论统计</a></li>
+                <li><a id="index_gcfx" tabindex="-1"
+                        href="http://10.223.235.16:8806/sv/commonframe?funcid=8&gourl=http%3A%2F%2F10.223.3.216%3A13031%2Fnx_sdb_rq%3Frpt%3Dnx_bhgl_ztgl%26_menu%3D1">过程分析</a></li>
             </ul>
         </li>
+
+        <li>
+            <a id="index_tjfx"
+                    href="http://10.223.235.16:880/sv/commonframe?funcid=9&gourl=http%3A%2F%2F10.223.3.216%3A13031%2Fnx_sdb_rq%3Frpt%3Dnx_fxtj_djtjfx%26_menu%3D1">
+                <i class="navicon ni-3"></i>
+                统计分析
+            </a>
+        </li>
+
+        <!--{"name":"闭环管理","cls":"navicon ni-3","children":[{"name":"工单派发","url":"-->
+        <!--http://10.223.235.16:8804/conclusion_stat.jsp"}, {"name":"过程分析","url":"/sv/commonframe?funcid=8&gourl=http%3A%2F%2F10.223.3.216%3A13031%2Fnx_sdb_rq%3Frpt%3Dnx_bhgl_ztgl%26_menu%3D1"}]},\-->
+        <!--{"name":"统计分析","cls":"navicon ni-3","url":"/sv/commonframe?funcid=9&gourl=http%3A%2F%2F10.223.3.216%3A13031%2Fnx_sdb_rq%3Frpt%3Dnx_fxtj_djtjfx%26_menu%3D1"}]-->
+
+
     </ul>
     <!-- 一级菜单-e -->
 </div>
