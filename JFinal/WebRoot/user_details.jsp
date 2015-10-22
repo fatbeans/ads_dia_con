@@ -115,7 +115,7 @@
         return null;
     }
 
-    $(document).ajaxError(function (event,XMLHttpRequest) {
+    $(document).ajaxError(function (event, XMLHttpRequest) {
 
         if (XMLHttpRequest.status == 488) {
             alert("未能查找到号码" + $("#msisdn").val() + "对应的IMSI");
@@ -132,8 +132,8 @@
             '支持4G'],
         colModel: [
             {name: 'MSISDN', width: 150},
-            {name: 'PROCEDURE_STARTTIME_MS', width: 150},
-            {name: 'PROCEDURE_ENDTIME_MS', width: 150},
+            {name: 'PROCEDURE_STARTTIME_MS', width: 200, formatter: dateFmatter},
+            {name: 'PROCEDURE_ENDTIME_MS', width: 200, formatter: dateFmatter},
             {name: 'TACTYPE', width: 150},
             {name: 'TACBRND', width: 150},
             {name: 'APP_TYPE_NAME', width: 150},
@@ -214,7 +214,6 @@
     }
 
 
-
     if (getQueryString("q") != null) {
 
         var sd = getQueryString("sd");
@@ -235,6 +234,15 @@
                         day) + " 00");
         $("#ed").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/" + (day < 10 ? ("0" + day) :
                         day) + " 23");
+    }
+
+    function dateFmatter(cellvalue, options, rowObject) {
+        var date = cellvalue;
+
+        var val = date.substr(0, 4) + "/" + date.substr(4, 2) + "/" +
+                date.substr(6, 2) + " " + date.substr(8, 2) + ":"
+                + date.substr(10, 2) + ":" + date.substr(12, 2) + "." + date.substr(14, 3);
+        return val;
     }
 
 </script>
