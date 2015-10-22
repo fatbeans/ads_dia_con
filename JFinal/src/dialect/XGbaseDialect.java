@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class XGbaseDialect extends XDialect {
     public String forTableBuilderDoBuild(String tableName) {
-        return "select * from " + tableName + " where 1 = 2";
+        return "select * from " + tableName + " limit 0";
     }
 
     public void forModelSave(Table table, Map<String, Object> attrs, StringBuilder sql, List<Object> paras) {

@@ -3,6 +3,7 @@ package log;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import dao.LogDao;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -71,8 +72,8 @@ public class LogInterceptor implements Interceptor {
 
     public void saveLog(String dep, String user, String functionId, String tel) {
         new LogDao().set(COL_DEP, dep).set(COL_USER, user).set(COL_TIME, DateFormatUtils.format(new Date(),
-                "yyyyMMddHHmmss")).set(COL_FUNCTION_ID, Long.parseLong(functionId)).set(COL_TEL, Long.parseLong(tel))
-                .save();
+                "yyyyMMddHHmmss")).set(COL_FUNCTION_ID, Long.parseLong(functionId)).set(COL_TEL, NumberUtils.toLong
+                (tel, 0)).save();
         System.out.println("日志保存完成");
 
     }
