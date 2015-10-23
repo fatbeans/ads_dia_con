@@ -36,7 +36,6 @@ public class ComplaintController extends Controller {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
 
     private String mdn2Imsi(String mdn) throws SQLException {
-//
         Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("select IMSI from map_imsi_mdn where " +
                 "mdn=" + mdn);
@@ -132,11 +131,15 @@ public class ComplaintController extends Controller {
 
         Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
         Statement statement = connection.createStatement();
-
-        ComplaintDao complaintDao = ComplaintDao.dao.findFirst(pageSql);
-        String cnt = complaintDao.get("cnt") == null ? complaintDao.get("CNT").toString() : complaintDao.get("cnt")
-                .toString();
-        pager.setRecords(NumberUtils.toLong(cnt, 0));
+        ResultSet resultSet = statement.executeQuery(pageSql);
+        long cnt =0;
+        if (resultSet.next()) {
+            cnt = resultSet.getLong(1);
+        }
+        resultSet.close();
+        statement.close();
+        connection.close();
+        pager.setRecords(cnt);
         if (pager.getRecords() == 0) {
             pager.setRows(new ArrayList<ComplaintDao>(0));
         } else {
