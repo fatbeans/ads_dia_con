@@ -22,7 +22,6 @@ $(document).ready(function(){ //页面加载完后执行
         document.cookie="dep="+encodeURIComponent(getQueryString("dep"));
     }
     menuHrefaddUsrInfo();
-    contentH();//计算content高度
     //tab动作
     $('#myTab a').click(function (e) {
       e.preventDefault();
@@ -86,9 +85,7 @@ $(document).ready(function(){ //页面加载完后执行
       $(this).addClass('active');
     });
 });
-$(window).resize(function () {//当浏览器大小变化时
-    contentH();//计算content高度
-});
+
 /*自定义select*/
 $(function(){
   $(".sel_wrap").on("change", function() {
@@ -102,13 +99,7 @@ $(function(){
           $(this).find('label').html(o);
       }).trigger('change');
 });
-/* ============================================================
- * 计算content的高度。
- * ============================================================ */
-var contentH = function(){
-  var h = (window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight));
-    $("#content").css({"height":h-115});
-};
+
 
 /* ============================================================
  * tab点击激活

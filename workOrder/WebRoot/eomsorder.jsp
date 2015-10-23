@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="css/style.css"/>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.json-2.4.min.js"></script>
-	<script type="text/javascript" src="js/plugins.js"></script>
-<script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/plugins.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
 
-    <script type="text/javascript" >
+    <script type="text/javascript">
 
         function getQueryString(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
@@ -100,7 +100,7 @@
                         $("#rangeId").val($("#rangeName option:selected").attr("rangekey"));
                     });
                     val2Html(source);
-                    if(source.send_status==1 || source.send_status==2) {
+                    if (source.send_status == 1 || source.send_status == 2) {
                         $("#rangeName").attr("disabled", "disabled");
                     }
                 },
@@ -126,7 +126,7 @@
             $("#neNames").val(source.neNames);
             if (!(source.fileName == null || source.fileName == undefined || source.fileName == '')) {
                 $("#fileName").html(source.fileName);
-                $("#fileName").attr("href", downFileUrl + "?fileName=" + source.fileName);
+                $("#fileName").attr("href", downFileUrl + "?fileName=" + encodeURIComponent(source.fileName));
             }
             if (!(source.wo_id == null || source.wo_id == undefined || source.wo_id == '')) {
                 $("#wo_id").val(source.wo_id);
@@ -194,6 +194,9 @@
 
 
             $("#submitBtn").click(function () {
+                if(!checkInput()){
+                    return;
+                }
                 source.content = $("#content").val();
                 $.ajax({
                     type: 'post',
@@ -231,6 +234,9 @@
             });
 
             $("#saveBtn").click(function () {
+                if(!checkInput()){
+                    return;
+                }
                 source.content = $("#content").val();
                 $.ajax({
                     type: 'post',
@@ -266,6 +272,14 @@
             });
 
         });
+        function checkInput() {
+            if ($("#rangeLabel").html() == "问题对象") {
+                alert("请选择问题对象");
+                return false;
+            }else{
+                return true;
+            }
+        }
     </script>
 </head>
 <body>
@@ -283,17 +297,17 @@
         </div>
         <div class="inlininput mr10">
             <label class="S-label">任务子类</label>
-            <input id="typeSubName" type="text"  style="width: 204px;" placeholder="" value="" maxlength="11">
+            <input id="typeSubName" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
         </div>
     </div>
     <div class="animated fadeInDown pr">
-        <div class="inlininput mr10"  >
+        <div class="inlininput mr10">
             <label class="S-label">地市</label>
-            
-                <input id="cityName" type="text"   style="width: 204px;"  placeholder="" value="" maxlength="11">
+
+            <input id="cityName" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
         </div>
         <div class="sel_wrap mb10 mr10" style="width: 280px;">
-            <label>问题对象</label>
+            <label id="rangeLabel">问题对象</label>
             <span id="rangeSelect"><input id="rangeName" name="RangeName" type="text" readonly="readonly"/></span>
             <a class="sel-link"><i class="icon-arrow"></i></a>
         </div>
@@ -301,7 +315,8 @@
     <div class="animated fadeInDown pr">
         <div class="inlininput mr10">
             <label class="S-label">任务处理对象</label>
-            <input id="neType" type="text" style="padding-left: 98px;width: 177px;" placeholder="" value="" maxlength="11">
+            <input id="neType" type="text" style="padding-left: 98px;width: 177px;" placeholder="" value=""
+                   maxlength="11">
         </div>
         <div class="inlininput mr10">
             <label class="S-label">派单方式</label>
@@ -312,7 +327,8 @@
     <div class="animated fadeInDown pr">
         <div class="inlininput mr10">
             <label class="S-label">派单内容</label>
-            <textarea id="content" name="Content" style="width: 563px; height: 180px; padding: 29px 7px 7px 7px;"></textarea>
+            <textarea id="content" name="Content"
+                      style="width: 563px; height: 180px; padding: 29px 7px 7px 7px;"></textarea>
         </div>
     </div>
 
@@ -328,7 +344,7 @@
         <input id="submitBtn" type="button" value="提交" class="myButton btn btn-danger"/>
     </div>
 
-    <input type="hidden" id="eomsOrderId" name="EomsOrderID" >
+    <input type="hidden" id="eomsOrderId" name="EomsOrderID">
     <input type="hidden" id="cityKey" name="CityKey">
     <input type="hidden" id="typeId" name="TypeID">
     <input type="hidden" id="typeSubId" name="TypeSubID">
