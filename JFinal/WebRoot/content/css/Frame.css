@@ -159,7 +159,7 @@ caption, th{text-align:left;}
 /* 一级菜单 */
 
 .nav-menu{height:71px;padding:4px 0 5px;width:450px;margin:0 auto }
-.nav-menu > li{float:left;margin:0 15px 0 0;height:100%;position:relative;width:71px;}
+.nav-menu > li{float:left;margin:0 15px 0 0;height:100%;position:relative;}
 .nav-menu > li > a{display:block;line-height:26px;color:#fff;font-size:14px;text-align:center;z-index:1;position:relative;border:1px solid transparent;height:69px;}
 .nav-menu > li > a:hover{text-decoration:none;}
 .nav-menu > li.active > a, .nav-menu > li:hover > a{background:-moz-linear-gradient(top, rgba(254,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);/* FF3.6+ */ background:-webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(254,255,255,0.25)), color-stop(100%, rgba(255,255,255,0.1)));/* Chrome,Safari4+ */ background:-webkit-linear-gradient(top, rgba(254,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);/* Chrome10+,Safari5.1+ */ background:-o-linear-gradient(top, rgba(254,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);/* Opera 11.10+ */ background:-ms-linear-gradient(top, rgba(254,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);/* IE10+ */ background:linear-gradient(to bottom, rgba(254,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);/* W3C */  filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#40feffff', endColorstr='#1affffff', GradientType=0 );/* IE6-9 */

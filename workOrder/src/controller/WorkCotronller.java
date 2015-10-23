@@ -12,6 +12,7 @@ import util.DbOpUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -333,10 +334,10 @@ public class WorkCotronller extends Controller {
 
 
     public void downFile() throws Exception {
-        HttpServletResponse response = getResponse();
+
         String filePath = PropKit.get("FILE_PATH");
 
-        String fileName = getPara("fileName");
+        String fileName = URLDecoder.decode(getPara("fileName"), "utf-8");
         if (StringUtils.isBlank(fileName) || fileName.equals("null")) {
             System.out.println("文件名" + fileName + "异常");
             renderError(403);
