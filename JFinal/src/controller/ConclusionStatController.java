@@ -23,27 +23,6 @@ import java.util.*;
  */
 public class ConclusionStatController extends Controller {
 
-
-    private String mdn2Imsi(String mdn) throws SQLException {
-//
-        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("select IMSI from map_imsi_mdn where " +
-                "mdn=" + mdn);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            String imsi = resultSet.getString(1);
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-            return imsi;
-        } else {
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-            return null;
-        }
-    }
-
     /**
      * 地市下拉数据
      *
@@ -107,14 +86,6 @@ public class ConclusionStatController extends Controller {
         String sd = getPara("sd", DateFormatUtils.format(new Date(), "yyyyMMdd"));
         String ed = getPara("ed", DateFormatUtils.format(new Date(), "yyyyMMdd"));
         long msisdn = getParaToLong("msisdn", 0l);
-        if ((msisdn + "").length() == 11) {
-            String imsi = mdn2Imsi(msisdn + "");
-            if (imsi == null) {
-                renderError(488);
-            } else {
-                msisdn = NumberUtils.toLong(imsi, 0l);
-            }
-        }
 
         sd = StringUtils.rightPad(sd, 6, "0").substring(0, 6);
         long lv2_con_id = getParaToLong("lv2_con_id", -1l);
