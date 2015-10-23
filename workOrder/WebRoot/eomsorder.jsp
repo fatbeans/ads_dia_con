@@ -273,7 +273,7 @@
 
         });
         function checkInput() {
-            if ($("#rangeLabel").html(). == "问题对象") {
+            if ($("#rangeLabel").html() == "问题对象") {
                 alert("请选择问题对象");
                 return false;
             }else{
