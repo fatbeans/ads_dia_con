@@ -157,7 +157,12 @@ public class UserDetailsController extends Controller {
 
     private void doForHbase(int page, int size, long sd, long ed, long msisdn) throws Throwable {
         Map<String, AppInfoEntity> appInfoEntityMap = getAppInfo();
+
+        System.out.println("page = [" + page + "], size = [" + size + "], sd = [" + sd + "], ed = [" + ed + "], " +
+                "msisdn = [" + msisdn + "]");
+
         List<UserDetHbaseEntity> list = UserDetailHbaseAdapter.getPage(msisdn + "", sd + "", ed + "");
+        System.out.println("查询出来数据条数："+list.size());
         joinAppName(appInfoEntityMap, list);
         joinHttpStatus(list);
         joinErrorCode(list);
