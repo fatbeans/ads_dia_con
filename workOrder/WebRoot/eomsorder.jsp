@@ -126,7 +126,7 @@
             $("#neNames").val(source.neNames);
             if (!(source.fileName == null || source.fileName == undefined || source.fileName == '')) {
                 $("#fileName").html(source.fileName);
-                $("#fileName").attr("href", downFileUrl + "?fileName=" + source.fileName);
+                $("#fileName").attr("href", downFileUrl + "?fileName=" + encodeURIComponent(source.fileName));
             }
             if (!(source.wo_id == null || source.wo_id == undefined || source.wo_id == '')) {
                 $("#wo_id").val(source.wo_id);

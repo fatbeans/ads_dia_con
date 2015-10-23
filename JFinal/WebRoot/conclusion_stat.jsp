@@ -129,7 +129,7 @@
 <script type="text/javascript">
 
     var provIdInDB = $("#provIdInDB").val();
-    var provIdInView = $("#provIdInView").val() ;
+    var provIdInView = $("#provIdInView").val();
 
     var host = window.location.host;
     function getQueryString(name) {
@@ -274,15 +274,15 @@
                     neNames += grid.jqGrid('getRowData', ids[i]).NENAME + ",";
                 }
 
-                var cityKey = $("#citySel").val() ;
+                var cityKey = $("#citySel").val();
 
                 var cityName = $("#citySel option:selected").html();
-                var url = "http://"+host + "/eoms/eomsorder.jsp?typeId=2" +
+                var url = "http://" + host + "/eoms/eomsorder.jsp?typeId=2" +
                         "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
                         "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
                         "&sendWay=人工派单&fileName=" + fileName +
                         "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
-window.open(encodeURI(url));
+                windowOpen(encodeURI(url), "_blank");
             }
         });
 
@@ -310,7 +310,7 @@ window.open(encodeURI(url));
 
         showHideCol();
     });
-    $(document).ajaxError(function (event,XMLHttpRequest) {
+    $(document).ajaxError(function (event, XMLHttpRequest) {
 
         if (XMLHttpRequest.status == 488) {
             alert("未能查找到号码" + $("#msisdn").val() + "对应的IMSI");
@@ -434,6 +434,29 @@ window.open(encodeURI(url));
         });
 
 
+    }
+
+    function windowOpen(url, target) {
+        var a = document.createElement("a");
+        a.setAttribute("href", url);
+        if (target == null) {
+            target = '';
+        }
+
+        a.setAttribute("target", target);
+        document.body.appendChild(a);
+        if (a.click) {
+            a.click();
+        } else {
+            try {
+                var evt = document.createEvent('Event');
+                a.initEvent('click', true, true);
+                a.dispatchEvent(evt);
+            } catch (e) {
+                window.open(url);
+            }
+        }
+        document.body.removeChild(a);
     }
 
 
