@@ -3,6 +3,7 @@ package controller;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
+import com.jfinal.plugin.activerecord.DbKit;
 import dao.ComplaintDao;
 import dao.Pager;
 import dao.UserDetailsDao;
@@ -20,6 +21,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,16 +35,40 @@ public class ComplaintController extends Controller {
     Logger logger = LoggerFactory.getLogger(ComplaintController.class);
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
 
+    private String mdn2Imsi(String mdn) throws SQLException {
+//
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("select IMSI from map_imsi_mdn where " +
+                "mdn=" + mdn);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            String imsi = resultSet.getString(1);
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+            return imsi;
+        } else {
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+            return null;
+        }
+    }
+
     /**
      * 诊断明细
      */
-    public void searchUsrLog() {
+    public void searchUsrLog() throws SQLException {
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
         long msisdn = getParaToLong(("msisdn"), -1l);
-        if (msisdn == -1) {
-            render("");
-            return;
+        if ((msisdn + "").length() == 11) {
+            String imsi = mdn2Imsi(msisdn + "");
+            if (imsi == null) {
+                renderError(488);
+            } else {
+                msisdn = NumberUtils.toLong(imsi, 0l);
+            }
         }
 
         Pager pager = new Pager();
@@ -63,7 +89,10 @@ public class ComplaintController extends Controller {
         renderJson(jsonStr);
     }
 
-    public void searchHistory() {
+    /**
+     * 历史投诉
+     */
+    public void searchHistory() throws SQLException {
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
         long sd = getParaToLong(("sd"), 2000010100l);
@@ -100,6 +129,10 @@ public class ComplaintController extends Controller {
                 ("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + ""))
                 .replaceFirst("\\%\\?\\%", "%" + business_class + "%");
         System.out.println(pageSql);
+
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        Statement statement = connection.createStatement();
+
         ComplaintDao complaintDao = ComplaintDao.dao.findFirst(pageSql);
         String cnt = complaintDao.get("cnt") == null ? complaintDao.get("CNT").toString() : complaintDao.get("cnt")
                 .toString();
