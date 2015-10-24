@@ -167,6 +167,7 @@ public class DemoConfig extends JFinalConfig {
         arp.addMapping("ADS_DIA_USR", Usr.class);
         arp.addMapping("ADS_DIA_CON_HTTP_SERV_IP", HttpServIp.class);
         arp.addMapping("ADS_DIA_CON_ALL_TE", AllTe.class);
+        arp.addMapping("V_TOTAL_ALL_TMP", ComplaintDao.class);
     }
 
 
