@@ -45,6 +45,8 @@
                 "content": getQueryString("content"),
                 "fileName": getQueryString("fileName"),
                 "rangeId": getQueryString("rangeId"),
+                "roleId": getQueryString("roleId"),
+                "roleName": getQueryString("roleName"),
                 "wo_id": getQueryString("wo_id")
             };
             return source;
@@ -79,6 +81,39 @@
                 });
             }
         }
+
+
+        function roleInput(source) {
+
+            $.ajax({
+                url: getQueryString("test") == "true" ? "./citySelectTest.json" : "./work/getRole",
+                type: "post",
+                data: {workJson: $.toJSON(synchData)},
+                dataType: 'json',
+                success: function (data) {
+                    var h = "";
+                    for (var i = 0; i < data.length; i++) {
+                        h += "<option rolekey='" + data[i].roleid + "' value ='" + data[i].rolename + "'>" +
+                                data[i].rolename + "</option> ";
+
+                    }
+                    $("#roleSelect").html("<select id='roleName' class='select'  name='roleName'>" + h + "</select>");
+                    $("#roleId").val($("#roleName option:selected").attr("rolekey"));
+                    $("#roleName").change(function () {
+                        $("#roleId").val($("#roleName option:selected").attr("rolekey"));
+                    });
+                    val2Html(source);
+                    if (source.send_status == 1 || source.send_status == 2) {
+                        $("#roleName").attr("disabled", "disabled");
+                    }
+                },
+                error: function () {
+                    alert("获取班组信息列表数据错误");
+                }
+            });
+
+        }
+
 
         function rangeInput(source) {
 
@@ -138,6 +173,19 @@
 
             if (!(source.rangeName == null || source.rangeName == undefined || source.rangeName == '')) {
                 $("#rangeName").val(source.rangeName);
+                $("#rangeLabel").html(source.rangeName);
+            }
+
+            if (!(source.roleName == null || source.roleName == undefined || source.roleName == '')) {
+                $("#roleName").val(source.roleName);
+                $("#roleLabel").html(source.roleName);
+            }
+
+            if (!(source.roleId == null || source.roleId == undefined || source.roleId == '')) {
+                var sel = $("#roleName option[rolekey="+source.roleId+"]");
+                $("#roleLabel").html(sel.val());
+                $("#roleId").val(source.roleId);
+
             }
         }
 
@@ -160,6 +208,8 @@
                 "fileName": data.FILE_NAME,
                 "rangeId": data.WO_RANGE_ID,
                 "send_status": data.SEND_STATUS,
+                "roleId": data.ROLE_ID,
+                "roleName": data.ROLE_NAME,
                 "wo_id": data.WO_ID
             };
             return source;
@@ -179,6 +229,7 @@
                     success: function (data) {
                         source = initSourceFromAjax(data);
                         rangeInput(source);
+                        roleInput(source);
                         if (source.send_status == 1 || source.send_status == 2) {
                             $("#saveBtn").hide();
                             $("#submitBtn").hide();
@@ -189,12 +240,13 @@
 
                 var source = initSource();
                 rangeInput(source);
+                roleInput(source);
 
             }
 
 
             $("#submitBtn").click(function () {
-                if(!checkInput()){
+                if (!checkInput()) {
                     return;
                 }
                 source.content = $("#content").val();
@@ -218,6 +270,7 @@
                         content: $("#content").val(),
                         fileName: $("#fileName").html(),
                         sendStatus: 1,
+                        roleId: $("#roleId").val(),
                         eomsOrderId: $("#eomsOrderId").val()
                     },
                     dataType: 'json',
@@ -234,7 +287,7 @@
             });
 
             $("#saveBtn").click(function () {
-                if(!checkInput()){
+                if (!checkInput()) {
                     return;
                 }
                 source.content = $("#content").val();
@@ -258,6 +311,7 @@
                         content: $("#content").val(),
                         fileName: $("#fileName").html(),
                         sendStatus: 0,
+                        roleId: $("#roleId").val(),
                         eomsOrderId: $("#eomsOrderId").val()
                     },
                     dataType: 'json',
@@ -276,9 +330,13 @@
             if ($("#rangeLabel").html() == "问题对象") {
                 alert("请选择问题对象");
                 return false;
-            }else{
-                return true;
             }
+            if ($("#roleLabel").html() == "班组信息") {
+                alert("请选择班组信息");
+                return false;
+            }
+            return true;
+
         }
     </script>
 </head>
@@ -323,6 +381,13 @@
             <input id="sendWay" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
         </div>
     </div>
+    <div class="animated fadeInDown pr">
+        <div class="sel_wrap mb10 mr10" style="width: 280px;">
+            <label id="roleLabel">班组信息</label>
+            <span id="roleSelect"><input id="roleName" name="roleName" type="text" readonly="readonly"/></span>
+            <a class="sel-link"><i class="icon-arrow"></i></a>
+        </div>
+    </div>
 
     <div class="animated fadeInDown pr">
         <div class="inlininput mr10">
@@ -351,6 +416,9 @@
     <input type="hidden" id="rangeId" name="RangeID">
     <input type="hidden" id="wo_id" name="wo_id">
     <input type="hidden" id="neNames" name="neNames">
+    <input type="hidden" id="roleId" name="roleId">
+
+
 </div>
 </body>
 </html>

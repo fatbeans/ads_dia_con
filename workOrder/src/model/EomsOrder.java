@@ -46,6 +46,8 @@ public class EomsOrder {
     //发送状态
     private String sendStatus;
 
+    private String dealUserRole;
+
     public String getEomsOrderId() {
         return eomsOrderId;
     }
@@ -190,6 +192,14 @@ public class EomsOrder {
         this.sendStatus = sendStatus;
     }
 
+    public String getDealUserRole() {
+        return dealUserRole;
+    }
+
+    public void setDealUserRole(String dealUserRole) {
+        this.dealUserRole = dealUserRole;
+    }
+
     public static EomsOrder initEomsOrder(Map<String, String[]> map) {
         EomsOrder eo = new EomsOrder();
         eo.eomsOrderId = map.get("eomsOrderId") != null ? map.get("eomsOrderId")[0] : null;
@@ -211,8 +221,10 @@ public class EomsOrder {
         eo.detailUrl = map.get("detailUrl") != null ? map.get("detailUrl")[0] : null;
         eo.eomsOrderTitle = map.get("eomsOrderTitle") != null ? map.get("eomsOrderTitle")[0] : null;
         eo.sendStatus = map.get("sendStatus") != null ? map.get("sendStatus")[0] : null;
+        eo.dealUserRole = map.get("roleId") != null ? map.get("roleId")[0] : null;
         return eo;
     }
+
 
     @Override
     public String toString() {
@@ -235,6 +247,7 @@ public class EomsOrder {
                 ", fileName='" + fileName + '\'' +
                 ", detailUrl='" + detailUrl + '\'' +
                 ", sendStatus='" + sendStatus + '\'' +
+                ", dealUserRole='" + dealUserRole + '\'' +
                 '}';
     }
 }

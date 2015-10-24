@@ -56,6 +56,29 @@ public class WorkCotronller extends Controller {
         renderJson(array.toJSONString());
     }
 
+
+    public void getRole() throws SQLException {
+        String sql = PropKit.get("WORK_ROLE_SQL");
+        Connection connection = DbKit.getConfig().getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        JSONArray array = new JSONArray();
+        while (resultSet.next()) {
+            if (resultSet.getString(1) != null && resultSet.getString(2) != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("roleid", resultSet.getString(1));
+                jsonObject.put("rolename", resultSet.getString(2));
+                array.add(jsonObject);
+            }
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+        renderJson(array.toJSONString());
+    }
+
+
+
     public void addNeEomsOrder(String neType, String neNames, String woId) throws SQLException {
         System.out.println("开始插入");
 
@@ -137,7 +160,7 @@ public class WorkCotronller extends Controller {
 
     private String updateWrokData(String workId, EomsOrder workObj) throws SQLException {
         String orderSql = "update  metadb_fc.W_WORKORDER_INFO set CITY_KEY = ?, CITY = ?, WO_RANGE_ID = ? , WO_RANGE = ?, " +
-                "WO_CONTENT = ?, WO_NETYPE =  ?,SEND_STATUS=? where wo_id = " + workId;
+                "WO_CONTENT = ?, WO_NETYPE =  ?,SEND_STATUS=?,DEALUSERROLE=? where wo_id = " + workId;
         Connection connection = DbKit.getConfig("orcl").getConnection();
         PreparedStatement statement = connection.prepareStatement(orderSql);
         try {
@@ -148,6 +171,7 @@ public class WorkCotronller extends Controller {
             statement.setString(5, workObj.getContent());
             statement.setString(6, workObj.getNeType());
             statement.setString(7, workObj.getSendStatus());
+            statement.setString(8, workObj.getDealUserRole());
             statement.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -175,13 +199,13 @@ public class WorkCotronller extends Controller {
 
             String orderSql = "insert into metadb_fc.W_WORKORDER_INFO(WO_ID,WO_TITLE,CITY_KEY,CITY,WO_TYPE," +
                     "WO_TYPE_SUB,WO_RANGE_ID,WO_RANGE,WO_CONTENT,WO_NETYPE,WO_SEND_WAY,WO_CREATE_TIME," +
-                    "SEND_STATUS,FILE_NAME,DETAIL_URL) values(" + workId + "," +
+                    "SEND_STATUS,FILE_NAME,DETAIL_URL,DEALUSERROLE) values(" + workId + "," +
                     "'" + workObj.getEomsOrderTitle() + "-" + workTitleIndex + "'," +
                     workObj.getCityKey() + ",'" + workObj.getCityName() + "'," + workObj.getTypeId() + "," +
                     workObj.getTypeSubId() + "," + workObj.getRangeId() + ",'" + workObj.getRangeName() + "'," +
                     "'" + workObj.getContent() + "','" + workObj.getNeType() + "','" + workObj.getSendWay() + "'," +
                     "sysdate," + workObj.getSendStatus() + ",'" + workObj.getFileName() + "','" + workObj
-                    .getDetailUrl() + "')";
+                    .getDetailUrl() + "','"+workObj.getDealUserRole()+"')";
             DbOpUtil.exec(orderSql, statement);
         } catch (Exception e) {
             e.printStackTrace();
