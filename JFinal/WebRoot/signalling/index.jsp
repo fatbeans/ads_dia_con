@@ -131,7 +131,7 @@
 					            <th>接入类型</th>
 					            <th>接口类型</th>
 					            <th>流程类型</th>
-					            <th>时延</th>
+					            <th>时延(ms)</th>
 					            <th>源端IP</th>
 					            <th>目的端IP</th>
 					            <th>流程状态</th>

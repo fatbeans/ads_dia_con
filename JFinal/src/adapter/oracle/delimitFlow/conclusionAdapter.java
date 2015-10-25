@@ -77,10 +77,17 @@ public class conclusionAdapter implements Iconclusion {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
-			CommonTable clConfig = getConclusionConfig(cid);
-			if (clConfig == null) {
-				throw new Exception("未找到配置表.");
+			CommonTable clConfig = null;
+			try{
+				clConfig =getConclusionConfig(cid);
+				if (clConfig == null) {
+					System.out.println("未找到配置表.");
+					throw new Exception("未找到配置表.");
+				}
+			}catch(Exception ex){
+				System.out.println("读取配置表异常.");
 			}
+			
 			statement = DbKit.getConfig("orcl").getConnection()
 					.createStatement();
 			String sql = "select  rownum as rn," + clConfig.getFields()+ " from " + clConfig.getName() + " where 2>1";
@@ -137,14 +144,12 @@ public class conclusionAdapter implements Iconclusion {
 	private CommonTable getConclusionConfig(String cid) throws Exception {
 
 		CommonTable commonTable = null;
-		String filePath = DataFactory.class.getClassLoader()
-				.getResource("/config/conclusionDetail.xml").getFile();
-
+		String filePath = DataFactory.class.getClassLoader().getResource("/config/conclusionDetail.xml").getFile();
+		System.out.println(filePath);
 		JAXBContext cxt = JAXBContext.newInstance(model.CommonTables.class);
 		Unmarshaller unmarshaller = cxt.createUnmarshaller();
 		@SuppressWarnings("unchecked")
-		CommonTables tables = (CommonTables) unmarshaller.unmarshal(new File(
-				filePath));
+		CommonTables tables = (CommonTables) unmarshaller.unmarshal(new File(filePath));
 		List<CommonTable> tableList = tables.getTables();
 		for (CommonTable ct : tableList) {
 			if (ct.getId().equals(cid)) {
