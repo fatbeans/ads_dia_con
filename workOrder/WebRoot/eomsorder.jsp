@@ -10,10 +10,12 @@
     <link rel="stylesheet" href="css/style.css"/>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.json-2.4.min.js"></script>
-	<script type="text/javascript" src="js/plugins.js"></script>
-<script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/plugins.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="js/moment.min.js"></script>
 
-    <script type="text/javascript" >
+    <script type="text/javascript">
 
         function getQueryString(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
@@ -80,6 +82,39 @@
             }
         }
 
+
+        function roleInput(source) {
+
+            $.ajax({
+                url: getQueryString("test") == "true" ? "./citySelectTest.json" : "./work/getRole",
+                type: "post",
+                data: {workJson: $.toJSON(synchData)},
+                dataType: 'json',
+                success: function (data) {
+                    var h = "";
+                    for (var i = 0; i < data.length; i++) {
+                        h += "<option rolekey='" + data[i].roleid + "' value ='" + data[i].rolename + "'>" +
+                                data[i].rolename + "</option> ";
+
+                    }
+                    $("#roleSelect").html("<select id='roleName' class='select'  name='roleName'>" + h + "</select>");
+                    $("#roleId").val($("#roleName option:selected").attr("rolekey"));
+                    $("#roleName").change(function () {
+                        $("#roleId").val($("#roleName option:selected").attr("rolekey"));
+                    });
+                    val2Html(source);
+                    if (source.send_status == 1 || source.send_status == 2) {
+                        $("#roleName").attr("disabled", "disabled");
+                    }
+                },
+                error: function () {
+                    alert("获取班组信息列表数据错误");
+                }
+            });
+
+        }
+
+
         function rangeInput(source) {
 
             $.ajax({
@@ -100,7 +135,7 @@
                         $("#rangeId").val($("#rangeName option:selected").attr("rangekey"));
                     });
                     val2Html(source);
-                    if(source.send_status==1 || source.send_status==2) {
+                    if (source.send_status == 1 || source.send_status == 2) {
                         $("#rangeName").attr("disabled", "disabled");
                     }
                 },
@@ -124,9 +159,22 @@
             $("#typeId").val(source.typeId);
             $("#typeSubId").val(source.typeSubId);
             $("#neNames").val(source.neNames);
+
+
+            if (!(source.wo_id == null || source.wo_id == undefined || source.wo_id == '')) {
+                $("#wo_id").val(source.wo_id);
+            }
+
+            if (!(source.acceptTime == null || source.acceptTime == undefined || source.acceptTime == '')) {
+                $("#acceptTime").val(source.acceptTime);
+            }
+            if (!(source.dealTime == null || source.dealTime == undefined || source.dealTime == '')) {
+                $("#dealTime").val(source.dealTime);
+            }
+
             if (!(source.fileName == null || source.fileName == undefined || source.fileName == '')) {
                 $("#fileName").html(source.fileName);
-                $("#fileName").attr("href", downFileUrl + "?fileName=" + source.fileName);
+                $("#fileName").attr("href", downFileUrl + "?fileName=" + encodeURIComponent(source.fileName));
             }
             if (!(source.wo_id == null || source.wo_id == undefined || source.wo_id == '')) {
                 $("#wo_id").val(source.wo_id);
@@ -138,6 +186,19 @@
 
             if (!(source.rangeName == null || source.rangeName == undefined || source.rangeName == '')) {
                 $("#rangeName").val(source.rangeName);
+                $("#rangeLabel").html(source.rangeName);
+            }
+
+            if (!(source.roleName == null || source.roleName == undefined || source.roleName == '')) {
+                $("#roleName").val(source.roleName);
+                $("#roleLabel").html(source.roleName);
+            }
+
+            if (!(source.roleId == null || source.roleId == undefined || source.roleId == '')) {
+                var sel = $("#roleName option[rolekey="+source.roleId+"]");
+                $("#roleLabel").html(sel.val());
+                $("#roleId").val(source.roleId);
+
             }
         }
 
@@ -160,12 +221,18 @@
                 "fileName": data.FILE_NAME,
                 "rangeId": data.WO_RANGE_ID,
                 "send_status": data.SEND_STATUS,
+                "roleId": data.ROLE_ID,
+                "roleName": data.ROLE_NAME,
+                "acceptTime":data.ACCEPTTIME,
+                "dealTime":data.DEALTIME,
                 "wo_id": data.WO_ID
+
             };
             return source;
         }
 
         $(document).ready(function () {
+            defaultTime();
             var source;
             var woid = getQueryString("wo_id");
             if (!(woid == null || woid == undefined || woid == '')) {
@@ -179,6 +246,7 @@
                     success: function (data) {
                         source = initSourceFromAjax(data);
                         rangeInput(source);
+                        roleInput(source);
                         if (source.send_status == 1 || source.send_status == 2) {
                             $("#saveBtn").hide();
                             $("#submitBtn").hide();
@@ -189,11 +257,15 @@
 
                 var source = initSource();
                 rangeInput(source);
+                roleInput(source);
 
             }
 
 
             $("#submitBtn").click(function () {
+                if (!checkInput()) {
+                    return;
+                }
                 source.content = $("#content").val();
                 $.ajax({
                     type: 'post',
@@ -215,6 +287,9 @@
                         content: $("#content").val(),
                         fileName: $("#fileName").html(),
                         sendStatus: 1,
+                        roleId: $("#roleId").val(),
+                        acceptTime:$!("#acceptTime").val(),
+                        dealTime:$("#dealTime").val(),
                         eomsOrderId: $("#eomsOrderId").val()
                     },
                     dataType: 'json',
@@ -231,6 +306,9 @@
             });
 
             $("#saveBtn").click(function () {
+                if (!checkInput()) {
+                    return;
+                }
                 source.content = $("#content").val();
                 $.ajax({
                     type: 'post',
@@ -252,6 +330,9 @@
                         content: $("#content").val(),
                         fileName: $("#fileName").html(),
                         sendStatus: 0,
+                        roleId: $("#roleId").val(),
+                        acceptTime:$("#acceptTime").val(),
+                        dealTime:$("#dealTime").val(),
                         eomsOrderId: $("#eomsOrderId").val()
                     },
                     dataType: 'json',
@@ -266,6 +347,26 @@
             });
 
         });
+        function checkInput() {
+            if ($("#rangeLabel").html() == "问题对象") {
+                alert("请选择问题对象");
+                return false;
+            }
+            if ($("#roleLabel").html() == "班组信息") {
+                alert("请选择班组信息");
+                return false;
+            }
+            return true;
+
+        }
+
+        function defaultTime(){
+            var acceptTime = moment().add(2, 'days').format("YYYY-MM-DD HH:mm:ss");
+            var dealTime = moment().add(7, 'days').format("YYYY-MM-DD HH:mm:ss");
+            $("#acceptTime").val(acceptTime);
+            $("#dealTime").val(dealTime);
+        }
+
     </script>
 </head>
 <body>
@@ -283,17 +384,17 @@
         </div>
         <div class="inlininput mr10">
             <label class="S-label">任务子类</label>
-            <input id="typeSubName" type="text"  style="width: 204px;" placeholder="" value="" maxlength="11">
+            <input id="typeSubName" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
         </div>
     </div>
     <div class="animated fadeInDown pr">
-        <div class="inlininput mr10"  >
+        <div class="inlininput mr10">
             <label class="S-label">地市</label>
-            
-                <input id="cityName" type="text"   style="width: 204px;"  placeholder="" value="" maxlength="11">
+
+            <input id="cityName" type="text" style="width: 204px;" placeholder="" value="" maxlength="11">
         </div>
         <div class="sel_wrap mb10 mr10" style="width: 280px;">
-            <label>问题对象</label>
+            <label id="rangeLabel">问题对象</label>
             <span id="rangeSelect"><input id="rangeName" name="RangeName" type="text" readonly="readonly"/></span>
             <a class="sel-link"><i class="icon-arrow"></i></a>
         </div>
@@ -301,7 +402,8 @@
     <div class="animated fadeInDown pr">
         <div class="inlininput mr10">
             <label class="S-label">任务处理对象</label>
-            <input id="neType" type="text" style="padding-left: 98px;width: 177px;" placeholder="" value="" maxlength="11">
+            <input id="neType" type="text" style="padding-left: 98px;width: 177px;" placeholder="" value=""
+                   maxlength="11">
         </div>
         <div class="inlininput mr10">
             <label class="S-label">派单方式</label>
@@ -311,8 +413,32 @@
 
     <div class="animated fadeInDown pr">
         <div class="inlininput mr10">
+            <label class="S-label">受理时限</label>
+            <span class="add-on"><a href="#"><i class="icon-calendar"></i></a></span>
+            <input type="text" id="acceptTime" class="w100"  style="width: 176px;"
+                   onClick="WdatePicker({dateFmt:'yyyy/MM/dd HH:mm:ss'})"/>
+        </div>
+        <div class="inlininput mr10">
+            <label class="S-label">最后时限</label>
+            <span class="add-on"><a href="#"><i class="icon-calendar"></i></a></span>
+            <input type="text" id="dealTime" class="w100"  style="width: 176px;"
+                   onClick="WdatePicker({dateFmt:'yyyy/MM/dd HH:mm:ss'})"/>
+        </div>
+    </div>
+
+    <div class="animated fadeInDown pr">
+        <div class="sel_wrap mb10 mr10" style="width: 280px;">
+            <label id="roleLabel">班组信息</label>
+            <span id="roleSelect"><input id="roleName" name="roleName" type="text" readonly="readonly"/></span>
+            <a class="sel-link"><i class="icon-arrow"></i></a>
+        </div>
+    </div>
+
+    <div class="animated fadeInDown pr">
+        <div class="inlininput mr10">
             <label class="S-label">派单内容</label>
-            <textarea id="content" name="Content" style="width: 563px; height: 180px; padding: 29px 7px 7px 7px;"></textarea>
+            <textarea id="content" name="Content"
+                      style="width: 563px; height: 180px; padding: 29px 7px 7px 7px;"></textarea>
         </div>
     </div>
 
@@ -328,13 +454,16 @@
         <input id="submitBtn" type="button" value="提交" class="myButton btn btn-danger"/>
     </div>
 
-    <input type="hidden" id="eomsOrderId" name="EomsOrderID" >
+    <input type="hidden" id="eomsOrderId" name="EomsOrderID">
     <input type="hidden" id="cityKey" name="CityKey">
     <input type="hidden" id="typeId" name="TypeID">
     <input type="hidden" id="typeSubId" name="TypeSubID">
     <input type="hidden" id="rangeId" name="RangeID">
     <input type="hidden" id="wo_id" name="wo_id">
     <input type="hidden" id="neNames" name="neNames">
+    <input type="hidden" id="roleId" name="roleId">
+
+
 </div>
 </body>
 </html>

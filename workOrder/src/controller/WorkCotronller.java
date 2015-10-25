@@ -12,6 +12,7 @@ import util.DbOpUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,28 +56,52 @@ public class WorkCotronller extends Controller {
         renderJson(array.toJSONString());
     }
 
+
+    public void getRole() throws SQLException {
+        String sql = PropKit.get("WORK_ROLE_SQL");
+        Connection connection = DbKit.getConfig().getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        JSONArray array = new JSONArray();
+        while (resultSet.next()) {
+            if (resultSet.getString(1) != null && resultSet.getString(2) != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("roleid", resultSet.getString(1));
+                jsonObject.put("rolename", resultSet.getString(2));
+                array.add(jsonObject);
+            }
+        }
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+        renderJson(array.toJSONString());
+    }
+
+
+
+
     public void addNeEomsOrder(String neType, String neNames, String woId) throws SQLException {
         System.out.println("开始插入");
 
-        String sql = "insert into rel_wo_conc(ne_type, ne_name,  wo_id) values (?,?,?)";
+        String sql = PropKit.get("REL_WO_CONC_SQL");
 
         Connection connection = DbKit.getConfig().getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        Statement statement = connection.createStatement();
         connection.setAutoCommit(false);
         for (String neName : StringUtils.split(neNames, ",")) {
-            System.out.println(neName);
             if (StringUtils.isNotBlank(neName)) {
-                preparedStatement.setString(1, neType);
-                preparedStatement.setString(2, neName.trim());
-                preparedStatement.setString(3, woId);
-                preparedStatement.addBatch();
+                String thisSql = sql.replaceFirst("\\?", neType).replaceFirst("\\?", neName.trim()).replaceFirst
+                        ("\\?", woId);
+
+                System.out.println(thisSql);
+                statement.addBatch(thisSql);
             }
         }
 
-        preparedStatement.executeBatch();
+        statement.executeBatch();
         connection.commit();
         connection.setAutoCommit(true);
-        preparedStatement.close();
+        statement.close();
         connection.close();
         System.out.println("插入完毕");
 
@@ -135,8 +160,9 @@ public class WorkCotronller extends Controller {
     }
 
     private String updateWrokData(String workId, EomsOrder workObj) throws SQLException {
-        String orderSql = "update  W_WORKORDER_INFO set CITY_KEY = ?, CITY = ?, WO_RANGE_ID = ? , WO_RANGE = ?, " +
-                "WO_CONTENT = ?, WO_NETYPE =  ?,SEND_STATUS=? where wo_id = " + workId;
+        String orderSql = "update  metadb_fc.W_WORKORDER_INFO set CITY_KEY = ?, CITY = ?, WO_RANGE_ID = ? , WO_RANGE = ?, " +
+                "WO_CONTENT = ?, WO_NETYPE =  ?,SEND_STATUS=?,DEALUSERROLE=?,accepttime=to_timestamp(?, 'yyyy-MM-dd HH24:MI:ss')," +
+                "dealtime=to_timestamp(?, 'yyyy-MM-dd HH24:MI:ss') where wo_id = " + workId;
         Connection connection = DbKit.getConfig("orcl").getConnection();
         PreparedStatement statement = connection.prepareStatement(orderSql);
         try {
@@ -147,6 +173,9 @@ public class WorkCotronller extends Controller {
             statement.setString(5, workObj.getContent());
             statement.setString(6, workObj.getNeType());
             statement.setString(7, workObj.getSendStatus());
+            statement.setString(8, workObj.getDealUserRole());
+            statement.setString(9, workObj.getAcceptTime());
+            statement.setString(10, workObj.getDealTime());
             statement.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,26 +190,28 @@ public class WorkCotronller extends Controller {
         Connection connection = DbKit.getConfig("orcl").getConnection();
         Statement statement = connection.createStatement();
         try {
-            String workIdSql = "select SEQ_W_WORKORDER_INFO.nextval as WORKID from dual";
+            String workIdSql = "select metadb_fc.SEQ_W_WORKORDER_INFO.nextval as WORKID from dual";
             List<Map<String, String>> workIdData = DbOpUtil.query(workIdSql, statement);
             workId = workIdData.get(0).get("WORKID");
             workObj.setDetailUrl(PropKit.get("DETAIL_URL") + "?workId=" + workId);
 
-            String workTitleIndexSql = "select SEQ_WORKORDER_TITLE_INDEX.nextval as TITLEINDEX from dual";
+            String workTitleIndexSql = "select metadb_fc.SEQ_WORKORDER_TITLE_INDEX.nextval as TITLEINDEX from dual";
             List<Map<String, String>> workIndexData = DbOpUtil.query(workTitleIndexSql, statement);
             String workTitleIndex = workIndexData.get(0).get("TITLEINDEX");
             workTitleIndex = ("000" + workTitleIndex).substring(workTitleIndex.length() + 3 - 4, workTitleIndex
                     .length() + 3);
 
-            String orderSql = "insert into W_WORKORDER_INFO(WO_ID,WO_TITLE,CITY_KEY,CITY,WO_TYPE," +
+            String orderSql = "insert into metadb_fc.W_WORKORDER_INFO(WO_ID,WO_TITLE,CITY_KEY,CITY,WO_TYPE," +
                     "WO_TYPE_SUB,WO_RANGE_ID,WO_RANGE,WO_CONTENT,WO_NETYPE,WO_SEND_WAY,WO_CREATE_TIME," +
-                    "SEND_STATUS,FILE_NAME,DETAIL_URL) values(" + workId + "," +
+                    "SEND_STATUS,FILE_NAME,DETAIL_URL,DEALUSERROLE,accepttime,dealtime) values(" + workId + "," +
                     "'" + workObj.getEomsOrderTitle() + "-" + workTitleIndex + "'," +
                     workObj.getCityKey() + ",'" + workObj.getCityName() + "'," + workObj.getTypeId() + "," +
                     workObj.getTypeSubId() + "," + workObj.getRangeId() + ",'" + workObj.getRangeName() + "'," +
                     "'" + workObj.getContent() + "','" + workObj.getNeType() + "','" + workObj.getSendWay() + "'," +
                     "sysdate," + workObj.getSendStatus() + ",'" + workObj.getFileName() + "','" + workObj
-                    .getDetailUrl() + "')";
+                    .getDetailUrl() + "','"+workObj.getDealUserRole()+"',to_timestamp('" + workObj.getAcceptTime()
+                    + "', 'yyyy-MM-dd HH24:MI:ss'),to_timestamp('" + workObj.getDealTime() + "', 'yyyy-MM-dd HH24:MI:ss'))";
+            System.out.println(orderSql);
             DbOpUtil.exec(orderSql, statement);
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,19 +222,27 @@ public class WorkCotronller extends Controller {
     }
 
 
+    public static void main(String[] args) {
+        String sql = "select count(*) from metadb_fc.W_WORKORDER_INFO where wo_id=\\?".replace("\\?","123");
+        System.out.println(sql);
+    }
+
     private boolean checkExists(String workId) throws SQLException {
 
-        String sql = PropKit.get("EXIST_WORK_SQL");
+        String sql = PropKit.get("EXIST_WORK_SQL").replace("\\?",workId);
+        System.out.println(sql);
         Connection connection = DbKit.getConfig("orcl").getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setString(1, workId);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
         boolean isExists = false;
         if (resultSet.next()) {
             isExists = resultSet.getInt(1) > 0 ? true : false;
         } else {
             isExists = false;
         }
+        resultSet.close();
+        statement.close();
+        connection.close();
         return isExists;
 
 
@@ -333,10 +372,10 @@ public class WorkCotronller extends Controller {
 
 
     public void downFile() throws Exception {
-        HttpServletResponse response = getResponse();
+
         String filePath = PropKit.get("FILE_PATH");
 
-        String fileName = getPara("fileName");
+        String fileName = URLDecoder.decode(getPara("fileName"), "utf-8");
         if (StringUtils.isBlank(fileName) || fileName.equals("null")) {
             System.out.println("文件名" + fileName + "异常");
             renderError(403);

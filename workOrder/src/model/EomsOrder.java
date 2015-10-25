@@ -46,6 +46,13 @@ public class EomsOrder {
     //发送状态
     private String sendStatus;
 
+    private String dealUserRole;
+    //受理时限
+    private String acceptTime;
+    //处理时限
+    private String dealTime;
+
+
     public String getEomsOrderId() {
         return eomsOrderId;
     }
@@ -190,6 +197,22 @@ public class EomsOrder {
         this.sendStatus = sendStatus;
     }
 
+    public String getDealUserRole() {
+        return dealUserRole;
+    }
+
+    public void setDealUserRole(String dealUserRole) {
+        this.dealUserRole = dealUserRole;
+    }
+
+    public String getAcceptTime() { return acceptTime; }
+
+    public void setAcceptTime(String acceptTime) { this.acceptTime = acceptTime; }
+
+    public String getDealTime() { return dealTime; }
+
+    public void setDealTime(String dealTime) { this.dealTime = dealTime; }
+
     public static EomsOrder initEomsOrder(Map<String, String[]> map) {
         EomsOrder eo = new EomsOrder();
         eo.eomsOrderId = map.get("eomsOrderId") != null ? map.get("eomsOrderId")[0] : null;
@@ -211,8 +234,12 @@ public class EomsOrder {
         eo.detailUrl = map.get("detailUrl") != null ? map.get("detailUrl")[0] : null;
         eo.eomsOrderTitle = map.get("eomsOrderTitle") != null ? map.get("eomsOrderTitle")[0] : null;
         eo.sendStatus = map.get("sendStatus") != null ? map.get("sendStatus")[0] : null;
+        eo.dealUserRole = map.get("roleId") != null ? map.get("roleId")[0] : null;
+        eo.acceptTime = map.get("acceptTime") != null ? map.get("acceptTime")[0] : null;
+        eo.dealTime = map.get("dealTime") != null ? map.get("dealTime")[0] : null;
         return eo;
     }
+
 
     @Override
     public String toString() {
@@ -235,6 +262,7 @@ public class EomsOrder {
                 ", fileName='" + fileName + '\'' +
                 ", detailUrl='" + detailUrl + '\'' +
                 ", sendStatus='" + sendStatus + '\'' +
+                ", dealUserRole='" + dealUserRole + '\'' +
                 '}';
     }
 }
