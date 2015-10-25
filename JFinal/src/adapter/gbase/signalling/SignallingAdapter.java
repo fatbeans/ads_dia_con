@@ -45,8 +45,8 @@ public class SignallingAdapter implements Isignalling{
 				DictionaryEntity dictionary=new DictionaryEntity();
 				dictionary.setKey(resultSet.getString("procedure_type_code"));
 				dictionary.setName(resultSet.getString("procedure_type"));
-				dictionary.setProp1(resultSet.getString("proto_type_code"));
-				dictionary.setProp2(resultSet.getString("proto_type"));
+//				dictionary.setProp1(resultSet.getString("proto_type_code"));
+//				dictionary.setProp2(resultSet.getString("proto_type"));
 				dictionaryList.add(dictionary);
 			}
 		}catch(Exception ex){
@@ -217,7 +217,7 @@ public class SignallingAdapter implements Isignalling{
 					if(sigitem.getProcedureType()!=null && sigitem.getInterfaceType()!=null &&sigitem.getInterfaceType().equals("5") 
 							&& sigitem.getProcedureType().equals(dictionaryint.getKey())){
 						sigitem.setProcedureStatusText(dictionaryint.getName());
-						sigitem.setProtocolType(dictionaryint.getProp2());
+//						sigitem.setProtocolType(dictionaryint.getProp2());
 						break;
 					}
 				}

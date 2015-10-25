@@ -218,7 +218,7 @@
             {name: 'SEND_STATUS', width: 150, formatter: statusFormat},
             {name: 'EOMS_STATUS', width: 150}
         ],
-
+        loadonce:true,
         autowidth: true,
         rowNum: 30,
         hidegrid: false,
