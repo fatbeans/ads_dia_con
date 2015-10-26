@@ -87,7 +87,7 @@ public class ConclusionStatController extends Controller {
         String ed = getPara("ed", DateFormatUtils.format(new Date(), "yyyyMMdd"));
         long msisdn = getParaToLong("msisdn", 0l);
 
-        sd = StringUtils.rightPad(sd, 6, "0").substring(0, 6);
+
         long lv2_con_id = getParaToLong("lv2_con_id", -1l);
         int cityId = getParaToInt("cityId", 0);
 
