@@ -29,7 +29,7 @@
         var selectWorkUrl = localUrl + "/work/getTaskOne";
         var downFileUrl = localUrl + "/work/downFile";
         var synchData = null;
-<%=request.getParameter()%>
+
         function initSource() {
             var source = {
                 "neNames": getQueryString("neName"),
