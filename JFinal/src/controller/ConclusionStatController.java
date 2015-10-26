@@ -116,7 +116,6 @@ public class ConclusionStatController extends Controller {
             }
         }
 
-        sd = StringUtils.rightPad(sd, 6, "0").substring(0, 6);
         long lv2_con_id = getParaToLong("lv2_con_id", -1l);
         int cityId = getParaToInt("cityId", 0);
 
@@ -166,6 +165,10 @@ public class ConclusionStatController extends Controller {
                 .prepareStatement(sql);
         int startTime = NumberUtils.toInt(sd);
         int endTime = NumberUtils.toInt(ed);
+
+        System.out.println("sd = [" + startTime + "], ed = [" + endTime + "], lv2_con_id = [" + lv2_con_id + "], data" +
+                " = [" + data + "], cityId = [" + cityId + "], msisdn = [" + msisdn + "]");
+
         preparedStatement.setLong(1, lv2_con_id);
         preparedStatement.setInt(2, cityId);
         preparedStatement.setInt(3, startTime);
@@ -255,8 +258,8 @@ public class ConclusionStatController extends Controller {
         if (jsStr != null) {
             JSONArray array = JSONArray.parseArray(jsStr);
 
-            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次" };
-            String[] key = new String[]{"NETYPE", "NENAME", "NECITY", "LV2_CON_NAME", "SCNT" };
+            String[] header = new String[]{"网元类型", "网元名称", "网元归属地市", "诊断问题", "影响人次"};
+            String[] key = new String[]{"NETYPE", "NENAME", "NECITY", "LV2_CON_NAME", "SCNT"};
 
             String fileName = PropKit.get("FILE_PRE") + DateFormatUtils.format(new Date(),
                     "yyyyMmddHHmmssSSS") + ".xlsx";
