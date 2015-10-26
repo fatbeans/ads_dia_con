@@ -111,10 +111,10 @@
         <input type="hidden" id="fcityName"/>
         <input type="hidden" id="fcityKey"/>
         <input type="hidden" id="sendWay" value="人工派单"/>
-        <input type="hidden" id="ffileName" />
+        <input type="hidden" id="ffileName"/>
         <input type="hidden" id="ftypeName" value="专题分析结论"/>
         <input type="hidden" id="ftypeSubName" value="客户感知溯源"/>
-        <input type="hidden" id="neName" />
+        <input type="hidden" id="neName"/>
     </form>
 
     <!-- 表格部分-e -->
@@ -283,6 +283,18 @@
                 $.artcloud.loading("close");
                 var ids = grid.jqGrid('getGridParam', 'selarrrow');
                 var wo_netype = grid.jqGrid('getRowData', ids[0]).NETYPE;
+                if (wo_netype.indexOf("无线侧") != -1) {
+                    wo_netype = "小区";
+                } else if (wo_netype.toLowerCase().indexOf("sp") != -1) {
+                    wo_netype = "内容源";
+                } else if (wo_netype.indexOf("核心") != -1) {
+                    wo_netype = "核心网";
+                } else if (wo_netype.indexOf("用户") != -1) {
+                    wo_netype = "用户";
+                } else if (wo_netype.indexOf("终端") != -1) {
+                    wo_netype = "终端侧";
+                }
+
                 var neNames = "";
                 for (var i = 0; i < ids.length; i++) {
                     neNames += grid.jqGrid('getRowData', ids[i]).NENAME + ",";
@@ -298,7 +310,7 @@
                 $("#fcityKey").val(cityKey);
                 $("#ffileName").val(fileName);
                 $("#neName").val(neNames);
-//                $("#workOrderFrom").submit();
+                $("#workOrderFrom").submit();
 
 //                var url = "http://" + host + "/eoms/eomsorder.jsp?typeId=2" +
 //                        "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
