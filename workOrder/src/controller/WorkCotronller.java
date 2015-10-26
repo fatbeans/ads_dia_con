@@ -59,7 +59,7 @@ public class WorkCotronller extends Controller {
     public void addNeEomsOrder(String neType, String neNames, String woId) throws SQLException {
         System.out.println("开始插入");
 
-        String sql = "insert into rel_wo_conc(ne_type, ne_name,  wo_id) values (?,?,?)";
+        String sql = "insert into swxt.rel_wo_conc(ne_type, ne_name,  wo_id) values (?,?,?)";
 
         Connection connection = DbKit.getConfig().getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);

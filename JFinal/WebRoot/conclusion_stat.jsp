@@ -103,6 +103,20 @@
     <input type="hidden" value="1" id="provIdInDB"/>
     <input type="hidden" value="-1" id="provIdInView">
 
+    <form id="workOrderFrom" action="/eoms/eomsorder.jsp" method="post" target="_blank">
+        <input type="hidden" id="ftypeId" value="2"/>
+        <input type="hidden" id="ftypeSubId" value="7"/>
+        <input type="hidden" id="feomsOrderTitle" value="客户感知溯源工单"/>
+        <input type="hidden" id="fneType"/>
+        <input type="hidden" id="fcityName"/>
+        <input type="hidden" id="fcityKey"/>
+        <input type="hidden" id="sendWay" value="人工派单"/>
+        <input type="hidden" id="ffileName" />
+        <input type="hidden" id="ftypeName" value="专题分析结论"/>
+        <input type="hidden" id="ftypeSubName" value="客户感知溯源"/>
+        <input type="hidden" id="neName" />
+    </form>
+
     <!-- 表格部分-e -->
 </div>
 <%@ include file="footer.html" %>
@@ -220,7 +234,7 @@
         ],
 
         autowidth: true,
-        rowNum: 30,
+        rowNum: 500,
         hidegrid: false,
         rownumbers: true,
         shrinkToFit: false,
@@ -277,12 +291,21 @@
                 var cityKey = $("#citySel").val();
 
                 var cityName = $("#citySel option:selected").html();
-                var url = "http://" + host + "/eoms/eomsorder.jsp?typeId=2" +
-                        "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
-                        "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
-                        "&sendWay=人工派单&fileName=" + fileName +
-                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
-                windowOpen(encodeURI(url), "_blank");
+
+
+                $("#fneType").val(wo_netype);
+                $("#fcityName").val(cityName);
+                $("#fcityKey").val(cityKey);
+                $("#ffileName").val(fileName);
+                $("#neName").val(neNames);
+//                $("#workOrderFrom").submit();
+
+//                var url = "http://" + host + "/eoms/eomsorder.jsp?typeId=2" +
+//                        "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
+//                        "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
+//                        "&sendWay=人工派单&fileName=" + fileName +
+//                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
+//                windowOpen(encodeURI(url), "_blank");
             }
         });
 

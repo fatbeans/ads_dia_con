@@ -15,6 +15,8 @@
 
     <script type="text/javascript">
 
+
+
         function getQueryString(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
             var r = window.location.search.substr(1).match(reg);
@@ -27,7 +29,7 @@
         var selectWorkUrl = localUrl + "/work/getTaskOne";
         var downFileUrl = localUrl + "/work/downFile";
         var synchData = null;
-
+<%=request.getParameter()%>
         function initSource() {
             var source = {
                 "neNames": getQueryString("neName"),
