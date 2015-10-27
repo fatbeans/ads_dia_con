@@ -15,6 +15,7 @@
 
     <script type="text/javascript">
 
+
         function getQueryString(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
             var r = window.location.search.substr(1).match(reg);
@@ -30,22 +31,22 @@
 
         function initSource() {
             var source = {
-                "neNames": getQueryString("neName"),
-                "eomsOrderId": getQueryString("eomsOrderId"),
-                "eomsOrderTitle": getQueryString("eomsOrderTitle"),
-                "typeId": getQueryString("typeId"),
-                "typeName": getQueryString("typeName"),
-                "typeSubId": getQueryString("typeSubId"),
-                "typeSubName": getQueryString("typeSubName"),
-                "cityKey": getQueryString("cityKey"),
-                "cityName": getQueryString("cityName"),
-                "rangeName": getQueryString("rangeName"),
-                "neType": getQueryString("neType"),
-                "sendWay": getQueryString("sendWay"),
-                "content": getQueryString("content"),
-                "fileName": getQueryString("fileName"),
-                "rangeId": getQueryString("rangeId"),
-                "wo_id": getQueryString("wo_id")
+                "neNames": "<%=request.getParameter("neName")!=null?request.getParameter("neName"):""%>",
+                "eomsOrderId": "<%=request.getParameter("feomsOrderId")!=null?request.getParameter("feomsOrderId"):""%>",
+                "eomsOrderTitle": "<%=request.getParameter("feomsOrderTitle")!=null?request.getParameter("feomsOrderTitle"):""%>",
+                "typeId": "<%=request.getParameter("ftypeId")!=null?request.getParameter("ftypeId"):""%>",
+                "typeName": "<%=request.getParameter("ftypeName")!=null?request.getParameter("ftypeName"):""%>",
+                "typeSubId": "<%=request.getParameter("ftypeSubId")!=null?request.getParameter("ftypeSubId"):""%>",
+                "typeSubName": "<%=request.getParameter("ftypeSubName")!=null?request.getParameter("ftypeSubName"):""%>",
+                "cityKey": "<%=request.getParameter("fcityKey")!=null?request.getParameter("fcityKey"):""%>",
+                "cityName": "<%=request.getParameter("fcityName")!=null?request.getParameter("fcityName"):""%>",
+                "rangeName": "<%=request.getParameter("frangeName")!=null?request.getParameter("frangeName"):""%>",
+                "neType": "<%=request.getParameter("fneType")!=null?request.getParameter("fneType"):""%>",
+                "sendWay": "<%=request.getParameter("sendWay")!=null?request.getParameter("sendWay"):""%>",
+                "content": "<%=request.getParameter("fcontent")!=null?request.getParameter("fcontent"):""%>",
+                "fileName": "<%=request.getParameter("ffileName")!=null?request.getParameter("ffileName"):""%>",
+                "rangeId": "<%=request.getParameter("rangeId")!=null?request.getParameter("rangeId"):""%>",
+                "wo_id": "<%=request.getParameter("wo_id")!=null?request.getParameter("wo_id"):""%>"
             };
             return source;
         }

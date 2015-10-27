@@ -103,6 +103,20 @@
     <input type="hidden" value="1" id="provIdInDB"/>
     <input type="hidden" value="-1" id="provIdInView">
 
+    <form id="workOrderFrom" action="/eoms/eomsorder.jsp" method="post" target="_blank">
+        <input type="hidden" id="ftypeId" name="ftypeId" value="2"/>
+        <input type="hidden" id="ftypeSubId" name="ftypeSubId" value="7"/>
+        <input type="hidden" id="feomsOrderTitle" name="feomsOrderTitle" value="客户感知溯源工单"/>
+        <input type="hidden" id="fneType" name="fneType"/>
+        <input type="hidden" id="fcityName" name="fcityName"/>
+        <input type="hidden" id="fcityKey" name="fcityKey"/>
+        <input type="hidden" id="sendWay" name="sendWay" value="人工派单"/>
+        <input type="hidden" id="ffileName" name="ffileName"/>
+        <input type="hidden" id="ftypeName" name="ftypeName" value="专题分析结论"/>
+        <input type="hidden" id="ftypeSubName" name="ftypeSubName" value="客户感知溯源"/>
+        <input type="hidden" id="neName" name="neName"/>
+    </form>
+
     <!-- 表格部分-e -->
 </div>
 <%@ include file="footer.html" %>
@@ -135,34 +149,12 @@
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
-        if (r != null)return unescape(r[2]);
+        if (r != null)return decodeURIComponent(r[2]);
         return null;
-    }
-
-
-    function showHideCol() {
-        var $jqgrid = $("#contab").jqGrid();
-        if ($("#lv1_con_id").val() == 2) {
-            $jqgrid.showCol(['TCNT', 'TIMEPERCENT']);
-            $jqgrid.setLabel('NENAME', '网元名称');
-        }
-        if ($("#lv1_con_id").val() == 1) {
-            if ($("#lv2_con_id").val() == 10020005 || $("#lv2_con_id").val() == 10020006 || $("#lv2_con_id").val() == 10020007 || $("#lv2_con_id").val() == 10030008 || $("#lv2_con_id").val() == 10020005 || $("#lv2_con_id").val() == 10020005) {
-                $jqgrid.hideCol(['TCNT', 'TIMEPERCENT']);
-                $jqgrid.setLabel('NENAME', '网元名称');
-            } else {
-                $jqgrid.showCol(['TCNT', 'TIMEPERCENT']);
-                $jqgrid.setLabel('NENAME', '网元名称');
-            }
-        }
-        if ($("#lv1_con_id").val() == 3) {
-            $jqgrid.setLabel("NENAME", "SP IP");
-            $jqgrid.hideCol(["TCNT", "TIMEPERCENT"]);
-
-        }
-
 
     }
+
+
 
     function statusFormat(ccc, options, rowObject) {
         cellvalue = rowObject.SEND_STATUS;
@@ -202,6 +194,7 @@
             for (var i = 0; i < aRowids.length; i++) {
                 if ($("#jqg_contab_" + aRowids[i]).attr("disabled") == "disabled") {
                     $("#jqg_contab_" + aRowids[i]).removeAttr("checked");
+                    $("#contab").jqGrid().setSelection(	aRowids,false);
                 }
             }
         },
@@ -277,12 +270,21 @@
                 var cityKey = $("#citySel").val();
 
                 var cityName = $("#citySel option:selected").html();
-                var url = "http://" + host + "/eoms/eomsorder.jsp?typeId=2" +
-                        "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
-                        "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
-                        "&sendWay=人工派单&fileName=" + fileName +
-                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
-                windowOpen(encodeURI(url), "_blank");
+
+
+                $("#fneType").val(wo_netype);
+                $("#fcityName").val(cityName);
+                $("#fcityKey").val(cityKey);
+                $("#ffileName").val(fileName);
+                $("#neName").val(neNames);
+                $("#workOrderFrom").submit();
+
+//                var url = "http://" + host + "/eoms/eomsorder.jsp?typeId=2" +
+//                        "&typeSubId=7&eomsOrderTitle=客户感知溯源工单" +
+//                        "&neType=" + wo_netype + "&cityName=" + cityName + "&cityKey=" + cityKey +
+//                        "&sendWay=人工派单&fileName=" + fileName +
+//                        "&typeName=专题分析结论&typeSubName=客户感知溯源&neName=" + neNames;
+//                windowOpen(encodeURI(url), "_blank");
             }
         });
 

@@ -149,6 +149,7 @@
 
 
     $("#hisTab").jqGrid({
+
         url: 'comp/searchHistory',
         datatype: 'local',
         colNames: ['全量投诉流水号', '客服受理时间', '受理号码', '用户归属地市', '客户级别', '客户品牌', '投诉业务类型', '诉求内容', '重复投诉', '投诉类型', '客服判断是否解决（认可）', '省EOMS流水号', '派单EOMS时间', '工单时限', '最终处理部门'],
@@ -315,7 +316,7 @@
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
-        if (r != null)return unescape(r[2]);
+        if (r != null)return decodeURIComponent(r[2]);
         return null;
     }
 
