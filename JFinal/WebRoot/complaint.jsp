@@ -63,7 +63,7 @@
             <input id="imsi" type="text" class="w100" style="padding-left: 45px" placeholder="">
         </div>
         <a href="#" id="psb" class="btn btn-search vm mb10" title="无号码则查询时间段内所有设诉数据，且不查询投诉履历">
-            <span class="searchicon" ><i class="uicon ui-search" ></i></span> 查询
+            <span class="searchicon"><i class="uicon ui-search"></i></span> 查询
         </a>
     </div>
     <!-- 搜索-e -->
@@ -114,6 +114,9 @@
                 <li class="active litab"><a href="#tab1">历史投诉</a></li>
                 <li class="litab"><a href="#tab2">诊断明细</a></li>
             </ul>
+            <div class="pull-right">
+                <a href="#" id="export" class="btn btn-primary">导出</a>
+            </div>
         </div>
         <div class="tab-content" style="overflow: visible;" id="panel">
             <div class="tab-pane active" id="tab1">
@@ -298,6 +301,22 @@
             return true;
         }
     }
+
+    $("#export").click(function () {
+        if (!checkInput()) {
+
+        } else {
+
+            var sd = $("#sd").val().replace(/[/]/g, '').replace(' ', '');
+            var ed = $("#ed").val().replace(/[/]/g, '').replace(' ', '');
+            var business_class = encodeURIComponent($("#business_class").val().trim());
+            var msisdn = $("#msisdn").val();
+            window.open("../export.jsp?export=comp&business_class=" + business_class + "&sd=" + sd + "&ed=" + ed + "&msisdn=" + msisdn,
+                    "导出文件",
+                    "height=300, width=600, toolbar =no, top=300, left=300 menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+
+        }
+    });
 
     function info(d) {
         if (d == null || typeof (d) == "undefined") {

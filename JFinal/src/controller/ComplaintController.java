@@ -1,7 +1,10 @@
 package controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.PropKit;
 import dao.ComplaintDao;
 import dao.Pager;
@@ -20,6 +23,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +68,10 @@ public class ComplaintController extends Controller {
     }
 
     public void searchHistory() {
+        if(getPara("export")!=null) {
+            exportExcel();
+            return;
+        }
         int page = getParaToInt("page", 1);
         int size = getParaToInt("rows", 10);
         long sd = getParaToLong(("sd"), 2000010100l);
@@ -111,11 +119,12 @@ public class ComplaintController extends Controller {
                     ("COMP_WHERE_BUSINESS"), " ") : PropKit.get("COMP_SQL");
 
             if (StringUtils.isNotBlank(msisdn)) {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size,sql )
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, sql)
                                 .replaceFirst("\\%\\?\\%", "%" + business_class + "%"),
                         msisdn, sd, ed));
             } else {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql, PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql,
+                        PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
                         business_class + "%"), sd, ed));
             }
         }
@@ -182,46 +191,75 @@ public class ComplaintController extends Controller {
     }
 
 
-    public void export() {
+    public void exportExcel()  {
 
         long sd = getParaToLong(("sd"), 20000101l);
         long ed = getParaToLong(("ed"), 21000101l);
         long msisdn = getParaToLong(("msisdn"), -1l);
 
-        String prefix = msisdn + "_" + sd + "_" + ed;
+        String prefix = "投诉履历_" + (msisdn == -1 ? "" : msisdn) + "_" + sd + "_" + ed + "_" + ((int) Math.random() *
+                100);
+        ExcelExport.checkFileExists(prefix);
 
-        String fileName = ExcelExport.checkFileExists(prefix);
-        if (fileName == null) {
+        String realFileName = ExcelExport.getRealFilename(prefix);
+        String webFileName = ExcelExport.getWebFileName(prefix);
 
-            String where = "where procedure_starttime >= ? and procedure_starttime < ? " + (msisdn == -1 ? "" : " and" +
-                    " " +
+        System.out.println("fileName = " + realFileName);
+        if (realFileName != null) {
 
-                    "msisdn = " + msisdn);
+            File file = new File(realFileName);
+            JSONArray data = getCompData();
+            System.out.println("data = " + data);
 
-            List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd,
-                    ed);
-            String[] headStr = {
-                    "手机号码", "开始时间", "结束时间", "终端型号", "终端厂家", "业务大类", "业务小类", "访问站点", "详细站点",
-                    "状态", "错误码", "上行流量", "下行流量", "平均响应时间", "APN", "网络类型", "服务小区"};
-            String[] key = {"msisdn",
-                    "procedure_starttime_ms",
-                    "procedure_endtime_ms",
-                    "tactype",
-                    "tacbrnd",
-                    "app_type_name",
-                    "app_sub_type_name",
-                    "host",
-                    "uri",
-                    "status_code",
-                    "",
-                    "ul_data",
-                    "dl_data",
-                    "bus_lantency",
-                    "apn",
-                    "rat_code",
-                    "cell_name"};
-            fileName = ExcelExport.exportExcelFile(list, prefix, headStr, key);
+            String[] headStr = {"全量投诉流水号", "客服受理时间", "受理号码", "用户归属地市", "客户级别", "客户品牌", "投诉业务类型", "诉求内容", "重复投诉", "投诉类型",
+                    "客服判断是否解决（认可）", "省EOMS流水号", "派单EOMS时间", "工单时限", "最终处理部门"};
+            String[] key = {"TOTALFLOWID", "ACCEPT_TIME", "CALLING_NO", "PRO_MAN_BELONG", "PRO_MAN_LEVEL",
+                    "PRO_MAN_SIZEUP", "BUSINESS_CLASS", "PRO_CONTENT", "PROSECUTE_TIMES", "PROSECUTE_TYPE",
+                    "IS_OVER", "FLOW_ID", "START_TIME", "SHEET_LIMIT", "DEAL_DEPT_NAME"};
+            try {
+                ExcelExport.createExcelFile(file, data, headStr, key,"LTE详单");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            renderText(webFileName);
         }
-        renderText(fileName);
     }
+
+
+    public JSONArray getCompData() {
+        int page = getParaToInt("page", 1);
+        int size = getParaToInt("rows", 10);
+        long sd = getParaToLong(("sd"), 2000010100l);
+        long ed = getParaToLong(("ed"), 2100010100l);
+        String msisdn = getPara("msisdn");
+        String business_class = getPara("business_class");
+        DbType dbType = null;
+        if (PropKit.get("dbPre").contains("GBASE")) {
+            dbType = DbType.GBASE;
+        } else if (PropKit.get("dbPre").contains("GP")) {
+            dbType = DbType.GP;
+        } else {
+            dbType = DbType.GISORCL;
+        }
+
+        XDialect xDialect = (dbType == DbType.GBASE ? new XGbaseDialect() : (dbType == DbType.GP ? new XGpDialect() :
+                new XOracleDialect()));
+        System.out.println("page Para:" + msisdn + "|" + sd + "|" + ed);
+
+        String sql = StringUtils.isBlank(business_class) ? PropKit.get("COMP_SQL").replace(PropKit.get
+                ("COMP_WHERE_BUSINESS"), " ") : PropKit.get("COMP_SQL");
+
+        List<ComplaintDao> list;
+
+        if (StringUtils.isNotBlank(msisdn)) {
+            list = ComplaintDao.dao.find(xDialect.forPaginate(page, size, sql).replaceFirst("\\%\\?\\%", "%" +
+                    business_class + "%"), msisdn, sd, ed);
+        } else {
+            list = ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql, PropKit.get
+                    ("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" + business_class + "%"), sd, ed);
+        }
+        return JSONArray.parseArray(JsonKit.toJson(list));
+    }
+
+
 }

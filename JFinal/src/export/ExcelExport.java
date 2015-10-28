@@ -38,10 +38,16 @@ public class ExcelExport {
         String webFileName = "/" + exportDir + filePostfix + extension;
         File file = new File(realFileName);
         if (!file.exists()) {
-
-            return null;
+            file.delete();
         }
         return webFileName;
+    }
+    public static String getWebFileName(String filePostfix){
+        return root_Dir + "/" + exportDir + filePostfix + extension;
+    }
+
+    public static String getRealFilename(String filePostfix){
+        return root_Dir + "/" + exportDir + filePostfix + extension;
     }
 
     private static void createExcelFile(File file, List<UserDetailsDao> list, String[] header,
@@ -101,30 +107,11 @@ public class ExcelExport {
     }
 
 
-    public static void main(String[] args) throws Exception {
-        String[] header = new String[]{"年", "性", "名"};
-        String[] key = new String[]{"age", "sex", "name"};
 
-        JSONArray array = new JSONArray();
-
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"sex\":\"男\",\"name\":\"阿拉\"}"));
-
-        File file = new File("g:/生成测试.xlsx");
-        createExcelFile(file, array, header, key);
-    }
 
 
     public static void createExcelFile(File file, JSONArray list, String[] header,
-                                       String[] key) throws Exception {
+                                       String[] key,String sheetName) throws Exception {
 
         if (header.length != key.length) {
             throw (new Exception("header与key的长度不一致"));
@@ -132,7 +119,8 @@ public class ExcelExport {
         // 先创建工作簿对象
         SXSSFWorkbook workbook2007 = new SXSSFWorkbook(100);
         // 创建工作表对象并命名
-        Sheet sheet = workbook2007.createSheet("信令详单");
+
+        Sheet sheet = workbook2007.createSheet(sheetName==null?"sheet1":sheetName);
         Row headrow = sheet.createRow(0);
 
 
@@ -159,13 +147,9 @@ public class ExcelExport {
 
         FileOutputStream fos = null;
         try {
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+            if (file.exists()) file.delete();
+            file.createNewFile();
             fos = new FileOutputStream(file);
             workbook2007.write(fos);
         } catch (Exception e) {
