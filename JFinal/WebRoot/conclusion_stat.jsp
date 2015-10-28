@@ -103,6 +103,20 @@
     <input type="hidden" value="1" id="provIdInDB"/>
     <input type="hidden" value="-1" id="provIdInView">
 
+    <form id="workOrderFrom" action="/eoms/eomsorder.jsp" method="post" target="_blank">
+        <input type="hidden" id="ftypeId" name="ftypeId" value="2"/>
+        <input type="hidden" id="ftypeSubId" name="ftypeSubId" value="7"/>
+        <input type="hidden" id="feomsOrderTitle" name="feomsOrderTitle" value="客户感知溯源工单"/>
+        <input type="hidden" id="fneType" name="fneType"/>
+        <input type="hidden" id="fcityName" name="fcityName"/>
+        <input type="hidden" id="fcityKey" name="fcityKey"/>
+        <input type="hidden" id="sendWay" name="sendWay" value="人工派单"/>
+        <input type="hidden" id="ffileName" name="ffileName"/>
+        <input type="hidden" id="ftypeName" name="ftypeName" value="专题分析结论"/>
+        <input type="hidden" id="ftypeSubName" name="ftypeSubName" value="客户感知溯源"/>
+        <input type="hidden" id="neName" name="neName"/>
+    </form>
+
     <!-- 表格部分-e -->
 </div>
 <%@ include file="footer.html" %>
@@ -135,7 +149,7 @@
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
-        if (r != null)return unescape(r[2]);
+        if (r != null)return decodeURIComponent(r[2]);
         return null;
     }
 

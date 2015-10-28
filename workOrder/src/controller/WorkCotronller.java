@@ -165,7 +165,7 @@ public class WorkCotronller extends Controller {
             String workIdSql = "select SEQ_W_WORKORDER_INFO.nextval as WORKID from dual";
             List<Map<String, String>> workIdData = DbOpUtil.query(workIdSql, statement);
             workId = workIdData.get(0).get("WORKID");
-            workObj.setDetailUrl(PropKit.get("DETAIL_URL") + "?workId=" + workId);
+            workObj.setDetailUrl(PropKit.get("DETAIL_URL") + "?wo_id=" + workId);
 
             String workTitleIndexSql = "select SEQ_WORKORDER_TITLE_INDEX.nextval as TITLEINDEX from dual";
             List<Map<String, String>> workIndexData = DbOpUtil.query(workTitleIndexSql, statement);
