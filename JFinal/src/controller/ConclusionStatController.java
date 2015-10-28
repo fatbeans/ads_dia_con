@@ -93,7 +93,7 @@ public class ConclusionStatController extends Controller {
 
         List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
-        getCtlCellData(sd,ed, lv2_con_id, data, cityId,msisdn);
+        getCtlCellData(sd, ed, lv2_con_id, data, cityId, msisdn);
 
 
         JSONObject json = new JSONObject();
@@ -104,8 +104,8 @@ public class ConclusionStatController extends Controller {
 
     private void getHttpSpResData(String sd, long lv2_con_id, List<Map<String, String>> data) throws SQLException {
         String sql = PropKit.get("HTTP_SP_RES_STAT");
-        PreparedStatement preparedStatement = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection()
-                .prepareStatement(sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setLong(1, lv2_con_id);
         preparedStatement.setString(2, sd);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -120,23 +120,28 @@ public class ConclusionStatController extends Controller {
             }
             data.add(row);
         }
+        try {
+            resultSet.close();
+            preparedStatement.close();
 
-        resultSet.close();
-        preparedStatement.close();
+        } catch (Exception e) {
+        } finally { connection.close(); }
     }
 
-    private void getCtlCellData(String sd,String ed, long lv2_con_id, List<Map<String, String>> data, int cityId,long msisdn)
+    private void getCtlCellData(String sd, String ed, long lv2_con_id, List<Map<String, String>> data, int cityId,
+                                long msisdn)
             throws
             SQLException {
         String sql = PropKit.get("VIEW_LIST_STAT");
         if (msisdn != 0) {
             sql = sql.replace("1=1", "a.usr=" + msisdn);
         }
-        PreparedStatement preparedStatement = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection()
-                .prepareStatement(sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         int startTime = NumberUtils.toInt(sd);
         int endTime = NumberUtils.toInt(ed);
-        System.out.println("sd = [" + startTime + "], ed = [" + endTime + "], lv2_con_id = [" + lv2_con_id + "], data = ["
+        System.out.println("sd = [" + startTime + "], ed = [" + endTime + "], lv2_con_id = [" + lv2_con_id + "], data" +
+                " = ["
                 + data
                 + "], cityId = [" + cityId + "], msisdn = [" + msisdn + "]");
         preparedStatement.setLong(1, lv2_con_id);
@@ -156,14 +161,20 @@ public class ConclusionStatController extends Controller {
             data.add(row);
         }
 
-        resultSet.close();
-        preparedStatement.close();
+        try{
+            resultSet.close();
+            preparedStatement.close();
+        }catch (Exception e){
+
+        }finally {
+            connection.close();
+        }
     }
 
     private void getCtlMmeData(String sd, long lv2_con_id, List<Map<String, String>> data) throws SQLException {
         String sql = PropKit.get("CTL_MME_STAT");
-        PreparedStatement preparedStatement = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection()
-                .prepareStatement(sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setLong(1, lv2_con_id);
         preparedStatement.setString(2, sd);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -178,14 +189,17 @@ public class ConclusionStatController extends Controller {
             }
             data.add(row);
         }
-        resultSet.close();
-        preparedStatement.close();
+        try {
+            resultSet.close();
+            preparedStatement.close();
+        }catch (Exception e){ }
+        finally { connection.close(); }
     }
 
     private void getDnsDelayData(List<Map<String, String>> data) throws SQLException {
         String sql = PropKit.get("DNS_DELAY_STAT");
-        PreparedStatement preparedStatement = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection()
-                .prepareStatement(sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             HashMap<String, String> row = new HashMap<String, String>();
@@ -197,14 +211,17 @@ public class ConclusionStatController extends Controller {
             }
             data.add(row);
         }
-        resultSet.close();
-        preparedStatement.close();
+        try{
+            resultSet.close();
+            preparedStatement.close();
+        }catch (Exception e){}
+        finally { connection.close(); }
     }
 
     private void getDnsEcStatData(long lv2_con_id, List<Map<String, String>> data) throws SQLException {
         String sql = PropKit.get("DNS_EC_STAT");
-        PreparedStatement preparedStatement = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection()
-                .prepareStatement(sql);
+        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setLong(1, lv2_con_id);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
@@ -218,8 +235,13 @@ public class ConclusionStatController extends Controller {
             }
             data.add(row);
         }
-        resultSet.close();
-        preparedStatement.close();
+        try{
+            resultSet.close();
+            preparedStatement.close();
+
+        }catch (Exception e){}
+        finally { connection.close();
+        }
     }
 
 
