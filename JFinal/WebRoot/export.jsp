@@ -29,8 +29,10 @@
     $(window).load(function () {
         var exType = getQueryString("export");
         var uri = "./user_det/export";
-        if(exType=="comp"){
+        var isComp = false;
+        if (exType == "comp") {
             uri = "./comp/exportExcel";
+            isComp = true;
         }
         $.ajax({
             type: 'POST',
@@ -39,10 +41,12 @@
                 sd: getQueryString('sd'),
                 ed: getQueryString('ed'),
                 msisdn: getQueryString('msisdn'),
-                business_class: getQueryString('business_class')==null?"":getQueryString("business_class")
+                business_class: getQueryString('business_class') == null ? "" : getQueryString("business_class")
             },
-            success: function(data){
-                $("#main").html("文件已生成: <a href='"+data+"'>点击下载</a>");
+            success: function (data) {
+                $("#main").html("文件已生成: <a href='" + encodeURI(
+                                (isComp ? ("./comp/download?fileName=" + data) : data)) +
+                        "'>点击下载</a>");
             }
 
         });

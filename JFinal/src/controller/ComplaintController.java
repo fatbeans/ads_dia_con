@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import dao.ComplaintDao;
 import dao.Pager;
@@ -24,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -202,9 +205,10 @@ public class ComplaintController extends Controller {
         ExcelExport.checkFileExists(prefix);
 
         String realFileName = ExcelExport.getRealFilename(prefix);
-        String webFileName = ExcelExport.getWebFileName(prefix);
+        String fileName = ExcelExport.getFileName(prefix);
 
-        System.out.println("fileName = " + realFileName);
+
+        System.out.println("fileName = " + fileName);
         if (realFileName != null) {
 
             File file = new File(realFileName);
@@ -217,12 +221,19 @@ public class ComplaintController extends Controller {
                     "PRO_MAN_SIZEUP", "BUSINESS_CLASS", "PRO_CONTENT", "PROSECUTE_TIMES", "PROSECUTE_TYPE",
                     "IS_OVER", "FLOW_ID", "START_TIME", "SHEET_LIMIT", "DEAL_DEPT_NAME"};
             try {
-                ExcelExport.createExcelFile(file, data, headStr, key,"LTE详单");
+                ExcelExport.createExcelFile(file, data, headStr, key,"历史投诉");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            renderText(webFileName);
+            renderText(fileName);
         }
+    }
+
+    public void download() throws UnsupportedEncodingException {
+        String fileName = URLDecoder.decode(getPara("fileName"), "utf-8");
+        File file = new File(PathKit.getWebRootPath()+"/export/" + fileName);
+        System.out.println("file = " + file);
+        renderFile(file);
     }
 
 

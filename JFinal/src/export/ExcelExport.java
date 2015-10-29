@@ -42,12 +42,17 @@ public class ExcelExport {
         }
         return webFileName;
     }
-    public static String getWebFileName(String filePostfix){
-        return root_Dir + "/" + exportDir + filePostfix + extension;
+
+    public static String getFileName(String filePostfix){
+        return filePostfix + extension;
     }
 
-    public static String getRealFilename(String filePostfix){
-        return root_Dir + "/" + exportDir + filePostfix + extension;
+    public static String getWebFileName(String filePostfix){
+        return  "/" + exportDir + getFileName(filePostfix);
+    }
+
+    public static String getRealFilename(String filePostfix) {
+        return root_Dir + "/" + getWebFileName(filePostfix);
     }
 
     private static void createExcelFile(File file, List<UserDetailsDao> list, String[] header,
@@ -72,10 +77,9 @@ public class ExcelExport {
             // 创建行
             Row row = sheet.createRow(i + 1);
             // 开始创建单元格并赋值
-            for (int j = 0; j < item.getAttrNames().length; j++) {
+            for (int j = 0; j < key.length; j++) {
                 Cell nameCell = row.createCell(j);
-                String var = item.get(key[j]) == null ? "" : item.get(key[j])
-                        .toString();
+                String var = item.get(key[j]) == null ? "" : item.get(key[j]).toString();
                 nameCell.setCellValue(var);
             }
         }
@@ -105,8 +109,6 @@ public class ExcelExport {
             }
         }
     }
-
-
 
 
 

@@ -86,35 +86,34 @@ public class UserDetailsController extends Controller {
         String prefix = msisdn + "_" + sd + "_" + ed;
 
         String fileName = ExcelExport.checkFileExists(prefix);
-        if (fileName == null) {
 
-            String where = "where procedure_starttime >= ? and procedure_starttime < ? " + (msisdn == -1 ? "" : " and" +
-                    " msisdn = " + msisdn);
 
-            List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd,
-                    ed);
-            String[] headStr = {
-                    "手机号码", "开始时间", "结束时间", "终端型号", "终端厂家", "业务大类", "业务小类", "访问站点", "详细站点",
-                    "状态", "错误码", "上行流量", "下行流量", "平均响应时间", "APN", "网络类型", "服务小区"};
-            String[] key = {"msisdn",
-                    "procedure_starttime_ms",
-                    "procedure_endtime_ms",
-                    "tactype",
-                    "tacbrnd",
-                    "app_type_name",
-                    "app_sub_type_name",
-                    "host",
-                    "uri",
-                    "status_code",
-                    "",
-                    "ul_data",
-                    "dl_data",
-                    "bus_lantency",
-                    "apn",
-                    "rat_code",
-                    "cell_name"};
-            fileName = ExcelExport.exportExcelFile(list, prefix, headStr, key);
-        }
+        String where = "where time_hour >= ? and time_hour < ? " + (msisdn == -1 ? "" : " and msisdn = " + msisdn);
+
+        List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd,
+                ed);
+        String[] headStr = {
+                "手机号码", "开始时间", "结束时间", "终端型号", "终端厂家", "业务大类", "业务小类", "访问站点", "详细站点",
+                "状态", "错误码", "上行流量", "下行流量", "平均响应时间", "APN", "网络类型", "服务小区"};
+        String[] key = {"msisdn",
+                "procedure_starttime_ms",
+                "procedure_endtime_ms",
+                "tactype",
+                "tacbrnd",
+                "app_type_name",
+                "app_sub_type_name",
+                "host",
+                "uri",
+                "status_code",
+                "",
+                "ul_data",
+                "dl_data",
+                "bus_lantency",
+                "apn",
+                "rat_code",
+                "cell_name"};
+        fileName = ExcelExport.exportExcelFile(list, prefix, headStr, key);
+
         renderText(fileName);
     }
 
@@ -188,7 +187,8 @@ public class UserDetailsController extends Controller {
         for (String tab : tabNameList) {
             long tabCnt = tabCntMap.get(tab);
             String where = getWhere(msisdn, startDate, endDate, tab);
-            System.out.println("offset:"+offset+"|ctsCurrent:"+ctsCurrent+"|tabCnt:"+tabCnt+"|res:"+ (offset <
+            System.out.println("offset:" + offset + "|ctsCurrent:" + ctsCurrent + "|tabCnt:" + tabCnt + "|res:" +
+                    (offset <
                     ctsCurrent + tabCnt));
             if (offset < ctsCurrent + tabCnt) {
                 if (!beginSearch) {
