@@ -71,7 +71,7 @@ public class ComplaintController extends Controller {
     }
 
     public void searchHistory() {
-        if(getPara("export")!=null) {
+        if (getPara("export") != null) {
             exportExcel();
             return;
         }
@@ -103,7 +103,7 @@ public class ComplaintController extends Controller {
         if (StringUtils.isBlank(business_class)) {
             pageSql = pageSql.replace(PropKit.get("COMP_WHERE_BUSINESS"), " ");
         }
-        System.out.println("mdn Blank:"+StringUtils.isNotBlank(msisdn));
+        System.out.println("mdn Blank:" + StringUtils.isNotBlank(msisdn));
 
         pageSql = StringUtils.isNotBlank(msisdn) ? pageSql.replaceFirst("\\?", msisdn)
                 .replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")).replaceFirst("\\%\\?\\%", "%" +
@@ -122,11 +122,12 @@ public class ComplaintController extends Controller {
                     ("COMP_WHERE_BUSINESS"), " ") : PropKit.get("COMP_SQL");
 
             if (StringUtils.isNotBlank(msisdn)) {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size,sql )
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, sql)
                                 .replaceFirst("\\%\\?\\%", "%" + business_class + "%"),
                         msisdn, sd, ed));
             } else {
-                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql, PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
+                pager.setRows(ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql,
+                        PropKit.get("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" +
                         business_class + "%"), sd, ed));
             }
         }
@@ -193,7 +194,7 @@ public class ComplaintController extends Controller {
     }
 
 
-    public void exportExcel()  {
+    public void exportExcel() {
 
         long sd = getParaToLong(("sd"), 20000101l);
         long ed = getParaToLong(("ed"), 21000101l);
@@ -220,7 +221,7 @@ public class ComplaintController extends Controller {
                     "PRO_MAN_SIZEUP", "BUSINESS_CLASS", "PRO_CONTENT", "PROSECUTE_TIMES", "PROSECUTE_TYPE",
                     "IS_OVER", "FLOW_ID", "START_TIME", "SHEET_LIMIT", "DEAL_DEPT_NAME"};
             try {
-                ExcelExport.createExcelFile(file, data, headStr, key,"历史投诉");
+                ExcelExport.createExcelFile(file, data, headStr, key, "历史投诉");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -230,7 +231,7 @@ public class ComplaintController extends Controller {
 
     public void download() throws UnsupportedEncodingException {
         String fileName = URLDecoder.decode(getPara("fileName"), "utf-8");
-        File file = new File(PathKit.getWebRootPath()+"/export/" + fileName);
+        File file = new File(PathKit.getWebRootPath() + "/export/" + fileName);
         System.out.println("file = " + file);
         renderFile(file);
     }
@@ -262,11 +263,10 @@ public class ComplaintController extends Controller {
         List<ComplaintDao> list;
 
         if (StringUtils.isNotBlank(msisdn)) {
-            list = ComplaintDao.dao.find(xDialect.forPaginate(page, size, sql).replaceFirst("\\%\\?\\%", "%" +
-                    business_class + "%"), msisdn, sd, ed);
+            list = ComplaintDao.dao.find(sql.replaceFirst("\\%\\?\\%", "%" + business_class + "%"), msisdn, sd, ed);
         } else {
-            list = ComplaintDao.dao.find(xDialect.forPaginate(page, size, StringUtils.replaceOnce(sql, PropKit.get
-                    ("COMP_WHERE_MDN"), " ")).replaceFirst("\\%\\?\\%", "%" + business_class + "%"), sd, ed);
+            list = ComplaintDao.dao.find(StringUtils.replaceOnce(sql, PropKit.get("COMP_WHERE_MDN"), " ")
+                    .replaceFirst("\\%\\?\\%", "%" + business_class + "%"), sd, ed);
         }
         return JSONArray.parseArray(JsonKit.toJson(list));
     }
