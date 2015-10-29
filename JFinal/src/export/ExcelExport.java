@@ -44,6 +44,18 @@ public class ExcelExport {
         return webFileName;
     }
 
+    public static String getFileName(String filePostfix){
+        return filePostfix + extension;
+    }
+
+    public static String getWebFileName(String filePostfix){
+        return  "/" + exportDir + getFileName(filePostfix);
+    }
+
+    public static String getRealFilename(String filePostfix) {
+        return root_Dir + "/" + getWebFileName(filePostfix);
+    }
+
     private static void createExcelFile(File file, List<UserDetailsDao> list, String[] header,
                                         String[] key) {
 
@@ -66,10 +78,10 @@ public class ExcelExport {
             // 创建行
             Row row = sheet.createRow(i + 1);
             // 开始创建单元格并赋值
-            for (int j = 0; j < item.getAttrNames().length; j++) {
+            System.out.println("key.length="+key.length);
+            for (int j = 0; j < key.length; j++) {
                 Cell nameCell = row.createCell(j);
-                String var = item.get(key[j]) == null ? "" : item.get(key[j])
-                        .toString();
+                String var = item.get(key[j]) == null ? "" : item.get(key[j]).toString();
                 nameCell.setCellValue(var);
             }
         }
@@ -101,30 +113,9 @@ public class ExcelExport {
     }
 
 
-    public static void main(String[] args) throws Exception {
-        String[] header = new String[]{"年", "性", "名"};
-        String[] key = new String[]{"age", "sex", "name"};
-
-        JSONArray array = new JSONArray();
-
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"age\":\"12\",\"sex\":\"男\",\"name\":\"阿拉\"}"));
-        array.add(JSONObject.parse("{\"sex\":\"男\",\"name\":\"阿拉\"}"));
-
-        File file = new File("g:/生成测试.xlsx");
-        createExcelFile(file, array, header, key);
-    }
-
 
     public static void createExcelFile(File file, JSONArray list, String[] header,
-                                       String[] key) throws Exception {
+                                       String[] key,String sheetName) throws Exception {
 
         if (header.length != key.length) {
             throw (new Exception("header与key的长度不一致"));
@@ -132,7 +123,8 @@ public class ExcelExport {
         // 先创建工作簿对象
         SXSSFWorkbook workbook2007 = new SXSSFWorkbook(100);
         // 创建工作表对象并命名
-        Sheet sheet = workbook2007.createSheet("信令详单");
+
+        Sheet sheet = workbook2007.createSheet(sheetName==null?"sheet1":sheetName);
         Row headrow = sheet.createRow(0);
 
 
@@ -159,13 +151,9 @@ public class ExcelExport {
 
         FileOutputStream fos = null;
         try {
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+            if (file.exists()) file.delete();
+            file.createNewFile();
             fos = new FileOutputStream(file);
             workbook2007.write(fos);
         } catch (Exception e) {

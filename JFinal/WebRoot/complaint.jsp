@@ -55,9 +55,7 @@
         </div>
         <div class="inlininput mr10">
             <label class="S-label">投诉业务类型</label>
-            <input type="text" id="business_class" style="padding-left: 100px;width: 250px"
-                   value="基础通信-互联网类业务-4G（LTE）"
-                   class="w100">
+            <input type="text" id="business_class" style="padding-left: 100px;width: 250px" class="w100">
         </div>
         <div class="inlininput mr10" style="display: none">
 
@@ -116,6 +114,9 @@
                 <li class="active litab"><a href="#tab1">历史投诉</a></li>
                 <li class="litab"><a href="#tab2">诊断明细</a></li>
             </ul>
+            <div class="pull-right">
+                <a href="#" id="export" class="btn btn-primary">导出</a>
+            </div>
         </div>
         <div class="tab-content" style="overflow: visible;" id="panel">
             <div class="tab-pane active" id="tab1">
@@ -197,7 +198,8 @@
         var sessionid = cellvalue;
         var mdn = rowObject.MDN;
         var val =
-                "<a target='_blank' href='http://10.223.235.16:8806/sv/indexcust?q=true&sd=" + sd + "&ed=" + ed + "&msisdn=" + mdn +
+                "<a target='_blank' href='http://10.154.3.8:8806/sv/indexcust?q=true&sd=" + sd + "&ed=" + ed +
+                "&msisdn=" + mdn +
                 "&sessionid=" +
                 sessionid + "' class='btn btn-small btn-primary'>查看详情</a>";
         return val;
@@ -300,6 +302,22 @@
             return true;
         }
     }
+
+    $("#export").click(function () {
+        if (!checkInput()) {
+
+        } else {
+
+            var sd = $("#sd").val().replace(/[/]/g, '').replace(' ', '');
+            var ed = $("#ed").val().replace(/[/]/g, '').replace(' ', '');
+            var business_class = encodeURIComponent($("#business_class").val().trim());
+            var msisdn = $("#msisdn").val();
+            window.open("../export.jsp?export=comp&business_class=" + business_class + "&sd=" + sd + "&ed=" + ed + "&msisdn=" + msisdn,
+                    "导出文件",
+                    "height=300, width=600, toolbar =no, top=300, left=300 menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+
+        }
+    });
 
     function info(d) {
         if (d == null || typeof (d) == "undefined") {

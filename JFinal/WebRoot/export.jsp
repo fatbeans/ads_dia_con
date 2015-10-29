@@ -21,22 +21,36 @@
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
-        if (r != null)return unescape(r[2]);
+        if (r != null)return decodeURIComponent(r[2]);
         return null;
     }
 
-    $.ajax({
-        type: 'POST',
-        url: './user_det/export',
-        data: {
-            sd: getQueryString('sd'),
-            ed: getQueryString('ed'),
-            msisdn: getQueryString('msisdn')
-        },
-        success: function(data){
-            $("#main").html("文件已生成: <a href='"+data+"'>点击下载</a>");
-        }
 
-    });
+    $(window).load(function () {
+        var exType = getQueryString("export");
+        var uri = "./user_det/export";
+        var isComp = false;
+        if (exType == "comp") {
+            uri = "./comp/exportExcel";
+            isComp = true;
+        }
+        $.ajax({
+            type: 'POST',
+            url: uri,
+            data: {
+                sd: getQueryString('sd'),
+                ed: getQueryString('ed'),
+                msisdn: getQueryString('msisdn'),
+                business_class: getQueryString('business_class') == null ? "" : getQueryString("business_class")
+            },
+            success: function (data) {
+                $("#main").html("文件已生成: <a href='" + encodeURI(
+                                (isComp ? ("./comp/download?fileName=" + data) : data)) +
+                        "'>点击下载</a>");
+            }
+
+        });
+    })
+
 </script>
 </html>

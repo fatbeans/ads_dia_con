@@ -41,26 +41,6 @@ public class UserDetailsController extends Controller {
     public void search23g() {
     }
 
-    private String mdn2Imsi(String mdn) throws SQLException {
-//
-        Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("select IMSI from map_imsi_mdn where " +
-                "mdn=" + mdn);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            String imsi = resultSet.getString(1);
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-            return imsi;
-        }else{
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-            return null;
-        }
-    }
-
     /**
      * 详单-LTE
      */
@@ -71,16 +51,6 @@ public class UserDetailsController extends Controller {
         long sd = getParaToLong("sd", 20000101l);
         long ed = getParaToLong("ed", 21000101l);
         long msisdn = getParaToLong("msisdn", -1l);
-
-
-        if((msisdn+"").length()==11) {
-            String imsi = mdn2Imsi(msisdn+"");
-            if(imsi == null){
-                renderError(488);
-            }else {
-                msisdn = NumberUtils.toLong(imsi, 0l);
-            }
-        }
 
         String dbPre = PropKit.get("dbPre");
 
@@ -104,7 +74,8 @@ public class UserDetailsController extends Controller {
         String time_key = PropKit.get("WHERE_TIME_KEY");
 
         String where = "where " + time_key + " >= ? and " + time_key + " < ? " + (msisdn == -1 ? "" : " and " +
-                "msisdn = " + msisdn);
+                "msisdn = " + msisdn) + " and time_day >= " + (sd / 100) + " and time_day <= " + (ed / 100);
+
 
         Pager pager = new Pager();
         pager.setPage(page);
@@ -279,9 +250,7 @@ public class UserDetailsController extends Controller {
         if (fileName == null) {
 
             String where = "where procedure_starttime >= ? and procedure_starttime < ? " + (msisdn == -1 ? "" : " and" +
-                    " " +
-
-                    "msisdn = " + msisdn);
+                    "  msisdn = " + msisdn)+ " and time_day >= " + (sd / 100) + " and time_day <= " + (ed / 100);;
 
             List<UserDetailsDao> list = UserDetailsDao.dao.find(PropKit.get("LTE_SQL").replace("$where", where), sd,
                     ed);
