@@ -55,19 +55,9 @@ public class UserDetailsController extends Controller {
         String dbPre = PropKit.get("dbPre");
 
 
-        DbType dbType = DbType.HBASE;
-        if (dbPre == null) {
-            dbType = DbType.HBASE;
+        DbType dbType = DbType.GP;
 
-        } else {
-            dbType = dbPre.contains("GBASE") ? DbType.GBASE : dbPre.contains("GP") ? DbType.GP : DbType.HBASE;
 
-        }
-
-        if (dbType == DbType.HBASE) {
-            doForHbase(page, size, sd, ed, msisdn);
-            return;
-        }
 
         XDialect xDialect = dbType == DbType.GBASE ? new XGbaseDialect() : new XGpDialect();
 
