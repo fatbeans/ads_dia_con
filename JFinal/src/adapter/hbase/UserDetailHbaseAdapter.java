@@ -28,6 +28,18 @@ import org.apache.commons.lang.time.DateUtils;
  */
 public class UserDetailHbaseAdapter {
 
+    public static void main(String[] args) {
+        String imsi = "460027950740073";
+        String startTime = "2015111600";
+        String endTime = "2015111623";
+
+        String startKey = StringUtils.rightPad(imsi + startTime, 34, "0");
+        String endKey = StringUtils.rightPad(imsi + endTime, 34, "9");
+
+        System.out.println("startKey = " + startKey);
+        System.out.println("endKey = " + endKey);
+    }
+
 
     public static List<UserDetHbaseEntity> getPage(String imsi,
                                                    String startTime, String endTime)

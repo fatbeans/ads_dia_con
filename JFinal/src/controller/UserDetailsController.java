@@ -85,74 +85,12 @@ public class UserDetailsController extends Controller {
             }
         }
 
-        String dbPre = PropKit.get("dbPre");
 
 
-        DbType dbType = DbType.HBASE;
-        if (dbPre == null) {
-            dbType = DbType.HBASE;
-
-        } else {
-            dbType = dbPre.contains("GBASE") ? DbType.GBASE : dbPre.contains("GP") ? DbType.GP : DbType.HBASE;
-
-        }
-
-        if (dbType == DbType.HBASE) {
             doForHbase(page, size, sd, ed, msisdn);
             return;
-        }
-
-        XDialect xDialect = dbType == DbType.GBASE ? new XGbaseDialect() : new XGpDialect();
-
-        String time_key = PropKit.get("WHERE_TIME_KEY");
-
-        String where = "where " + time_key + " >= ? and " + time_key + " < ? " + (msisdn == -1 ? "" : " and " +
-                "msisdn = " + msisdn);
-
-        Pager pager = new Pager();
-        pager.setPage(page);
-        pager.setSize(size);
 
 
-        if (getPara("showSql") != null) {
-            renderText(xDialect.forPaginate((int) pager.getPage(),
-                    (int) pager.getSize
-                            (), PropKit.get("LTE_SQL")
-                            .replace("$where", where)).replaceFirst("\\?", sd + "").replaceFirst("\\?", ed + ""));
-            return;
-        }
-
-
-        long records = Db.use(dbType == DbType.GBASE ? "gbase" : "gp").queryLong(PropKit.get("LTE_SQL_COUNT").replace
-                ("$where", where), sd, ed);
-        pager.setRecords(records);
-
-
-        if (pager.getRecords() == 0) {
-            pager.setRows(new ArrayList<UserDetailsDao>(0));
-        } else {
-            List<UserDetailsDao> list = UserDetailsDao.dao.find(xDialect.forPaginate((int) pager.getPage(),
-                    (int) pager.getSize(), PropKit.get("LTE_SQL").replace("$where", where)), sd, ed);
-            for (UserDetailsDao item : list) {
-                String cell_name = item.get("cell_name");
-                String start_time = item.get("procedure_starttime_ms").toString();
-                String end_time = item.get("procedure_endtime_ms").toString();
-                start_time = getTime(start_time);
-                end_time = getTime(end_time);
-                if (start_time != null) {
-                    item.put("procedure_starttime_ms", start_time);
-                }
-                if (end_time != null) {
-                    item.put("procedure_endtime_ms", end_time);
-                }
-            }
-            pager.setRows(list);
-        }
-
-        pager.setTotal(pager.getRecords() / pager.getSize() + (pager.getRecords() % pager.getSize() > 0 ? 1 : 0));
-
-        String jsonStr = pager.toJsonString();
-        renderJson(jsonStr);
     }
 
     private void doForHbase(int page, int size, long sd, long ed, long msisdn) throws Throwable {
