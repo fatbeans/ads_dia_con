@@ -109,7 +109,8 @@ public class DemoConfig extends JFinalConfig {
 
     private void configGp(Plugins me) {
         C3p0Plugin cp = new C3p0Plugin(prop.get("GP_URL"), prop.get("GP_USER"), prop.get
-                ("GP_PWD"), prop.get("GP_JDBC"));
+                ("GP_PWD"), prop.get("GP_JDBC"),4,1,1,20,2);
+
         me.add(cp);
 
 
@@ -144,20 +145,20 @@ public class DemoConfig extends JFinalConfig {
         arp.setShowSql(true);
         me.add(arp);
         //arp.addMapping("ADS_DIA_CON_HTTP_CELL", HttpCell.class);
-        arp.addMapping("ADS_DIA_CON_CTL_MME", CtlMme.class);
-        arp.addMapping("ADS_DIA_CON_HTTP_SGW", HttpSgw.class);
-        arp.addMapping("ADS_DIA_CTL", CtlCell.class);
-        arp.addMapping("ADS_DIA_CON_DNS_EC", DnsEc.class);
-        arp.addMapping("ADS_DIA_CON_DNS_DELAY", DnsDelay.class);
-        arp.addMapping("ADS_DIA_CON_CTL_USR_EC", CtlUsrEc.class);
-        arp.addMapping("ADS_DIA_CON_USR_VIR", UsrVir.class);
-        arp.addMapping("ADS_DIA_CON_USR_IL_IP", UsrIlIp.class);
-        arp.addMapping("ADS_DIA_CON_USR_HI_FLO_SRV", UsrHiFloSrv.class);
-        arp.addMapping("ADS_DIA_CON_CTL_TE", CtlTe.class);
-        arp.addMapping("ADS_DIA_CON_HTTP_LIST", HttpList.class);
+//        arp.addMapping("ADS_DIA_CON_CTL_MME", CtlMme.class);
+//        arp.addMapping("ADS_DIA_CON_HTTP_SGW", HttpSgw.class);
+//        arp.addMapping("ADS_DIA_CTL", CtlCell.class);
+//        arp.addMapping("ADS_DIA_CON_DNS_EC", DnsEc.class);
+//        arp.addMapping("ADS_DIA_CON_DNS_DELAY", DnsDelay.class);
+//        arp.addMapping("ADS_DIA_CON_CTL_USR_EC", CtlUsrEc.class);
+//        arp.addMapping("ADS_DIA_CON_USR_VIR", UsrVir.class);
+//        arp.addMapping("ADS_DIA_CON_USR_IL_IP", UsrIlIp.class);
+//        arp.addMapping("ADS_DIA_CON_USR_HI_FLO_SRV", UsrHiFloSrv.class);
+//        arp.addMapping("ADS_DIA_CON_CTL_TE", CtlTe.class);
+//        arp.addMapping("ADS_DIA_CON_HTTP_LIST", HttpList.class);
         //arp.addMapping("ADS_DIA_CON_HTTP_TE", HttpTe.class);
-        arp.addMapping("ADS_DIA_CON_CTL_S_EC", CtlSEc.class);
-        arp.addMapping("ADS_DIA_CON_HTTP_SP", HttpSp.class);
+//        arp.addMapping("ADS_DIA_CON_CTL_S_EC", CtlSEc.class);
+//        arp.addMapping("ADS_DIA_CON_HTTP_SP", HttpSp.class);
         arp.addMapping("ADS_DIA_CON", "ADS_DIA_CON_CFG", AdsDiaCon.class);
         arp.addMapping("ADS_DIA_HTTP_USR_SRV", UsrSrv.class);
         arp.addMapping("ADS_DIA_HTTP", AdsDiaHttp.class);
