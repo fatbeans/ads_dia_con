@@ -122,12 +122,12 @@ public class ComplaintController extends Controller {
         }
 
 
-        pageSql = StringUtils.isNotBlank(msisdn) ? pageSql.replaceFirst("\\?", msisdn)
+        pageSql = StringUtils.isNotBlank(msisdn) ? pageSql.replaceFirst("\\?", "'"+msisdn+"'")
                 .replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + "")).replaceFirst("\\%\\?\\%", "%" +
                         business_class + "%") : StringUtils.replaceOnce(pageSql, PropKit.get
                 ("COMP_WHERE_MDN"), " ").replaceFirst("\\?", (sd + "")).replaceFirst("\\?", (ed + ""))
                 .replaceFirst("\\%\\?\\%", "%" + business_class + "%");
-        System.out.println(pageSql);
+        System.out.println("pageSql = " + pageSql);
 
         Connection connection = DbKit.getConfig(DbType.ORACLE.getValue()).getConnection();
         Statement statement = connection.createStatement();
