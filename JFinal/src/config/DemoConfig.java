@@ -173,7 +173,7 @@ public class DemoConfig extends JFinalConfig {
 
     public void configInterceptor(Interceptors me) {
 
-        me.addGlobalActionInterceptor(new LogInterceptor());
+//        me.addGlobalActionInterceptor(new LogInterceptor());
     }
 
     public void configHandler(Handlers me) {

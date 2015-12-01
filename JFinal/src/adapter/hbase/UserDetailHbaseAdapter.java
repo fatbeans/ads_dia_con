@@ -33,8 +33,8 @@ public class UserDetailHbaseAdapter {
         String startTime = "2015111600";
         String endTime = "2015111623";
 
-        String startKey = StringUtils.rightPad(imsi + startTime, 34, "0");
-        String endKey = StringUtils.rightPad(imsi + endTime, 34, "9");
+        String startKey = StringUtils.rightPad(imsi + startTime, 36, "0");
+        String endKey = StringUtils.rightPad(imsi + endTime, 36, "9");
 
         System.out.println("startKey = " + startKey);
         System.out.println("endKey = " + endKey);
@@ -67,15 +67,15 @@ public class UserDetailHbaseAdapter {
         Date s1 = DateUtils.parseDate(startTime.substring(0, 8), new String[]{"yyyyMMdd"});
         Date s2 = DateUtils.parseDate(endTime.substring(0, 8), new String[]{"yyyyMMdd"});
 
-        int tabCnt = (int) (s2.getTime() - s1.getTime()) / (24 * 60 * 60 * 1000) + 1;
+        int tabCnt = (int) (s2.getTime() - s1.getTime()) / (24 * 60 * 60 * 1000) + 2;
 
 
         try {
             for (int i = 0; i < tabCnt; i++) {
                 // 关闭事务自动提交
                 String day = DateFormatUtils.format(s1, "yyyyMMdd");
-                startKey = StringUtils.rightPad(imsi + startTime, 34, "0");
-                endKey = StringUtils.rightPad(imsi + endTime, 34, "9");
+                startKey = StringUtils.rightPad(imsi + startTime, 36, "0");
+                endKey = StringUtils.rightPad(imsi + endTime, 36, "9");
                 String tableNameTemp = tableName + "_" + day;
                 System.out.println("tableNameTemp = " + tableNameTemp);
                 // 判断表名是否存在content:other
@@ -108,8 +108,8 @@ public class UserDetailHbaseAdapter {
         String tableName = "S_M_HTTP";
         String day = startTime.substring(0, 8);
         String tableNameTemp = tableName + "_" + day;
-        String startKey = StringUtils.rightPad(imsi + startTime, 34, "0");
-        String endKey = StringUtils.rightPad(imsi + endTime, 34, "9");
+        String startKey = StringUtils.rightPad(imsi + startTime, 36, "0");
+        String endKey = StringUtils.rightPad(imsi + endTime, 36, "9");
         return XDataHBaseHelper.getHelper().getTotal(tableNameTemp, null, startKey, endKey);
     }
 }

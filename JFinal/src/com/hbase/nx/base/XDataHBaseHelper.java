@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.apache.hadoop.hbase.filter.Filter;
 
 import com.jfinal.kit.PropKit;
 import org.apache.hadoop.conf.Configuration;

@@ -56,7 +56,7 @@ public class UserDetailsController extends Controller {
             preparedStatement.close();
             connection.close();
             return imsi;
-        }else{
+        } else {
             resultSet.close();
             preparedStatement.close();
             connection.close();
@@ -76,22 +76,22 @@ public class UserDetailsController extends Controller {
         long msisdn = getParaToLong("msisdn", -1l);
 
 
-        if((msisdn+"").length()==11) {
-            String imsi = mdn2Imsi(msisdn+"");
-            if(imsi == null){
+        if ((msisdn + "").length() == 11) {
+            String imsi = mdn2Imsi(msisdn + "");
+            if (imsi == null) {
                 renderError(488);
-            }else {
+            } else {
                 msisdn = NumberUtils.toLong(imsi, 0l);
             }
         }
 
 
-
-            doForHbase(page, size, sd, ed, msisdn);
-            return;
+        doForHbase(page, size, sd, ed, msisdn);
+        return;
 
 
     }
+
 
     private void doForHbase(int page, int size, long sd, long ed, long msisdn) throws Throwable {
         Map<String, AppInfoEntity> appInfoEntityMap = getAppInfo();
@@ -100,7 +100,7 @@ public class UserDetailsController extends Controller {
                 "msisdn = [" + msisdn + "]");
 
         List<UserDetHbaseEntity> list = UserDetailHbaseAdapter.getPage(msisdn + "", sd + "", ed + "");
-        System.out.println("查询出来数据条数："+list.size());
+        System.out.println("查询出来数据条数：" + list.size());
         joinAppName(appInfoEntityMap, list);
         joinHttpStatus(list);
         joinErrorCode(list);
@@ -109,6 +109,8 @@ public class UserDetailsController extends Controller {
         pager.setSize(size);
         pager.setRows(list);
         pager.setRecords(list.size());
+//        pager.setRows(list.subList(size * (page - 1), size * page - 1 > list.size() ? list.size() : size * page - 1));
+
         pager.setTotal(pager.getRecords() / pager.getSize() + (pager.getRecords() % pager.getSize() > 0 ? 1 : 0));
         JSONObject json = pager.toJson();
         json.put("rows", list);

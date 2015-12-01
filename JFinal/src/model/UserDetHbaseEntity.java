@@ -1,6 +1,7 @@
 package model;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * Created by xinxin on 2015/8/27.
@@ -55,8 +56,8 @@ public class UserDetHbaseEntity {
         APP_SUB_TYPE_NAME = data[16];
         HOST = data[40];
         URI1 = data[39];
-        STATUS_CODE = data[20];
-        ERROR_CODE = data[21];
+        STATUS_CODE = NumberUtils.toInt(data[21], 0) >= 400 ? "失败" : "成功";
+        ERROR_CODE = NumberUtils.toInt(data[21], 0) + "";
         UL_DATA = data[23];
         DL_DATA = data[24];
         BUS_LANTENCY = data[25];
