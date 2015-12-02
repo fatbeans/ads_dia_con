@@ -115,19 +115,23 @@
         return null;
     }
 
-    $(document).ajaxError(function (event,XMLHttpRequest) {
+    $(document).ajaxError(function (event, XMLHttpRequest) {
 
         if (XMLHttpRequest.status == 488) {
             alert("未能查找到号码" + $("#msisdn").val() + "对应的IMSI");
         }
     });
 
+    function dataFmatter(cellvalue, options, rowObject) {
+        return (Number(rowObject.UL_DATA) + Number(rowObject.DL_DATA)).toFixed(2);
+    }
+
 
     $("#ltetab").jqGrid({
         url: 'user_det/searchLTE',
         datatype: 'local',
         colNames: ['手机号码', '开始时间', '结束时间', '终端型号', '终端厂家', '业务大类', '业务小类', '访问站点', '详细站点',
-            '状态', '错误码', '英文解释', '中文解释', '上行流量(B)', '下行流量(B)', '平均响应时间(ms)', 'APN', '网络类型', '服务小区', '终端系统', '支持2G',
+            '状态', '错误码', '英文解释', '中文解释', '上行流量(B)', '下行流量(B)', '总流量(B)', '平均响应时间(ms)', 'APN', '网络类型', '服务小区', '终端系统', '支持2G',
             '支持3G',
             '支持4G'],
         colModel: [
@@ -146,6 +150,7 @@
             {name: 'FIAL_SCENE_EN', width: 150},
             {name: 'UL_DATA', width: 150},
             {name: 'DL_DATA', width: 150},
+            {name: 'SESSION_ID', formatter: dataFmatter},
             {name: 'BUS_LANTENCY', width: 150},
             {name: 'APN', width: 150},
             {name: 'RAT_CODE', width: 150},
@@ -214,7 +219,6 @@
     }
 
 
-
     if (getQueryString("q") != null) {
 
         var sd = getQueryString("sd");
@@ -232,9 +236,9 @@
         var month = now.getMonth() + 1;
         var day = now.getDate();
         $("#sd").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/" + (day < 10 ? ("0" + day) :
-                        day) + " 00");
+                day) + " 00");
         $("#ed").val(now.getFullYear() + "/" + (month < 10 ? ("0" + month) : month) + "/" + (day < 10 ? ("0" + day) :
-                        day) + " 23");
+                day) + " 23");
     }
 
 </script>
