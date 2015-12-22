@@ -28,16 +28,18 @@ import org.apache.commons.lang.time.DateUtils;
  */
 public class UserDetailHbaseAdapter {
 
-    public static void main(String[] args) {
-        String imsi = "460027950740073";
-        String startTime = "2015111600";
-        String endTime = "2015111623";
+    public static void main(String[] args) throws ParseException {
+        String startTime = "2015110100";
+        String endTime = "2015113023";
 
-        String startKey = StringUtils.rightPad(imsi + startTime, 36, "0");
-        String endKey = StringUtils.rightPad(imsi + endTime, 36, "9");
+        Date s1 = DateUtils.parseDate(startTime.substring(0, 8), new String[]{"yyyyMMdd"});
+        Date s2 = DateUtils.parseDate(endTime.substring(0, 8), new String[]{"yyyyMMdd"});
 
-        System.out.println("startKey = " + startKey);
-        System.out.println("endKey = " + endKey);
+
+
+
+        long tabCnt = (long) (s2.getTime() - s1.getTime()) / (24 * 60 * 60 * 1000) + 2;
+        System.out.println(tabCnt);
     }
 
 
@@ -64,14 +66,15 @@ public class UserDetailHbaseAdapter {
         XDataHBaseHelper xDataHBaseHelper = XDataHBaseHelper.getHelper();
 
 
+
         Date s1 = DateUtils.parseDate(startTime.substring(0, 8), new String[]{"yyyyMMdd"});
         Date s2 = DateUtils.parseDate(endTime.substring(0, 8), new String[]{"yyyyMMdd"});
 
-        int tabCnt = (int) (s2.getTime() - s1.getTime()) / (24 * 60 * 60 * 1000) + 2;
+        long tabCnt = (long) (s2.getTime() - s1.getTime()) / (24 * 60 * 60 * 1000) + 2;
 
 
         try {
-            for (int i = 0; i < tabCnt; i++) {
+            for (long i = 0; i < tabCnt; i++) {
                 // 关闭事务自动提交
                 String day = DateFormatUtils.format(s1, "yyyyMMdd");
                 startKey = StringUtils.rightPad(imsi + startTime, 36, "0");

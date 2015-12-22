@@ -194,7 +194,7 @@
                 sd: $("#sd").val().replace(/[/]/g, '').replace(' ', ''),
                 ed: $("#ed").val().replace(/[/]/g, '').replace(' ', ''),
                 msisdn: $("#msisdn").val()
-            }, datatype: 'json'
+            }, datatype: 'json',page:1
         }).trigger("reloadGrid");
     });
 
